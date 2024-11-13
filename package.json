@@ -1,0 +1,60 @@
+{
+    "name": "@peter.naydenov/morph",
+    "description": "Template engine",
+    "version": "0.0.0",
+    "license": "MIT",
+    "author": "Peter Naydenov",
+    "main": "./src/main.js",
+    "type": "module",
+    "exports": {
+        ".": {
+            "import": "./dist/transformer.esm.mjs",
+            "require": "./dist/transformer.cjs",
+            "default": "./dist/transformer.umd.js"
+        },
+        "./package.json": "./package.json",
+        "./dist/*": "./dist/*",
+        "./src/*": "./src/*"
+    },
+    "scripts": {
+        "test": "mocha test",
+        "cover": "c8 mocha",
+        "build": "rollup -c"
+    },
+    "devDependencies": {
+        "@rollup/plugin-commonjs": "^28.0.0",
+        "@rollup/plugin-node-resolve": "^15.3.0",
+        "@rollup/plugin-terser": "^0.4.4",
+        "c8": "^10.1.2",
+        "chai": "5.1.2",
+        "mocha": "10.8.2",
+        "rollup": "^4.24.3"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/PeterNaydenov/morph.git"
+    },
+    "c8": {
+        "include": [
+            "src/**/*.js"
+        ],
+        "exclude": [
+            "node_modules",
+            "test"
+        ],
+        "reporter": [
+            "lcov",
+            "text-summary"
+        ]
+    },
+    "keywords": [
+        "template",
+        "engine",
+        "string",
+        "function"
+    ],
+    "dependencies": {
+        "@peter.naydenov/stack": "^3.0.0",
+        "@peter.naydenov/walk": "^4.2.3"
+    }
+}
