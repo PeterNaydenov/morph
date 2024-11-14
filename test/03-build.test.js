@@ -220,6 +220,7 @@ describe ( 'transformer: build', () => {
 
 
      it.only ( 'How to hide a placeholder', () => {
+        // Hide a placeholder - provide an empty string
                 const myTpl = {
                                 template : `My name is {{ name }}.{{ extraData}}`
                         }
@@ -228,12 +229,11 @@ describe ( 'transformer: build', () => {
                                                   name: 'Peter' 
                                                 , extraData: ''
                                         });
-                //TODO: IT'S NOT WORKING
                 expect ( result ).to.be.equal ( 'My name is Peter.' )
         }) // it how to hide a placeholder
 
 
-        
+
      it ( '', () => {
         // TODO: When to present render result as a part of object? Do I need a specific sign before the action?
      })

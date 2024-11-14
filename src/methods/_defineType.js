@@ -1,5 +1,5 @@
 function _defineDataType ( data ) {
-    if ( !data ) return 'null'
+    if ( data == null )              return 'null'
     if ( typeof data === 'string'  ) return 'primitive'
     if ( typeof data === 'number'  ) return 'primitive'
     if ( typeof data === 'boolean' ) return 'primitive'

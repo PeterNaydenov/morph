@@ -13,7 +13,7 @@ import _defineDataType   from "./_defineType.js"
  function build  ( tpl ) {
         
         const { hasError, placeholders, chop, helpers } = _readTemplate ( tpl );
-        
+       
         if ( hasError ) {
                         return function fail () {
                                         return hasError
@@ -46,7 +46,6 @@ import _defineDataType   from "./_defineType.js"
                                                                              info = d[data]
                                                                            , type = _defineDataType ( info )
                                                                            ;
-                                                                        
                                                                         switch ( type ) {
                                                                                 case 'primitive':
                                                                                         cuts[index] = info
