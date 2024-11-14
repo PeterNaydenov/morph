@@ -5,7 +5,8 @@ import settings from './settings.js'
 
 function _renderHolder ( template, data ) {
     // Data should be an object. No array, no string.
-    const 
+    if ( data === null )   return null    
+    const
           chop = _chopTemplate (settings)( template )
         , set  = settings
         ;

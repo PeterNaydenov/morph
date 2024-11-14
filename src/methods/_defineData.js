@@ -26,8 +26,8 @@ function _defineData (d) {
             } // step func.
 
     
-
     walk ({ data:d, objectCallback:findObjects, keyCallback:findRoot })
+    
     nestedData[0] = rootData
     if ( dataDeepLevel == 0 )  return { dataDeepLevel, nestedData: { 0:d } }
     else                       return { dataDeepLevel, nestedData }

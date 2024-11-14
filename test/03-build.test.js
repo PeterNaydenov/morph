@@ -178,28 +178,65 @@ describe ( 'transformer: build', () => {
 
 
 
-     it.only ( '', () => {
+     it ( 'Ignore rendering if data is null', () => {
+                // Ignore rendering [] lines that have missing data
                 const myTpl = {
-                          template : `People and their jobs: {{ @all : ul, [], li, >jobItems }}`
+                          template : `People and their jobs: {{ jobList : ul, [], li, >jobItems }}`
                         , helpers  : {
                                           ul : `<ul>{{text}}</ul>`
                                         , li : `<li>{{name}} - {{job}}</li>`
-                                        , jobItems : ( data ) => {
-                                                        if ( !data.name || !data.job )   return ''
+                                        , jobItems : ( data ) => { // It's a data function
+                                                        // If data-function returns null, it will be ignored in template render
+                                                        if ( !data.name || !data.job )   return null
                                                         else                             return data
                                                 }
                                 }
+                        };
+                const data = {
+                        jobList: [
+                                  {name: 'Peter', job: 'Software Engineer'}
+                                , {name: 'Ivan' } // No job - ignored in template render
+                                , {name: 'Stoyan', job: 'designer'  }
+                                ]
+                        };
+                const templateFn = build ( myTpl );
+                const result = templateFn(data);
+                expect ( result ).to.be.equal ( 'People and their jobs: <ul><li>Peter - Software Engineer</li><li>Stoyan - designer</li></ul>' )
+                
+        }) // it Ignore rendering if data is null
+
+
+
+     it ( 'Ignore rendering fields that have no data', () => {
+                const myTpl = {
+                        template : `My name is {{ name }}.`
+
+                        };
+                const templateFn = build ( myTpl );
+                const result = templateFn({ person: 'Peter' });
+                expect ( result ).to.be.equal ( 'My name is {{ name }}.' )
+        }) // it Ignore rendering fields that have no data
+
+
+
+     it.only ( 'How to hide a placeholder', () => {
+                const myTpl = {
+                                template : `My name is {{ name }}.{{ extraData}}`
                         }
-                const data = [
-                                {name: 'Peter', job: 'Software Engineer'}
-                              , {name: 'Ivan', job: 'doctor' }
-                              , {name: 'Stoyan',  }
-                        ]
-                const templateFn = build ( myTpl )
-                const result = templateFn(data)
-                console.log ( result)
-                // TODO: When to present render result as a part of object? Do I need a specific sign before the action?
-        })
+                const templateFn = build ( myTpl );
+                const result = templateFn({ 
+                                                  name: 'Peter' 
+                                                , extraData: ''
+                                        });
+                //TODO: IT'S NOT WORKING
+                expect ( result ).to.be.equal ( 'My name is Peter.' )
+        }) // it how to hide a placeholder
+
+
+        
+     it ( '', () => {
+        // TODO: When to present render result as a part of object? Do I need a specific sign before the action?
+     })
 
 
 

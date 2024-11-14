@@ -105,7 +105,6 @@ import _defineDataType   from "./_defineType.js"
                                                                                                             theData = initialRound ? nestedData[dataDeepLevel] : buffer[data]
                                                                                                           , dataType = _defineDataType ( theData )
                                                                                                           ;
-
                                                                                                         switch ( dataType ) {
                                                                                                                 case 'array':
                                                                                                                         buffer[data] = theData.map ( d => helpers[name]( d ) )
@@ -124,11 +123,10 @@ import _defineDataType   from "./_defineType.js"
                                                                                                 case 'render':
                                                                                                         // TODO: render could be a function and template.
                                                                                                         const 
-                                                                                                             renderData = initialRound ? nestedData[level] : buffer[data]
+                                                                                                             renderData = initialRound ? nestedData[dataDeepLevel] : buffer[data]
                                                                                                            , renderDataType = _defineDataType ( renderData )
                                                                                                            , isRenderFunction = typeof helpers[name] === 'function'
                                                                                                            ;
-                                                                                                           
                                                                                                         switch ( renderDataType ) {
                                                                                                                 case 'array':
                                                                                                                         if ( isRenderFunction )  buffer[data] = renderData.map ( d => helpers[name]( setRenderData(d) ) )
@@ -148,7 +146,21 @@ import _defineDataType   from "./_defineType.js"
                                                                                                         break;
                                                                                                 case 'mix':
                                                                                                         const mixData = initialRound ? nestedData[level] : buffer[data];
-                                                                                                        if ( name === '' )   buffer[data] = mixData.join ( '' )
+                                                                                                        const mixDataType = _defineDataType ( mixData );
+                                                                                                        // console.log ( mixData)
+                                                                                                        if ( name === '' ) {
+                                                                                                                switch ( mixDataType ) {
+                                                                                                                                case 'string':
+                                                                                                                                        buffer[data] = mixData
+                                                                                                                                        break
+                                                                                                                                case 'array':
+                                                                                                                                        buffer[data] = mixData.join ( '' )
+                                                                                                                                        break
+                                                                                                                                case 'object':
+                                                                                                                                        buffer[data] = mixData.text
+                                                                                                                                        break
+                                                                                                                }}
+                                                                                                        
                                                                                                         else                 buffer[data] = helpers[name]( mixData )
                                                                                                         initialRound = false
                                                                                                         break
