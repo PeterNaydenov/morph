@@ -255,5 +255,36 @@ describe.only ( 'transformer: build', () => {
 
 
 
+     it ( 'Action only', () => {
+        // Use helper functions to insert dynamic data from programming environment(state, variable, etc.)
+        // Templates that are using actions only, don't need a input data object. It's a dynamic data.
+                const myState = 'active'
+                const myTpl = {
+                                  template: `Profile {{ : state }}.`
+                                , helpers: {
+                                        state: () => myState  
+                                        }
+                        };
+                const templateFn = build ( myTpl );
+                const result = templateFn();
+                expect ( result ).to.be.equal ( 'Profile active.' )
+        }) // it action only
+
+        
+
+    it ( 'Mixing a string', () => {
+        // Providing a string to a mixing function should not break the result.
+                const myTpl = {
+                            template: `My name is {{ : [], >name }}`
+                          , helpers: {
+                                        name: ( data ) => data.name 
+                                }
+                        }
+                const templateFn = build ( myTpl );
+                const result = templateFn({ name: 'Stoyan'});
+                expect ( result ).to.be.equal ( 'My name is Stoyan' )
+       }) // it mixing a string
+
+
 
 }) // Describe

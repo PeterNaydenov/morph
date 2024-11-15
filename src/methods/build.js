@@ -22,7 +22,7 @@ import _defineDataType   from "./_defineType.js"
         else {  // If no errors:
                         let cuts = structuredClone ( chop );
                         // *** Template recognition complete. Start building the rendering function -->                        
-                        return function success ( d=null ) {
+                        return function success ( d={} ) {
                                         
                                         const 
                                              topLevelType = _defineDataType ( d )
@@ -60,33 +60,9 @@ import _defineDataType   from "./_defineType.js"
                                                                                         // TODO: Error in data...
                                                                                 } // switch
                                                                 } // dataOnly
-
-                                                        else if ( actionOnly ) {
-                                                                        const actOnly = _actionSupply ( _setupActions ( actionList, 0 ), 0 );
-                                                                        let actOnlyBuffer = {}
-                                                                        // actOnly is a generator!
-                                                                        for ( let step of actOnly ) {
-                                                                                        let { type, name, level } = step;
-                                                                                        // TODO: If method is type 'data' or 'render' -> different operations
-                                                                                        switch ( type ) {
-                                                                                                case 'data':                                                                                                        
-                                                                                                        actOnlyBuffer = helpers[name]( actOnlyBuffer )
-                                                                                                        break
-                                                                                                case 'render':
-                                                                                                        actOnlyBuffer[text] = helpers[name]( actOnlyBuffer )
-                                                                                                        break
-                                                                                                case 'mix':
-                                                                                                        // TODO: ?? Do I need it?
-                                                                                                        
-                                                                                                        break
-                                                                                                } // switch type
-                                                                                        actOnlyBuffer[text] = helpers[name]( actOnlyBuffer )
-                                                                                }
-                                                                        cuts[index] = actOnlyBuffer [ text ]
-                                                                } // actionOnly
                                                         else {   // Data and Actions
                                                                         const 
-                                                                           { dataDeepLevel, nestedData } = (data==='@all') ? _defineData ( d ) : _defineData ( d[data] )
+                                                                           { dataDeepLevel, nestedData } = (data==='@all' || data===null) ? _defineData ( d ) : _defineData ( d[data] )
                                                                            , actSetup = _actionSupply ( _setupActions ( action, dataDeepLevel ), dataDeepLevel )
                                                                            , buffer = {}
                                                                            ;
@@ -148,9 +124,10 @@ import _defineDataType   from "./_defineType.js"
                                                                                                               mixData     = initialRound ? nestedData[level] : buffer[data]
                                                                                                             , mixDataType = _defineDataType ( mixData )
                                                                                                             ;
+                                                                                                            
                                                                                                         if ( name === '' ) {
                                                                                                                 switch ( mixDataType ) {
-                                                                                                                                case 'string':
+                                                                                                                                case 'primitive':
                                                                                                                                         buffer[data] = mixData
                                                                                                                                         break
                                                                                                                                 case 'array':
