@@ -104,7 +104,7 @@ import _defineDataType   from "./_defineType.js"
                                                                                                            ;
                                                                                                         switch ( renderDataType ) {
                                                                                                                 case 'array':
-                                                                                                                        if ( isRenderFunction )  buffer[data] = renderData.map ( d => helpers[name]( setRenderData(d) ) )
+                                                                                                                        if ( isRenderFunction )  buffer[data] = helpers[name](renderData)
                                                                                                                         else                     buffer[data] = renderData.map ( d => _renderHolder ( helpers[name], setRenderData(d) ))
                                                                                                                         break
                                                                                                                 case 'primitive':
@@ -145,7 +145,7 @@ import _defineDataType   from "./_defineType.js"
                                                                                                 default:
                                                                                                         break
                                                                                                 }
-                                                                                }
+                                                                                } // for step of actSetup
                                                                                 let accType = _defineDataType ( buffer[data] )
                                                                                 if ( buffer[data] == null )   return
                                                                                 switch ( accType ) {

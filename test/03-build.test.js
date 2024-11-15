@@ -20,7 +20,7 @@ describe.only ( 'transformer: build', () => {
         }) // it simple mustache like placeholders, no actions
 
 
-    it ( 'Mixing function', () => {
+    it ( 'Mixing actions', () => {
                 // Mix action starts with '[]'. If no name after '[]' it will be like arr.join(''). 
                 // If name, it is the helper function used. In our case it is 'coma'.
                 const myTpl = {
@@ -32,7 +32,7 @@ describe.only ( 'transformer: build', () => {
                 const templateFn = build ( myTpl );
                 const result = templateFn({ names: ['Peter', 'Ivan'] });
                 expect ( result ).to.be.equal ( 'My friends are Peter, Ivan.' );
-        }) // it mixing function
+        }) // it mixing actions
 
 
 
@@ -270,7 +270,7 @@ describe.only ( 'transformer: build', () => {
                 expect ( result ).to.be.equal ( 'Profile active.' )
         }) // it action only
 
-        
+
 
     it ( 'Mixing a string', () => {
         // Providing a string to a mixing function should not break the result.
@@ -287,4 +287,86 @@ describe.only ( 'transformer: build', () => {
 
 
 
+    it ( 'Broken template', () => {
+        // If template is broken, the result should be a string, representation of the error.
+                const myTpl = {
+                                template : `My {{ {{ welcome }}`
+                        };
+                const templateFn = build ( myTpl );
+                const result = templateFn();
+                expect ( result ).to.be.equal ( 'Error: Nested placeholders. Close placeholder before open new one.' )
+        }) // it broken template
+
+
+
+     it ( 'Data only - object. Default field is "text"', () => {
+        // If provided data is object - default field is 'text'
+                const myTpl = {
+                                template : `My name is {{ person }}.`
+                        };
+                const templateFn = build ( myTpl );
+                const result = templateFn({ person: { text: 'Ivan', age: 25 }});
+                expect ( result ).to.be.equal ( 'My name is Ivan.' )
+        })
+
+
+
+     it ( 'Data only - array. Should render first element', () => {
+        // If provided data is array - default field is the first element of the array
+                const myTpl = {
+                                template : `My name is {{ person }}.`
+                        };
+                const templateFn = build ( myTpl );
+                const result = templateFn({ person: [ 'John', 'Milen', 'Vladislav' ]});
+                expect ( result ).to.be.equal ( 'My name is John.' )
+        })
+
+
+
+     it ( 'Auto mixing array results', () => {
+        // Auto mix if in the end of the action-list the result is still an array
+                const myTpl = {
+                                  template: `My friends are {{ friendsList: li }}.`
+                                , helpers : {
+                                                li: `<li>{{ text }}</li>`
+                                        }
+                        };
+                const templateFn = build ( myTpl );
+                const result = templateFn({ friendsList: [ 'John', 'Milen', 'Vladislav' ]});
+                expect ( result ).to.be.equal ( 'My friends are <li>John</li><li>Milen</li><li>Vladislav</li>.' )        
+        })
+
+
+
+    it ( 'Nested templates', () => {
+        // Use helper functions to render other templates
+                
+                const secondaryTpl = { // Template for nesting  
+                                  template : `My friends are {{ names : []coma }}.`
+                                , helpers: {
+                                                  coma: (res) => res.join(', ')
+                                        }
+                        }        
+                const secTemplateFn = build ( secondaryTpl ); 
+                
+                const myTpl = { // Top level template
+                                  template : `My name is {{ name }}. {{ friends: friendListing}}`
+                                , helpers: {
+                                                friendListing: (d) => secTemplateFn ({ names : d }) // Nested template render
+                                        }
+                        }
+                const templateFn = build ( myTpl );
+                const result = templateFn({
+                                          name : 'Peter'
+                                        , friends: [ 'John', 'Milen', 'Vladislav' ]
+                                });
+                expect ( result ).to.be.equal ( 'My name is Peter. My friends are John, Milen, Vladislav.' )
+        }) // it nested templates
+
+
+
+    it ( 'Data deep levels' )
+
+
+    
 }) // Describe
