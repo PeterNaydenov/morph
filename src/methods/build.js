@@ -20,7 +20,7 @@ import _defineDataType   from "./_defineType.js"
                                 }
                 }
         else {  // If no errors:
-                        let cuts = structuredClone ( chop );   // TODO: Do I need to clone the chop?
+                        let cuts = structuredClone ( chop );
                         // *** Template recognition complete. Start building the rendering function -->                        
                         return function success ( d=null ) {
                                         

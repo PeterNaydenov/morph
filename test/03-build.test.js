@@ -1,6 +1,7 @@
 
-import { expect } from 'chai'
 import build from '../src/methods/build.js'
+
+import { expect } from 'chai'
 import walk from '@peter.naydenov/walk'
 import stack from '@peter.naydenov/stack'
 
