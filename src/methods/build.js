@@ -136,6 +136,7 @@ import _defineDataType   from "./_defineType.js"
                                                                                                                         else                     buffer[data] = _renderHolder ( helpers[name], setRenderData(renderData)   ) 
                                                                                                                         break
                                                                                                                 case 'object':
+                                                                                                                        buffer[data] = renderData
                                                                                                                         if ( isRenderFunction )  buffer[data]['text'] = helpers[name]( renderData )
                                                                                                                         else                     buffer[data]['text'] = _renderHolder ( helpers[name], renderData   )
                                                                                                                         break

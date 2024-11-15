@@ -1,15 +1,12 @@
-
-import build from '../src/methods/build.js'
-
+import   build    from '../src/methods/build.js'
 import { expect } from 'chai'
-import walk from '@peter.naydenov/walk'
-import stack from '@peter.naydenov/stack'
+
 
 
 describe.only ( 'transformer: build', () => {
 
 
-    it ( 'simple mustache like placeholders, no actions', () => {
+    it ( 'Simple mustache like placeholders, no actions', () => {
                 // spaces inside placeholders are ignored
                 const myTpl = {
                                 template: `Your name is {{ name }}. Your age is {{age}}.`
@@ -23,7 +20,7 @@ describe.only ( 'transformer: build', () => {
         }) // it simple mustache like placeholders, no actions
 
 
-    it ( 'mixing function', () => {
+    it ( 'Mixing function', () => {
                 // Mix action starts with '[]'. If no name after '[]' it will be like arr.join(''). 
                 // If name, it is the helper function used. In our case it is 'coma'.
                 const myTpl = {
@@ -36,6 +33,7 @@ describe.only ( 'transformer: build', () => {
                 const result = templateFn({ names: ['Peter', 'Ivan'] });
                 expect ( result ).to.be.equal ( 'My friends are Peter, Ivan.' );
         }) // it mixing function
+
 
 
     it ( 'No placeholders', () => {
@@ -235,9 +233,25 @@ describe.only ( 'transformer: build', () => {
 
 
 
-     it ( '', () => {
-        // TODO: When to present render result as a part of object? Do I need a specific sign before the action?
-     })
+     it ( 'Sequence of render processes with object', () => {
+        // Write result of render to field 'text' and preserve other existing fields
+        const myTpl = {
+                                template : `Here is - {{ website: a, setText }}.`
+                              , helpers  : {
+                                                  a : `<a href="{{link}}">{{text}}</a>`
+                                                , setText : `{{about}}: {{domain}}`
+                                        }
+                        }
+                const templateFn = build ( myTpl );
+                const result = templateFn({ 
+                                          website : {
+                                                          domain: `example.com`
+                                                        , about : `My portfolio`
+                                                        , link  : `http://example.com`
+                                                }
+                                        });
+                expect ( result ).to.be.equal ( 'Here is - <a href="http://example.com">My portfolio: example.com</a>.' )
+        }) // it sequence of render processes with object
 
 
 
