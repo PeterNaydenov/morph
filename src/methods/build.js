@@ -140,13 +140,13 @@ import _defineDataType   from "./_defineType.js"
                                                                                                                         else                     buffer[data]['text'] = _renderHolder ( helpers[name], renderData   )
                                                                                                                         break
                                                                                                                 } // switch renderDataType 
-                                                                                                        if ( name === 'ul' )   console.log ( buffer[data] )
                                                                                                         initialRound = false
                                                                                                         break;
                                                                                                 case 'mix':
-                                                                                                        const mixData = initialRound ? nestedData[level] : buffer[data];
-                                                                                                        const mixDataType = _defineDataType ( mixData );
-                                                                                                        // console.log ( mixData)
+                                                                                                        const 
+                                                                                                              mixData     = initialRound ? nestedData[level] : buffer[data]
+                                                                                                            , mixDataType = _defineDataType ( mixData )
+                                                                                                            ;
                                                                                                         if ( name === '' ) {
                                                                                                                 switch ( mixDataType ) {
                                                                                                                                 case 'string':
@@ -182,9 +182,7 @@ import _defineDataType   from "./_defineType.js"
                                                                                                         break
                                                                                         } // switch accType
                                                                 } // else other                
-                                                        
                                                 }) // forEach placeholders
-                                        console.log ( cuts.join('') )   // TODO: Delete this line
                                         endData.push ( cuts.join ( '' ))
                                         }) // forEach d
                                         if ( topLevelType === 'array' )  return endData

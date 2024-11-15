@@ -6,7 +6,7 @@ import walk from '@peter.naydenov/walk'
 import stack from '@peter.naydenov/stack'
 
 
-describe ( 'transformer: build', () => {
+describe.only ( 'transformer: build', () => {
 
 
     it ( 'simple mustache like placeholders, no actions', () => {
@@ -220,7 +220,7 @@ describe ( 'transformer: build', () => {
 
 
 
-     it.only ( 'How to hide a placeholder', () => {
+     it ( 'How to hide a placeholder', () => {
         // Hide a placeholder - provide an empty string
                 const myTpl = {
                                 template : `My name is {{ name }}.{{ extraData}}`
@@ -240,128 +240,6 @@ describe ( 'transformer: build', () => {
      })
 
 
-
-     it ( 'test walk', () => {
-                const data = {
-                                  type: 'profile'
-                                , profile : {
-                                            name: 'Peter'
-                                          , age: 30
-                                          , hairColor: 'brown'
-                                          , profession: 'Software Engineer'
-                                          , hobbies: ['coding', 'music']
-                                          , address: {
-                                                        city: 'Sofia'
-                                                      , country: 'Bulgaria'
-                                                }
-                                        },
-                                links: [
-                                          { text: 'Home'   , href: 'https://peter.naydenov.dev', person: 'Peter' }
-                                        , { text: 'GitHub' , href: 'https://github.com/peter-naydenov', person: 'Stefan' }
-                                        , { text: 'Twitter', href: 'https://twitter.com/peter_naydenov', person: 'Ivan' }
-                                    ]
-                            }
-
-                const 
-                      root = {}
-                    , nested = {}
-                    ;
-                let dataDeepLevel = 0;
-
-
-                function findObjects ({key, value, breadcrumbs}) {
-                                        dataDeepLevel = breadcrumbs.split('/').length -1;
-                                        if ( !nested[dataDeepLevel] )   nested[dataDeepLevel] = {}
-                                        nested[dataDeepLevel][breadcrumbs] = value
-                                        // console.log ( `${breadcrumbs}, deep: ${deepLevel}`)
-                                        return value
-                        } // step func.
-
-                function findRoot ({key, value, breadcrumbs}) {
-                                const deepLevel = breadcrumbs.split('/').length -2;
-                                if ( deepLevel == 0 )   root[key] = value
-                                return value
-                        } // findRoot func.
-
-                walk ({ data, objectCallback:findObjects, keyCallback:findRoot })
-                nested[0] = root
-                console.log ( nested )
-                console.log ( root )
-                console.log ( dataDeepLevel )
-                
-                
-
-     }) // it test walk
-
-
-
-
-
-     it ( 'build actions', () => {
-        function setupActions ( actions, dataDeepLevel ) {
-                                let 
-                                  actSetup = {}
-                                , actLevel = 0
-                                , actionList = actions.split( ',' ).map ( x => x.trim() )
-                                , i = 0
-                                ;
-                                do {
-                                        actSetup[i] = []
-                                        i++
-                                } while ( i <= dataDeepLevel )
-                                
-                                actionList.every ( act => {
-                                                if ( act === '#' ) {   // it's a change level action
-                                                        actLevel++
-                                                        if ( actLevel > dataDeepLevel )  return false
-                                                        else    return true
-                                                   }
-                                                if ( act.startsWith ( '[]' )) {   // it's a mixing action
-                                                                actSetup[actLevel].push ({
-                                                                                  type: 'mix'
-                                                                                , name: act.replace ( '[]', '' )
-                                                                                , level: actLevel
-                                                                                })
-                                                                return true
-                                                        }
-                                                if ( act.startsWith ( '>' ) ) {   // it's a data action. Result will be merged to existing data
-                                                                actSetup[actLevel].push ({
-                                                                                  type: 'data'
-                                                                                , name: act.replace ( '>', '' )
-                                                                                , level: actLevel
-                                                                                })
-                                                                return true
-                                                        }
-                                        actSetup[actLevel].push ({
-                                                                              type: 'render'
-                                                                            , name: act
-                                                                            , level: actLevel
-                                                                        })
-                                        return true
-                                        }) // actionList every
-                                return actSetup
-                } // setupActions func.
-        
-        const actionList = `ul, li, #, []coma, row, a`;
-        const deepLevel = 4;
-        const actionStacks = setupActions ( actionList, deepLevel );
-        const x = actionSupply ( actionStacks, 1 )
-        
-        for ( let step of x ) {
-                        console.log ( step )
-                }
-        
-        function* actionSupply ( act, level ) {
-                        let action = stack ({ type:'LIFO' });
-                        for ( let i=0; i<=level; i++ ) {
-                                        action.push ( act[i] )          
-                                }
-                        while ( action && !action.isEmpty () ) {
-                                        yield action.pull ()
-                                }                        
-                } // getAction func.
-        
-     }) // it build actions
 
 
 }) // Describe
