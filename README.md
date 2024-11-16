@@ -17,6 +17,7 @@ Some features of Morph:
 - Powerfull action system for data decoration;
 - Nesting templates as part of the action system;
 - Partial rendering (render only available data);
+- Option to connect templates to external data sources;
 - Templates shared helpers - themes;
 // TODO: themes? ^^^^
 
