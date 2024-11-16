@@ -1,9 +1,6 @@
-
-
-import walk from "@peter.naydenov/walk"
 import build from "./methods/build.js"
 
-console.log ( build )
+
 
 const
     defaultSettings = {
@@ -13,7 +10,63 @@ const
           , TG_SIZE_S: 2
         }
     // , render = renderSetup ( walk )
+    , storage = { default: {}}
     ;
+
+
+
+
+function get ( prop, strName='default' ) {
+    if ( !storage[strName] ) {
+            return function () {
+                  return `Error: Storage "${strName}" does not exist.`
+               }
+        }
+    if ( !storage[strName][prop] ) {
+            return function () {
+                  return `Error: Template "${prop}" does not exist in storage "${strName}".`
+               }
+        }
+    return storage[strName][prop]
+} // get func.
+
+
+
+function add ( name, tplfn, strName='default' ) {
+    if( !storage[strName] )   storage[strName] = {}
+    if ( typeof tplfn !== 'function' ) {
+         console.error ( `Error: Expect template to be a function.` )
+         return
+      }
+    storage[strName][name] = tplfn
+} // add func.
+
+
+
+function list ( strName='default' ) {
+    if ( !storage[strName] )   return []
+    return Object.keys ( storage[strName] )  
+} // list func. 
+
+
+
+function clear ( ) {
+    const keys = Object.keys ( storage )
+    keys.forEach ( key => {
+              if ( key != 'default' )   delete storage[key]
+              else                      storage['default'] = {}
+          })
+} // clear func.
+
+
+
+function remove ( name, strName='default' ) {
+    if ( !storage[strName]       )   return `Error: Storage "${strName}" does not exist.`
+    if ( !storage[strName][name] )   return `Error: Template "${name}" does not exist in storage "${strName}".`
+    delete storage[strName][name]
+} // remove func.
+
+
 
 const morphAPI = {
                 //  Engine API
@@ -29,7 +82,12 @@ const morphAPI = {
                  *  shine - extra step to remove all non used placeholders and <rs> tags
                  * 
                  */
-                build   // build a component from template description
+                  build   // build a component from template description
+                , get     // get a component from component storage
+                , add     // add a component to component storage
+                , list    // list all components in component storage
+                , clear   // clear all templates in component storage
+                , remove  // remove a template from component storage
 } // morphAPI
 
 

@@ -3,7 +3,7 @@ import { expect } from 'chai'
 
 
 
-describe.only ( 'transformer: build', () => {
+describe ( 'transformer: build', () => {
 
 
     it ( 'Simple mustache like placeholders, no actions', () => {
