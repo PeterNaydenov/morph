@@ -1,4 +1,4 @@
-import   build    from '../src/methods/build.js'
+import   morphAPI    from '../src/main.js'
 import { expect } from 'chai'
 
 
@@ -11,7 +11,7 @@ describe.only ( 'transformer: build', () => {
                 const myTpl = {
                                 template: `Your name is {{ name }}. Your age is {{age}}.`
                         }
-                const templateFn = build ( myTpl )
+                const templateFn = morphAPI.build ( myTpl )
                 const result = templateFn({
                                                   name: 'Peter'
                                                 , age: 50
@@ -29,7 +29,7 @@ describe.only ( 'transformer: build', () => {
                                                   coma: (res) => res.join(', ')
                                         }
                         };
-                const templateFn = build ( myTpl );
+                const templateFn = morphAPI.build ( myTpl );
                 const result = templateFn({ names: ['Peter', 'Ivan'] });
                 expect ( result ).to.be.equal ( 'My friends are Peter, Ivan.' );
         }) // it mixing actions
@@ -40,7 +40,7 @@ describe.only ( 'transformer: build', () => {
                 const myTpl = {
                                   template : `My name is Peter.`
                         }
-                const templateFn = build ( myTpl );
+                const templateFn = morphAPI.build ( myTpl );
                 const result = templateFn();   // No data required
                 expect ( result ).to.be.equal ( 'My name is Peter.' );
         }) // it No placeholders
@@ -58,7 +58,7 @@ describe.only ( 'transformer: build', () => {
                                                         }
                                         }
                         }
-                const templateFn = build ( myTpl );
+                const templateFn = morphAPI.build ( myTpl );
                 const result = templateFn({ job: 'Software Engineer' });
                 const result2 = templateFn({ job: 'doctor' });
                 expect ( result ).to.be.equal ( 'My job is hidden.' );
@@ -78,7 +78,7 @@ describe.only ( 'transformer: build', () => {
                                                         }
                                         }
                         }
-                const templateFn = build ( myTpl );
+                const templateFn = morphAPI.build ( myTpl );
                 const result = templateFn({ job: 'Software Engineer' });
                 expect ( result ).to.be.equal ( 'My job is {{ job : >jobPossible }}.' );
         }) // it Keep placeholder
@@ -94,7 +94,7 @@ describe.only ( 'transformer: build', () => {
                                 , li : `<li>{{text}}</li>`
                             }
                     };
-                const templateFn = build ( myTpl )
+                const templateFn = morphAPI.build ( myTpl )
                 const result = templateFn({
                                                   name: [ 'Peter', 'Stoyan' ]
                                                 , more: `extended version`
@@ -117,7 +117,7 @@ describe.only ( 'transformer: build', () => {
                                                         }
                                         }
                         }
-                const templateFn = build ( myTpl )
+                const templateFn = morphAPI.build ( myTpl )
                 const result = templateFn({
                                             friends: [
                                                         { name: 'Peter', age: 30 }
@@ -135,7 +135,7 @@ describe.only ( 'transformer: build', () => {
                 const myTpl = {
                                 template: `My name is {{ name }}. My age is {{ age }}.`
                         }
-                const templateFn = build ( myTpl )
+                const templateFn = morphAPI.build ( myTpl )
                 const result = templateFn([
                                             { name: 'Peter', age: 30 }
                                           , { name: 'Ivan', age: 25 }
@@ -166,7 +166,7 @@ describe.only ( 'transformer: build', () => {
                                                         }
                                         }
                         }
-                const templateFn = build ( myTpl )
+                const templateFn = morphAPI.build ( myTpl )
                 const result = templateFn({
                                                   name  : 'Peter'
                                                 , web   : 'example.com'
@@ -198,7 +198,7 @@ describe.only ( 'transformer: build', () => {
                                 , {name: 'Stoyan', job: 'designer'  }
                                 ]
                         };
-                const templateFn = build ( myTpl );
+                const templateFn = morphAPI.build ( myTpl );
                 const result = templateFn(data);
                 expect ( result ).to.be.equal ( 'People and their jobs: <ul><li>Peter - Software Engineer</li><li>Stoyan - designer</li></ul>' )
                 
@@ -211,7 +211,7 @@ describe.only ( 'transformer: build', () => {
                         template : `My name is {{ name }}.`
 
                         };
-                const templateFn = build ( myTpl );
+                const templateFn = morphAPI.build ( myTpl );
                 const result = templateFn({ person: 'Peter' });
                 expect ( result ).to.be.equal ( 'My name is {{ name }}.' )
         }) // it Ignore rendering fields that have no data
@@ -223,7 +223,7 @@ describe.only ( 'transformer: build', () => {
                 const myTpl = {
                                 template : `My name is {{ name }}.{{ extraData}}`
                         }
-                const templateFn = build ( myTpl );
+                const templateFn = morphAPI.build ( myTpl );
                 const result = templateFn({ 
                                                   name: 'Peter' 
                                                 , extraData: ''
@@ -242,7 +242,7 @@ describe.only ( 'transformer: build', () => {
                                                 , setText : `{{about}}: {{domain}}`
                                         }
                         }
-                const templateFn = build ( myTpl );
+                const templateFn = morphAPI.build ( myTpl );
                 const result = templateFn({ 
                                           website : {
                                                           domain: `example.com`
@@ -265,7 +265,7 @@ describe.only ( 'transformer: build', () => {
                                         state: () => myState  
                                         }
                         };
-                const templateFn = build ( myTpl );
+                const templateFn = morphAPI.build ( myTpl );
                 const result = templateFn();
                 expect ( result ).to.be.equal ( 'Profile active.' )
         }) // it action only
@@ -280,7 +280,7 @@ describe.only ( 'transformer: build', () => {
                                         name: ( data ) => data.name 
                                 }
                         }
-                const templateFn = build ( myTpl );
+                const templateFn = morphAPI.build ( myTpl );
                 const result = templateFn({ name: 'Stoyan'});
                 expect ( result ).to.be.equal ( 'My name is Stoyan' )
        }) // it mixing a string
@@ -292,7 +292,7 @@ describe.only ( 'transformer: build', () => {
                 const myTpl = {
                                 template : `My {{ {{ welcome }}`
                         };
-                const templateFn = build ( myTpl );
+                const templateFn = morphAPI.build ( myTpl );
                 const result = templateFn();
                 expect ( result ).to.be.equal ( 'Error: Nested placeholders. Close placeholder before open new one.' )
         }) // it broken template
@@ -304,7 +304,7 @@ describe.only ( 'transformer: build', () => {
                 const myTpl = {
                                 template : `My name is {{ person }}.`
                         };
-                const templateFn = build ( myTpl );
+                const templateFn = morphAPI.build ( myTpl );
                 const result = templateFn({ person: { text: 'Ivan', age: 25 }});
                 expect ( result ).to.be.equal ( 'My name is Ivan.' )
         })
@@ -316,7 +316,7 @@ describe.only ( 'transformer: build', () => {
                 const myTpl = {
                                 template : `My name is {{ person }}.`
                         };
-                const templateFn = build ( myTpl );
+                const templateFn = morphAPI.build ( myTpl );
                 const result = templateFn({ person: [ 'John', 'Milen', 'Vladislav' ]});
                 expect ( result ).to.be.equal ( 'My name is John.' )
         })
@@ -331,7 +331,7 @@ describe.only ( 'transformer: build', () => {
                                                 li: `<li>{{ text }}</li>`
                                         }
                         };
-                const templateFn = build ( myTpl );
+                const templateFn = morphAPI.build ( myTpl );
                 const result = templateFn({ friendsList: [ 'John', 'Milen', 'Vladislav' ]});
                 expect ( result ).to.be.equal ( 'My friends are <li>John</li><li>Milen</li><li>Vladislav</li>.' )        
         })
@@ -347,7 +347,7 @@ describe.only ( 'transformer: build', () => {
                                                   coma: (res) => res.join(', ')
                                         }
                         }        
-                const secTemplateFn = build ( secondaryTpl ); 
+                const secTemplateFn = morphAPI.build ( secondaryTpl ); 
                 
                 const myTpl = { // Top level template
                                   template : `My name is {{ name }}. {{ friends: friendListing}}`
@@ -355,7 +355,7 @@ describe.only ( 'transformer: build', () => {
                                                 friendListing: (d) => secTemplateFn ({ names : d }) // Nested template render
                                         }
                         }
-                const templateFn = build ( myTpl );
+                const templateFn = morphAPI.build ( myTpl );
                 const result = templateFn({
                                           name : 'Peter'
                                         , friends: [ 'John', 'Milen', 'Vladislav' ]

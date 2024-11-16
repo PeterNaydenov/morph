@@ -1,7 +1,9 @@
 
 
 import walk from "@peter.naydenov/walk"
+import build from "./methods/build.js"
 
+console.log ( build )
 
 const
     defaultSettings = {
@@ -10,14 +12,14 @@ const
           , TG_SIZE_P: 2
           , TG_SIZE_S: 2
         }
-    , render = renderSetup ( walk )
+    // , render = renderSetup ( walk )
     ;
 
-const transformer = {
+const morphAPI = {
                 //  Engine API
                 /**
                  *  
-                 *  build - build a component from template description
+                 *  build - 
                  *  add - register a component to component storage
                  *  get - get a component from component storage
                  *  list - list all components in component storage
@@ -27,10 +29,11 @@ const transformer = {
                  *  shine - extra step to remove all non used placeholders and <rs> tags
                  * 
                  */
-} // transformer
+                build   // build a component from template description
+} // morphAPI
 
 
 
-export default transformer
+export default morphAPI
 
 
