@@ -28,6 +28,24 @@ import _defineDataType   from "./_defineType.js"
                                              topLevelType = _defineDataType ( d )
                                            , endData = []
                                            ;
+
+                                        if ( typeof d === 'string' ) {
+                                                // 'd' is a string when we want to debug the template
+                                                   switch ( d ) {
+                                                        case 'raw':
+                                                                // return a template with placeholders
+                                                                return cuts.join('')
+                                                        case 'demo':
+                                                                // render with handshake object
+                                                                break
+                                                        case 'handshake':
+                                                                // return handshake object
+                                                                break
+                                                        case 'helpers':
+                                                                // return helpers object
+                                                        }
+                                                   return
+                                                } // if 'd' is string
                                         
                                         if ( topLevelType !== 'array' )   d = [ d ]
                                         
