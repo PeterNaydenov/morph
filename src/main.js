@@ -37,7 +37,7 @@ function add ( name, tplfn, strName='default' ) {
     if ( typeof tplfn !== 'function' ) {
           let result = build ( tplfn );
           if ( result.name === 'success' )   storage[strName][name] = result
-          else                 console.error ( `Error: Template "${name}" looks broken and is not added to storage.` )
+          else                               console.error ( `Error: Template "${name}" looks broken and is not added to storage.` )
           return
       }
     storage[strName][name] = tplfn
