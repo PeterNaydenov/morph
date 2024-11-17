@@ -40,7 +40,7 @@ import _defineDataType   from "./_defineType.js"
                                                                 break
                                                         case 'handshake':
                                                                 return structuredClone (handshake)   // return a copy of handshake object
-                                                        case 'default':
+                                                        default:
                                                                 return `Error: Wrong command "${d}".`
                                                         }
                                                 } // if 'd' is string

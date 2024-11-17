@@ -39,6 +39,21 @@ describe ( 'morph: commands', () => {
                 const result = morph.get ( 'myName' )('demo')
                 expect ( result ).to.be.equal ( 'My name is Stoyan.' )
     }) // it request a demo
+
+
+
+    
+    it ( 'Wrong command to component', () => {
+        // Commands other than 'raw', 'handshake' and 'demo' should return an error.
+                let demo = { name: 'Stoyan' }
+                const myTpl = { 
+                          template  : `My name is {{ name }}.` 
+                        , handshake : demo
+                    };
+                morph.add ( 'myName', myTpl );
+                const result = morph.get ( 'myName' )('fake')
+                expect ( result ).to.be.equal ( 'Error: Wrong command "fake".' )
+    }) // it wrong command to component
     
     
     
