@@ -11,7 +11,7 @@ function readData ( field ) {
 
 function _readTemplate ( tpl ) {
     const 
-             { template, helpers } = tpl
+             { template, helpers, handshake } = tpl
             ,{ TG_PRX, TG_SFX, TG_SIZE_P, TG_SIZE_S } = settings
             , placeholders = []
             ;
@@ -65,6 +65,7 @@ function _readTemplate ( tpl ) {
             , placeholders
             , chop
             , helpers
+            , handshake
             }
 } // _readTemplate func.
 

@@ -12,7 +12,7 @@ import _defineDataType   from "./_defineType.js"
 
  function build  ( tpl ) {
         
-        const { hasError, placeholders, chop, helpers } = _readTemplate ( tpl );
+        const { hasError, placeholders, chop, helpers, handshake } = _readTemplate ( tpl );
        
         if ( hasError ) {
                         return function fail () {
@@ -36,15 +36,13 @@ import _defineDataType   from "./_defineType.js"
                                                                 // return a template with placeholders
                                                                 return cuts.join('')
                                                         case 'demo':
-                                                                // render with handshake object
+                                                                d = handshake // render with handshake object
                                                                 break
                                                         case 'handshake':
-                                                                // return handshake object
-                                                                break
-                                                        case 'helpers':
-                                                                // return helpers object
+                                                                return structuredClone (handshake)   // return a copy of handshake object
+                                                        case 'default':
+                                                                return `Error: Wrong command "${d}".`
                                                         }
-                                                   return
                                                 } // if 'd' is string
                                         
                                         if ( topLevelType !== 'array' )   d = [ d ]

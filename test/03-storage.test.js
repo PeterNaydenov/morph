@@ -2,7 +2,7 @@ import morph from '../src/main.js'
 import { expect } from 'chai'
 
 
-describe.only ( 'morph: storage', () => {
+describe ( 'morph: storage', () => {
 
 
 
