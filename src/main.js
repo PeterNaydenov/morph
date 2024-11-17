@@ -35,8 +35,10 @@ function get ( prop, strName='default' ) {
 function add ( name, tplfn, strName='default' ) {
     if( !storage[strName] )   storage[strName] = {}
     if ( typeof tplfn !== 'function' ) {
-         console.error ( `Error: Expect template to be a function.` )
-         return
+          let result = build ( tplfn );
+          if ( result.name === 'success' )   storage[strName][name] = result
+          else                 console.error ( `Error: Template "${name}" looks broken and is not added to storage.` )
+          return
       }
     storage[strName][name] = tplfn
 } // add func.
