@@ -55,10 +55,19 @@ describe ( 'morph: commands', () => {
                 morph.add ( 'myName', myTpl );
                 const result = morph.get ( 'myName' )('fake')
                 expect ( result ).to.be.equal ( 'Error: Wrong command "fake".' )
-    }) // it wrong command to component
+        }) // it wrong command to component
     
     
-    
+    it ( 'See placeholders', () => {
+        let demo = { name: 'Stoyan', age: 30 }
+                const myTpl = { 
+                          template  : `My name is {{ name }}. Age {{ age }}.` 
+                        , handshake : demo
+                    };
+                morph.add ( 'myName', myTpl );
+                const result = morph.get ( 'myName' )('placeholders')
+                expect ( result ).to.be.equal ( '{{ name }}, {{ age }}' )
+        }) // it see placeholders
     
 
 }) // describe

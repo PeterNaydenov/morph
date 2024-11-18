@@ -40,6 +40,8 @@ import _defineDataType   from "./_defineType.js"
                                                                 break
                                                         case 'handshake':
                                                                 return structuredClone (handshake)   // return a copy of handshake object
+                                                        case 'placeholders':
+                                                                return placeholders.map ( h => cuts[h.index] ).join ( ', ')
                                                         default:
                                                                 return `Error: Wrong command "${d}".`
                                                         }
