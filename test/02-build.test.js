@@ -352,7 +352,9 @@ describe ( 'transformer: build', () => {
                 const myTpl = { // Top level template
                                   template : `My name is {{ name }}. {{ friends: friendListing}}`
                                 , helpers: {
-                                                friendListing: (d) => secTemplateFn ({ names : d }) // Nested template render
+                                                friendListing: (d) => {
+                                                                return secTemplateFn ({ names : d }) // Nested template render}
+                                                        }
                                         }
                         }
                 const templateFn = morphAPI.build ( myTpl );

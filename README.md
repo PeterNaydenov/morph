@@ -13,13 +13,11 @@
 Engine is text based, so it can be used for HTML, CSS, config files, source code, etc.
 Some features of Morph:
 - Simple logic-less template syntax;
-- Builtin storage for templates;
+- Builtin storage;
 - Powerfull action system for data decoration;
 - Nesting templates as part of the action system;
 - Partial rendering (render only available data);
 - Option to connect templates to external data sources;
-- Templates shared helpers - themes;
-// TODO: themes? ^^^^
 
 
 
@@ -27,7 +25,7 @@ Some features of Morph:
 
 ## Placeholders
 
-Template placeholders can contain data-source and actions separated by ':'. Data-source is a field of the data object used for the placeholder. Actions describe how the data should be decorated. Action is a list of operations separated by comma. Result from the first action is going as a argument to the second and so on. Executetion of actions is from right to left.
+Template placeholders can contain data-source and actions separated by ':'. Data-source is a field of the data object used for the placeholder. Actions describe how the data should be decorated. Action is a list of operations separated by comma. Result from the first action is going as a argument to the second and so on. Executetion of actions is from right to left. Actions are optional.
 
 ```js
 `{{ name : act2, act1 }}`
@@ -39,14 +37,14 @@ Template placeholders can contain data-source and actions separated by ':'. Data
 
 `{{ name }}` // render data from 'name'. Only data is provided to this placeholder
 `{{ :someAction}}` // no data, but the result of the action will fill the placeholder
-`{{ @all : someAction }}` // provide to action all data
+`{{ @all : someAction }}` // provide to action all the data
 ```
 
 
 
 ## Actions
 
-Actions are concise representations of a sequence of function calls. Some functions pertain to `data` manipulation, others to `rendering`, and some to `mixing`. We use a prefix system for enhanced maintainability.
+Actions are concise representations of a sequence of function calls. Some functions pertain to `data` manipulation, others to `rendering`, and some to `mixing`. We use a prefix system for enhanced readability and maintainability.
 
 `Render` functions are most used so they don't have any prefix. Data functions start with '>'. Mixing functions start with '[]'.
 

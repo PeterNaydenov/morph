@@ -122,7 +122,7 @@ import _defineDataType   from "./_defineType.js"
                                                                                                            ;
                                                                                                         switch ( renderDataType ) {
                                                                                                                 case 'array':
-                                                                                                                        if ( isRenderFunction )  buffer[data] = helpers[name](renderData)
+                                                                                                                        if ( isRenderFunction )  buffer[data] = helpers[name]( renderData )
                                                                                                                         else                     buffer[data] = renderData.map ( d => _renderHolder ( helpers[name], setRenderData(d) ))
                                                                                                                         break
                                                                                                                 case 'primitive':
@@ -142,14 +142,14 @@ import _defineDataType   from "./_defineType.js"
                                                                                                               mixData     = initialRound ? nestedData[level] : buffer[data]
                                                                                                             , mixDataType = _defineDataType ( mixData )
                                                                                                             ;
-                                                                                                            
-                                                                                                        if ( name === '' ) {
+                                                                                                           
+                                                                                                        if ( name === '' ) { // when is anonymous mixing helper
                                                                                                                 switch ( mixDataType ) {
                                                                                                                                 case 'primitive':
                                                                                                                                         buffer[data] = mixData
                                                                                                                                         break
                                                                                                                                 case 'array':
-                                                                                                                                        buffer[data] = mixData.join ( '' )
+                                                                                                                                        buffer[data] = mixData.filter ( x => x != null ).join ( '' )
                                                                                                                                         break
                                                                                                                                 case 'object':
                                                                                                                                         buffer[data] = mixData.text
@@ -165,12 +165,13 @@ import _defineDataType   from "./_defineType.js"
                                                                                                 }
                                                                                 } // for step of actSetup
                                                                                 let accType = _defineDataType ( buffer[data] )
-                                                                                if ( buffer[data] == null )   return
                                                                                 switch ( accType ) {
                                                                                                 case 'primitive':
+                                                                                                        if ( buffer[data] == null )   return
                                                                                                         cuts[index] = buffer[data]
                                                                                                         break
                                                                                                 case 'object': 
+                                                                                                        if (buffer[data]['text'] == null )   return
                                                                                                         cuts[index] = buffer[data]['text']
                                                                                                         break
                                                                                                 case 'array':
