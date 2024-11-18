@@ -121,13 +121,15 @@ const htmlBlock = myTemplate ( { person: {
 
 
 ## Template structure
-
-Templates are objects with two properties: `template` and `helpers`:
+Templates are objects with tree properties: `template`, `helpers`, and `handshake`:
 ```js
 const myTemplateDescription = {
-      template: `` // template string
+      template: `` // (required) Template string
     , helpers: {
-                // functions and templates used by actions to decorate the data
+                // (optional) Functions and templates used by actions to decorate the data
+        }
+    , handshake: {
+                // (optional) Example data used to render the template.
         }
 }
 ```
@@ -145,6 +147,14 @@ const myTemplateDescription = {
     , helpers: {
                 a: `<a href="{{href}}">{{text}}</a>`,
                 li: `<li>{{text}}</li>`
+            }
+    , handshake: {
+                title: 'My title'
+              , list: [
+                          { text: 'Item 1', href: 'item1.com' }
+                        , { text: 'Item 2', href: 'item2.com' }
+                        , { text: 'Item 3', href: 'item3.com' }
+                    ]
             }
 }
 ```

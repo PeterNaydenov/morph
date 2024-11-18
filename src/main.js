@@ -89,7 +89,8 @@ const morphAPI = {
                 , remove  // remove a template from component storage
 } // morphAPI
 
-
+// TODO: How to change render templates on condition?
+// - Use compiled versions of simile templates
 
 export default morphAPI
 
