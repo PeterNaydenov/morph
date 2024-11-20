@@ -1,3 +1,4 @@
+import a from '@peter.naydenov/walk';
 import morph from '../src/main.js'
 import { expect } from 'chai'
 
@@ -53,7 +54,7 @@ describe ( 'morph: data', () => {
 
     it ( 'Conditional rendering with string literals', () => {
                 const myTpl = {
-                          template : `I'm {{ persons: []coma, hello }}`
+                          template : "Hello, I'm {{ persons: []coma, hello }}"
                         , helpers  : {
                                       hello: (d) => d.map ( ({name, age}) => {
                                                     if ( age < 28 )   return null
@@ -72,7 +73,82 @@ describe ( 'morph: data', () => {
                                                     , { name: 'Bob' , age: 34}
                                                 ]
                                     });
-                expect ( result ).to.be.equal ( `I'm Robert - 30 years old, John - 64 years old, Bob - 34 years old` )
+                expect ( result ).to.be.equal ( `Hello, I'm Robert - 30 years old, John - 64 years old, Bob - 34 years old` )
         }) // it conditional rendering with string literals
+
+
+
+        it ( '', () => {
+                // Try to see tag functions...
+                
+                function tag (list ) {
+                            let tpl =  arguments
+                            return function tagClosure (vals) {
+                                        let extra = 1;
+                                        return list.reduce ( ( acc, part ) => {
+                                                let 
+                                                      key = tpl[extra++]
+                                                    , extraData = vals[key]? vals[key] : ''
+                                                    ;
+                                                if ( !part )   part = extraData
+                                                else           part = part + extraData
+                                                return acc + part
+                                        }, '' )
+                            } 
+                    } // tag func.
+
+                const 
+                      person = { 
+                              name   : 'Bob'
+                            , greet  : 'Hey'
+                            , age    : 30
+                            , extra  : 12
+                        }
+                    ;
+
+                const tg = tag`${'greet'} darling ${'name'}, my age is ${'age'}. Great!`
+                const res = tg ( person )
+                console.log ( res )
+                
+                    
+            }) // it
+        
+        
+        
+        
+        it.only ( '', () => {
+                // Try to see tag functions...
+                
+                function tag (list ) {
+                            let tpl =  arguments
+                            return function tagClosure (vals) {
+                                        let extra = 1;
+                                        return list.reduce ( ( acc, part ) => {
+                                                let 
+                                                      key = tpl[extra++]
+                                                    , extraData = vals[key]? vals[key] : ''
+                                                    ;
+                                                if ( !part )   part = extraData
+                                                else           part = part + extraData
+                                                return acc + part
+                                        }, '' )
+                            } 
+                    } // tag func.
+
+                const 
+                      person = { 
+                              name   : 'Bob'
+                            , greet  : 'Hey'
+                            , age    : 30
+                            , extra  : 12
+                        }
+                    ;
+
+                const tg = tag`${'greet'} darling ${'name'}, my age is ${'age'}. Great!`
+                const res = tg ( person )
+                console.log ( res )
+                
+                    
+            }) // it
 
 }) // describe
