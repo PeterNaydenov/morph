@@ -85,78 +85,117 @@ import _defineDataType   from "./_defineType.js"
                                                                            , buffer = {}
                                                                            ;
 
+
+                                                                        function renderLn ( theData, name, helpers ) {
+                                                                                // *** Executes rendering and return the results 
+                                                                                function setRenderData ( d={} ) {
+                                                                                                if ( typeof d === 'string' )  return { text: d }
+                                                                                                else return d
+                                                                                        } // setRenderData func.
+                                                                                const isRenderFunction = typeof helpers[name] === 'function';   // Render could be a function and template.
+                                                                                const dataType  = _defineDataType ( theData );
+
+                                                                                switch ( dataType ) {
+                                                                                        case 'primitive':
+                                                                                                theData = setRenderData ( theData )
+                                                                                        default :
+                                                                                                if ( isRenderFunction )  return helpers[name]( theData )
+                                                                                                else                     return _renderHolder ( helpers[name], theData   )
+                                                                                        } // switch renderDataType 
+                                                                                }  // renderLn func.
+
+
+
+
                                                                         for ( let step of actSetup ) {
-                                                                                        let { type, name, level } = step;
-                                                                                        function setRenderData ( d={} ) {
-                                                                                                        if ( typeof d === 'string' )  return { text: d }
-                                                                                                        else return d
-                                                                                                } // setRenderData func.
+                                                                                        let 
+                                                                                                  theData = initialRound ? nestedData[dataDeepLevel] : buffer[data]
+                                                                                                , dataType = _defineDataType ( theData )
+                                                                                                ;
+                                                                                        let { type, name, level } = step
                                                                                         
                                                                                         switch ( type ) {   // Action type 'data', 'render', or mix -> different operations
+                                                                                                case 'route':
+                                                                                                        switch ( dataType ) {
+                                                                                                                        case 'array': 
+                                                                                                                                buffer[data] = theData.map ( d => {
+                                                                                                                                                        if ( d == null ) return null
+                                                                                                                                                        const dType = _defineDataType ( d )
+                                                                                                                                                        const routeName = helpers[name]( d );
+                                                                                                                                                        if ( routeName == null )  return d
+                                                                                                                                                        if ( dType === 'object' ) d.text = renderLn ( d, routeName, helpers )
+                                                                                                                                                        else                      d = renderLn ( d, routeName, helpers )
+                                                                                                                                                        return d
+                                                                                                                                                })
+                                                                                                                                break
+                                                                                                                        case 'object':
+                                                                                                                                buffer[data]['text'] = renderLn ( theData, routeName, helpers )
+                                                                                                                                break
+                                                                                                                        case 'primitive':
+                                                                                                                                buffer[data] = renderLn ( theData, routeName, helpers )
+                                                                                                                                break
+                                                                                                                }
+                                                                                                        break        
                                                                                                 case 'data':
-                                                                                                        let
-                                                                                                            theData = initialRound ? nestedData[dataDeepLevel] : buffer[data]
-                                                                                                          , dataType = _defineDataType ( theData )
-                                                                                                          ;
                                                                                                         switch ( dataType ) {
                                                                                                                 case 'array':
-                                                                                                                        buffer[data] = theData.map ( d => helpers[name]( d ) )
+                                                                                                                        buffer[data] = theData.map ( d => helpers[name]( d ) )                                                                                                                        
                                                                                                                         break
                                                                                                                 case 'object':
                                                                                                                         buffer[data] = helpers[name]( theData )
                                                                                                                         break
                                                                                                                 case 'function':
+                                                                                                                        // TODO: ....?
                                                                                                                         break
                                                                                                                 case 'primitive':
                                                                                                                         buffer[data] = helpers[name]( theData )
                                                                                                                         break
                                                                                                                 } // switch dataType
                                                                                                         initialRound = false
-                                                                                                        break;
+                                                                                                        break
                                                                                                 case 'render':
-                                                                                                        // TODO: render could be a function and template.
-                                                                                                        const 
-                                                                                                             renderData = initialRound ? nestedData[dataDeepLevel] : buffer[data]
-                                                                                                           , renderDataType = _defineDataType ( renderData )
-                                                                                                           , isRenderFunction = typeof helpers[name] === 'function'
-                                                                                                           ;
-                                                                                                        switch ( renderDataType ) {
+                                                                                                        const isRenderFunction = typeof helpers[name] === 'function';   // Render could be a function and template.
+                                                                                                        switch ( dataType ) {
                                                                                                                 case 'array':
-                                                                                                                        if ( isRenderFunction )  buffer[data] = helpers[name]( renderData )
-                                                                                                                        else                     buffer[data] = renderData.map ( d => _renderHolder ( helpers[name], setRenderData(d) ))
+                                                                                                                        if ( isRenderFunction  )  buffer[data] = theData.map ( d => {
+                                                                                                                                                                                const dType = _defineDataType ( d );
+                                                                                                                                                                                const text = helpers[name]( d );
+                                                                                                                                                                                if ( text == null ) return null
+                                                                                                                                                                                if ( dType === 'object' ) d.text = text
+                                                                                                                                                                                else                      d      = text
+                                                                                                                                                                                return d
+                                                                                                                                                                        }) 
+                                                                                                                        else                      buffer[data] = theData.map ( d => {
+                                                                                                                                                                d.text = renderLn ( d, name, helpers )
+                                                                                                                                                                return d 
+                                                                                                                                                        }) 
+                                                                                                                        // console.log ( buffer[data] )
                                                                                                                         break
                                                                                                                 case 'primitive':
-                                                                                                                        if ( isRenderFunction )  buffer[data] = helpers[name]( setRenderData(renderData) )
-                                                                                                                        else                     buffer[data] = _renderHolder ( helpers[name], setRenderData(renderData)   ) 
+                                                                                                                        buffer[data] = renderLn ( theData, name, helpers )
                                                                                                                         break
                                                                                                                 case 'object':
-                                                                                                                        buffer[data] = renderData
-                                                                                                                        if ( isRenderFunction )  buffer[data]['text'] = helpers[name]( renderData )
-                                                                                                                        else                     buffer[data]['text'] = _renderHolder ( helpers[name], renderData   )
+                                                                                                                        buffer[data] = theData
+                                                                                                                        buffer[data]['text'] = renderLn ( theData, name, helpers )
                                                                                                                         break
                                                                                                                 } // switch renderDataType 
                                                                                                         initialRound = false
                                                                                                         break;
-                                                                                                case 'mix':
-                                                                                                        const 
-                                                                                                              mixData     = initialRound ? nestedData[level] : buffer[data]
-                                                                                                            , mixDataType = _defineDataType ( mixData )
-                                                                                                            ;
-                                                                                                           
+                                                                                                case 'mix':  
                                                                                                         if ( name === '' ) { // when is anonymous mixing helper
-                                                                                                                switch ( mixDataType ) {
+                                                                                                                switch ( dataType ) {
                                                                                                                                 case 'primitive':
-                                                                                                                                        buffer[data] = mixData
+                                                                                                                                        buffer[data] = theData
                                                                                                                                         break
                                                                                                                                 case 'array':
-                                                                                                                                        buffer[data] = mixData.filter ( x => x != null ).join ( '' )
+                                                                                                                                        buffer[data] = theData.filter ( x => x != null ).join ( '' )
                                                                                                                                         break
                                                                                                                                 case 'object':
-                                                                                                                                        buffer[data] = mixData.text
+                                                                                                                                        buffer[data] = theData.text
                                                                                                                                         break
                                                                                                                 }}
                                                                                                         
-                                                                                                        else                 buffer[data] = helpers[name]( mixData )
+                                                                                                        else                 buffer[data] = helpers[name]( theData )
                                                                                                         initialRound = false
                                                                                                         break
                                                                                                         // buffer[name] = helpers[name]( mixed )

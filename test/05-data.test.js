@@ -53,15 +53,17 @@ describe ( 'morph: Data', () => {
                 const myTpl = {
                           template : "Hello, I'm {{ persons: []coma, !web, hello }}"
                         , helpers  : {
-                                      hello: (d) => d.map ( ({name, age}) => {
+                                      hello: ( data ) => {
+                                                    const { name, age } = data;
                                                     if ( age < 28 )   return null
                                                     else              return `${name} - ${age} years old`
-                                                })
+                                                }
                                                 // filter is required to remove cancelled renders
-                                    , coma: (res) => res.filter ( x => x != null).join ( ', ' )
+                                    , coma: (res) => res.filter ( x => x != null).map ( x => x.text ).join ( ', ' )
                                     , a : `<a href="{{href}}">{{text}}</a>`
-                                    , web: (d) => {
-                                                    if ( !d.href )  return 'a'
+                                    , web: ( d ) => {
+                                                    if ( d.href )  return 'a'
+                                                    else           return null
                                             }
                                 }
                     };

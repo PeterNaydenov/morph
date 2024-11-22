@@ -8,7 +8,8 @@ function* _actionSupply ( act, level ) {
                     action.push ( act[i] )          
             }
     while ( action && !action.isEmpty () ) {
-                    yield action.pull ()
+                    let newAct = yield action.pull ()
+                    if ( newAct )  action.push ( newAct )
             }                        
 } // _actionSupply func.
 
