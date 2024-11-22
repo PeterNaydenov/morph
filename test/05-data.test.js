@@ -50,6 +50,7 @@ describe ( 'morph: Data', () => {
 
 
     it ( 'Conditional rendering with string literals', () => {
+      // TODO: Not finished. Need description and more reading
                 const myTpl = {
                           template : "Hello, I'm {{ persons: []coma, !web, hello }}"
                         , helpers  : {
@@ -59,7 +60,10 @@ describe ( 'morph: Data', () => {
                                                     else              return `${name} - ${age} years old`
                                                 }
                                                 // filter is required to remove cancelled renders
-                                    , coma: (res) => res.filter ( x => x != null).map ( x => x.text ).join ( ', ' )
+                                    , coma: (res) => res
+                                                        .filter ( x => x != null)
+                                                        .map ( x => x.text )
+                                                        .join ( ', ' )
                                     , a : `<a href="{{href}}">{{text}}</a>`
                                     , web: ( d ) => {
                                                     if ( d.href )  return 'a'
@@ -76,8 +80,7 @@ describe ( 'morph: Data', () => {
                                                     , { name: 'Bob' , age: 34 , href: 'http://bob.com' }
                                                 ]
                                     });
-                console.log ( result)
-                // expect ( result ).to.be.equal ( `Hello, I'm Robert - 30 years old, John - 64 years old, Bob - 34 years old` )
+                expect ( result ).to.be.equal ( `Hello, I'm <a href="http://robert.com">Robert - 30 years old</a>, John - 64 years old, <a href="http://bob.com">Bob - 34 years old</a>` )
         }) // it conditional rendering with string literals
 
 
