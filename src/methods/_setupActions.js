@@ -17,6 +17,14 @@ function _setupActions ( actions, dataDeepLevel=10 ) {
                                     if ( actLevel > dataDeepLevel )  return false
                                     return true
                             }
+                    if ( act.startsWith ( '!' ) ) {   // it's a route action
+                                    actSetup[actLevel].push ({
+                                                      type: 'route'
+                                                    , name: act.replace ( '!', '' )
+                                                    , level: actLevel
+                                                    })
+                                    return true
+                            }
                     if ( act.startsWith ( '[]' )) {   // it's a mixing action
                                     actSetup[actLevel].push ({
                                                       type: 'mix'
