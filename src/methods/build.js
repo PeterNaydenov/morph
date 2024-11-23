@@ -5,6 +5,7 @@ import _setupActions     from "./_setupActions.js"
 import _readTemplate     from "./_readTemplate.js"
 import _renderHolder     from './_renderHolder.js'
 import _defineDataType   from "./_defineType.js"
+import render from './render.js'
 
 
 
@@ -55,7 +56,6 @@ import _defineDataType   from "./_defineType.js"
                                                         const 
                                                              { index, data, action } = holder
                                                            , dataOnly   = !action && data
-                                                           , actionOnly = !data && action
                                                            ;
                                                         let initialRound = true   // Take data from source? False - take it from buffer       
 
@@ -74,8 +74,6 @@ import _defineDataType   from "./_defineType.js"
                                                                                 case 'object':
                                                                                         if ( info.text )   cuts[index] = info.text
                                                                                         return
-                                                                                default:
-                                                                                        // TODO: Error in data...
                                                                                 } // switch
                                                                 } // dataOnly
                                                         else {   // Data and Actions
@@ -84,29 +82,7 @@ import _defineDataType   from "./_defineType.js"
                                                                            , actSetup = _actionSupply ( _setupActions ( action, dataDeepLevel ), dataDeepLevel )
                                                                            , buffer = {}
                                                                            ;
-
-
-                                                                        function renderLn ( theData, name, helpers ) {
-                                                                                // *** Executes rendering and return the results 
-                                                                                function setRenderData ( d={} ) {
-                                                                                                if ( typeof d === 'string' )  return { text: d }
-                                                                                                else return d
-                                                                                        } // setRenderData func.
-                                                                                const isRenderFunction = typeof helpers[name] === 'function';   // Render could be a function and template.
-                                                                                const dataType  = _defineDataType ( theData );
-
-                                                                                switch ( dataType ) {
-                                                                                        case 'primitive':
-                                                                                                theData = setRenderData ( theData )
-                                                                                        default :
-                                                                                                if ( isRenderFunction )  return helpers[name]( theData )
-                                                                                                else                     return _renderHolder ( helpers[name], theData   )
-                                                                                        } // switch renderDataType 
-                                                                                }  // renderLn func.
-
-
-
-
+                                                                        
                                                                         for ( let step of actSetup ) {
                                                                                         let 
                                                                                                   theData = initialRound ? nestedData[dataDeepLevel] : buffer[data]
@@ -114,7 +90,7 @@ import _defineDataType   from "./_defineType.js"
                                                                                                 ;
                                                                                         let { type, name, level } = step
                                                                                         
-                                                                                        switch ( type ) {   // Action type 'data', 'render', or mix -> different operations
+                                                                                        switch ( type ) {   // Action type 'route','data', 'render', or mix -> different operations
                                                                                                 case 'route':
                                                                                                         switch ( dataType ) {
                                                                                                                         case 'array': 
@@ -123,16 +99,16 @@ import _defineDataType   from "./_defineType.js"
                                                                                                                                                         const dType = _defineDataType ( d )
                                                                                                                                                         const routeName = helpers[name]( d );
                                                                                                                                                         if ( routeName == null )  return d
-                                                                                                                                                        if ( dType === 'object' ) d.text = renderLn ( d, routeName, helpers )
-                                                                                                                                                        else                      d = renderLn ( d, routeName, helpers )
+                                                                                                                                                        if ( dType === 'object' ) d.text = render ( d, routeName, helpers )
+                                                                                                                                                        else                      d = render ( d, routeName, helpers )
                                                                                                                                                         return d
                                                                                                                                                 })
                                                                                                                                 break
                                                                                                                         case 'object':
-                                                                                                                                buffer[data]['text'] = renderLn ( theData, routeName, helpers )
+                                                                                                                                buffer[data]['text'] = render ( theData, routeName, helpers )
                                                                                                                                 break
                                                                                                                         case 'primitive':
-                                                                                                                                buffer[data] = renderLn ( theData, routeName, helpers )
+                                                                                                                                buffer[data] = render ( theData, routeName, helpers )
                                                                                                                                 break
                                                                                                                 }
                                                                                                         break        
@@ -158,6 +134,7 @@ import _defineDataType   from "./_defineType.js"
                                                                                                         switch ( dataType ) {
                                                                                                                 case 'array':
                                                                                                                         if ( isRenderFunction  )  buffer[data] = theData.map ( d => {
+                                                                                                                                                                                if ( d == null ) return null
                                                                                                                                                                                 const dType = _defineDataType ( d );
                                                                                                                                                                                 const text = helpers[name]( d );
                                                                                                                                                                                 if ( text == null ) return null
@@ -166,8 +143,9 @@ import _defineDataType   from "./_defineType.js"
                                                                                                                                                                                 return d
                                                                                                                                                                         }) 
                                                                                                                         else                      buffer[data] = theData.map ( d => {
+                                                                                                                                                                if ( d == null ) return null
                                                                                                                                                                 const dType = _defineDataType ( d );
-                                                                                                                                                                const text = renderLn ( d, name, helpers )
+                                                                                                                                                                const text = render ( d, name, helpers )
                                                                                                                                                                 if ( dType === 'object' ) d.text = text
                                                                                                                                                                 else                      d      = text
                                                                                                                                                                 return d 
@@ -175,11 +153,11 @@ import _defineDataType   from "./_defineType.js"
                                                                                                                         // console.log ( buffer[data] )
                                                                                                                         break
                                                                                                                 case 'primitive':
-                                                                                                                        buffer[data] = renderLn ( theData, name, helpers )
+                                                                                                                        buffer[data] = render ( theData, name, helpers )
                                                                                                                         break
                                                                                                                 case 'object':
                                                                                                                         buffer[data] = theData
-                                                                                                                        buffer[data]['text'] = renderLn ( theData, name, helpers )
+                                                                                                                        buffer[data]['text'] = render ( theData, name, helpers )
                                                                                                                         break
                                                                                                                 } // switch renderDataType 
                                                                                                         initialRound = false
