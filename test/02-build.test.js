@@ -90,6 +90,7 @@ describe ( 'transformer: build', () => {
                           template: `Hello, {{  name : ul, [], li, >fromList }}! {{ more }}`
                         , helpers: {
                                   fromList: name => (['Peter', 'Ivan'].includes(name) ? name : 'stranger')
+                                        
                                 , ul : `<ul>{{text}}</ul>`
                                 , li : `<li>{{text}}</li>`
                             }

@@ -166,7 +166,10 @@ import _defineDataType   from "./_defineType.js"
                                                                                                                                                                                 return d
                                                                                                                                                                         }) 
                                                                                                                         else                      buffer[data] = theData.map ( d => {
-                                                                                                                                                                d.text = renderLn ( d, name, helpers )
+                                                                                                                                                                const dType = _defineDataType ( d );
+                                                                                                                                                                const text = renderLn ( d, name, helpers )
+                                                                                                                                                                if ( dType === 'object' ) d.text = text
+                                                                                                                                                                else                      d      = text
                                                                                                                                                                 return d 
                                                                                                                                                         }) 
                                                                                                                         // console.log ( buffer[data] )
