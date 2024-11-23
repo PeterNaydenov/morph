@@ -2,17 +2,7 @@ import build from "./methods/build.js"
 
 
 
-const
-    defaultSettings = {
-            TG_PRX: '{{'
-          , TG_SFX: '}}'
-          , TG_SIZE_P: 2
-          , TG_SIZE_S: 2
-        }
-    // , render = renderSetup ( walk )
-    , storage = { default: {}}
-    ;
-
+const storage = { default: {}};
 
 
 
