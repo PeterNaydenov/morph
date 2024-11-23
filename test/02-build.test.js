@@ -113,7 +113,7 @@ describe ( 'transformer: build', () => {
                                                 ul: `<ul>{{text}}</ul>`,
                                                 people: (res) => {
                                                                 if ( res.age < 30 )   res.state = 'young'
-                                                                else                   res.state = 'old'
+                                                                else                  res.state = 'old'
                                                                 return res
                                                         }
                                         }
@@ -125,7 +125,7 @@ describe ( 'transformer: build', () => {
                                                       , { name: 'Ivan', age: 25 }
                                                       , { name: 'Stoyan', age: 35 }
                                                 ]
-                                        })
+                                        })                
                 expect ( result ).to.be.equal ( 'My friends: <ul><li>Peter: old</li><li>Ivan: young</li><li>Stoyan: old</li></ul>' )
         }) // it data action on array of objects
 

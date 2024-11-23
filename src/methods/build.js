@@ -191,7 +191,13 @@ import _defineDataType   from "./_defineType.js"
                                                                                                                                         buffer[data] = theData
                                                                                                                                         break
                                                                                                                                 case 'array':
-                                                                                                                                        buffer[data] = theData.filter ( x => x != null ).join ( '' )
+                                                                                                                                        buffer[data] = theData.map ( x => {
+                                                                                                                                                                        let xType = _defineDataType ( x );
+                                                                                                                                                                        if ( xType === 'object' )   return x.text
+                                                                                                                                                                        return x 
+                                                                                                                                                                })
+                                                                                                                                                               .filter ( x => x != null )
+                                                                                                                                                               .join ( '' )
                                                                                                                                         break
                                                                                                                                 case 'object':
                                                                                                                                         buffer[data] = theData.text
