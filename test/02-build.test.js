@@ -343,19 +343,17 @@ describe ( 'transformer: build', () => {
         // Use helper functions to render other templates
                 
                 const secondaryTpl = { // Template for nesting  
-                                  template : `My friends are {{ names : []coma }}.`
-                                , helpers: {
-                                                  coma: (res) => res.join(', ')
-                                        }
+                                  template : `My friends are {{ names }}.`
                         }        
                 const secTemplateFn = morphAPI.build ( secondaryTpl ); 
                 
                 const myTpl = { // Top level template
-                                  template : `My name is {{ name }}. {{ friends: friendListing}}`
+                                  template : `My name is {{ name }}. {{ friends: friendListing, []coma }}`
                                 , helpers: {
-                                                friendListing: (d) => {
-                                                                return secTemplateFn ({ names : d }) // Nested template render}
+                                                friendListing: ( d ) => {
+                                                                return secTemplateFn ({ names : d })   // Nested template render
                                                         }
+                                                , coma: ( res ) => res.join(', ')
                                         }
                         }
                 const templateFn = morphAPI.build ( myTpl );
