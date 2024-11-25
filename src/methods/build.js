@@ -78,7 +78,7 @@ import render from './render.js'
                                                                 } // dataOnly
                                                         else {   // Data and Actions
                                                                         const 
-                                                                           { dataDeepLevel, nestedData } = (data==='@all' || data===null) ? _defineData ( d ) : _defineData ( d[data] )
+                                                                             { dataDeepLevel, nestedData } = (data==='@all' || data===null) ? _defineData ( d ) : _defineData ( d[data] )
                                                                            , actSetup = _actionSupply ( _setupActions ( action, dataDeepLevel ), dataDeepLevel )
                                                                            , buffer = {}
                                                                            ;
@@ -88,7 +88,7 @@ import render from './render.js'
                                                                                                   theData = initialRound ? nestedData[dataDeepLevel] : buffer[data]
                                                                                                 , dataType = _defineDataType ( theData )
                                                                                                 ;
-                                                                                        let { type, name, level } = step
+                                                                                        let { type, name } = step   // {level} is not in use
                                                                                         
                                                                                         switch ( type ) {   // Action type 'route','data', 'render', or mix -> different operations
                                                                                                 case 'route':
@@ -150,7 +150,6 @@ import render from './render.js'
                                                                                                                                                                 else                      d      = text
                                                                                                                                                                 return d 
                                                                                                                                                         }) 
-                                                                                                                        // console.log ( buffer[data] )
                                                                                                                         break
                                                                                                                 case 'primitive':
                                                                                                                         buffer[data] = render ( theData, name, helpers )

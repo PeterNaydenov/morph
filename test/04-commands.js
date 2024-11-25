@@ -54,7 +54,7 @@ describe ( 'morph: commands', () => {
                     };
                 morph.add ( 'myName', myTpl );
                 const result = morph.get ( 'myName' )('fake')
-                expect ( result ).to.be.equal ( 'Error: Wrong command "fake".' )
+                expect ( result ).to.be.equal ( 'Error: Wrong command "fake". Available commands: raw, demo, handshake, placeholders.' )
         }) // it wrong command to component
     
     
