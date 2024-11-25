@@ -30,21 +30,21 @@ import render from './render.js'
                                            , endData = []
                                            ;
 
-                                        if ( typeof d === 'string' ) {
-                                                // 'd' is a string when we want to debug the template
+                                        if ( typeof d === 'string' ) {   // 'd' is a string when we want to debug the template
                                                    switch ( d ) {
                                                         case 'raw':
-                                                                // return a template with placeholders
-                                                                return cuts.join('')
+                                                                return cuts.join('')   // Original template with placeholders
                                                         case 'demo':
-                                                                d = handshake // render with handshake object
+                                                                if ( !handshake ) return `Error: No handshake data.`
+                                                                d = handshake // Render with handshake object
                                                                 break
                                                         case 'handshake':
+                                                                if ( !handshake ) return `Error: No handshake data.`
                                                                 return structuredClone (handshake)   // return a copy of handshake object
                                                         case 'placeholders':
                                                                 return placeholders.map ( h => cuts[h.index] ).join ( ', ')
                                                         default:
-                                                                return `Error: Wrong command "${d}".`
+                                                                return `Error: Wrong command "${d}". Available commands: raw, demo, handshake, placeholders.`
                                                         }
                                                 } // if 'd' is string
                                         
@@ -213,12 +213,6 @@ import render from './render.js'
                                 } // success func.
                 }
 } // build func.
-
-
-
-
-
-
 
 
 
