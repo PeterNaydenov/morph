@@ -142,6 +142,7 @@ describe ( 'transformer: build', () => {
                                           , { name: 'Ivan', age: 25 }
                                           , { name: 'Stoyan', age: 35 }
                                 ])
+                // Result is array of rendered templates
                 expect ( result ).to.have.length ( 3 )
                 expect ( result[0] ).to.be.equal ( 'My name is Peter. My age is 30.' )
                 expect ( result[1] ).to.be.equal ( 'My name is Ivan. My age is 25.' )
@@ -227,7 +228,7 @@ describe ( 'transformer: build', () => {
                 const templateFn = morphAPI.build ( myTpl );
                 const result = templateFn({ 
                                                   name: 'Peter' 
-                                                , extraData: ''
+                                                , extraData: '' // Provide an empty string to hide a placeholder
                                         });
                 expect ( result ).to.be.equal ( 'My name is Peter.' )
         }) // it how to hide a placeholder

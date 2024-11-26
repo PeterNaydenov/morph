@@ -162,7 +162,7 @@ import render from './render.js'
                                                                                                         initialRound = false
                                                                                                         break;
                                                                                                 case 'mix':  
-                                                                                                        if ( name === '' ) { // when is anonymous mixing helper
+                                                                                                        if ( name === '' ) {   // when is anonymous mixing helper
                                                                                                                 switch ( dataType ) {
                                                                                                                                 case 'primitive':
                                                                                                                                         buffer[data] = theData
@@ -184,7 +184,6 @@ import render from './render.js'
                                                                                                         else                 buffer[data] = helpers[name]( theData )
                                                                                                         initialRound = false
                                                                                                         break
-                                                                                                        // buffer[name] = helpers[name]( mixed )
                                                                                                 default:
                                                                                                         break
                                                                                                 }
