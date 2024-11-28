@@ -53,7 +53,7 @@ describe ( 'transformer: build', () => {
                                   template : `My job is {{ job : >jobPossible }}.`
                                 , helpers  : {
                                                 jobPossible: (text) => {
-                                                                if ( text === 'Software Engineer' ) return 'hidden'
+                                                                if ( text === 'Software Engineer' )   return 'hidden'
                                                                 else return text
                                                         }
                                         }
@@ -61,6 +61,7 @@ describe ( 'transformer: build', () => {
                 const templateFn = morphAPI.build ( myTpl );
                 const result = templateFn({ job: 'Software Engineer' });
                 const result2 = templateFn({ job: 'doctor' });
+
                 expect ( result ).to.be.equal ( 'My job is hidden.' );
                 expect ( result2 ).to.be.equal ( 'My job is doctor.' );
         }) // it data action to change the result
@@ -367,7 +368,33 @@ describe ( 'transformer: build', () => {
 
 
 
-    it ( 'Data deep levels' )
+    it ( 'Data deep levels', () => {
+                const myTpl = {
+                                  template : `My list: {{ list: ul , [], li, #, line }}.`
+                                , helpers: {
+                                                line: `{{ name }} - {{ age }}`
+                                              , ul: `<ul>{{ text }}</ul>`
+                                              , li: `<li>{{ text }}</li>`
+                                        }
+                                                
+                        };
+                const data = {
+                        list : [
+                                  'John'
+                                  , {
+                                        name: 'Milen'
+                                      , age: 25
+                                    }
+                                  , 'Vladislav'
+                                  , {
+                                        name: 'Stoyan'
+                                      , age: 30}
+                                ]
+                        };
+                const templateFn = morphAPI.build ( myTpl );
+                const result = templateFn ( data );
+                expect ( result ).to.be.equal ( 'My list: <ul><li>John</li><li>Milen - 25</li><li>Vladislav</li><li>Stoyan - 30</li></ul>.' )
+        }) // it Data deep levels
 
 
     
