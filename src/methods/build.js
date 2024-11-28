@@ -164,6 +164,8 @@ import render from './render.js'
                                                                                                                 switch ( dataType ) {
                                                                                                                                 case 'primitive':
                                                                                                                                         break
+                                                                                                                                case 'object':
+                                                                                                                                        break
                                                                                                                                 case 'array':
                                                                                                                                         nestedData[level] = theData.map ( x => {
                                                                                                                                                                         let xType = _defineDataType ( x );
@@ -173,11 +175,8 @@ import render from './render.js'
                                                                                                                                                                .filter ( x => x != null )
                                                                                                                                                                .join ( '' )
                                                                                                                                         break
-                                                                                                                                case 'object':
-                                                                                                                                        nestedData[level]['text'] = theData.text
-                                                                                                                                        break
-                                                                                                                        }
-                                                                                                            }
+                                                                                                                        } // switch dataType
+                                                                                                            } // if name === ''
                                                                                                         else                 nestedData[level] = helpers[name]( theData )
                                                                                                         initialRound = false
                                                                                                         break
