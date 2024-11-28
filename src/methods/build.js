@@ -5,16 +5,14 @@ import _setupActions     from "./_setupActions.js"
 import _readTemplate     from "./_readTemplate.js"
 import _renderHolder     from './_renderHolder.js'
 import _defineDataType   from "./_defineType.js"
-import render from './render.js'
+import render            from './render.js'
 
 
 
 
 
  function build  ( tpl ) {
-        
         const { hasError, placeholders, chop, helpers, handshake } = _readTemplate ( tpl );
-       
         if ( hasError ) {
                         return function fail () {
                                         return hasError
@@ -78,7 +76,7 @@ import render from './render.js'
                                                                 } // dataOnly
                                                         else {   // Data and Actions
                                                                         const 
-                                                                             { dataDeepLevel, nestedData } = (data==='@all' || data===null) ? _defineData ( d ) : _defineData ( d[data] )
+                                                                             { dataDeepLevel, nestedData } = (data==='@all' || data===null ) ? _defineData ( d ) : _defineData ( d[data] )
                                                                            , actSetup = _actionSupply ( _setupActions ( action, dataDeepLevel ), dataDeepLevel )
                                                                            ;
 
@@ -119,7 +117,7 @@ import render from './render.js'
                                                                                                                         nestedData[level] = helpers[name]( theData )
                                                                                                                         break
                                                                                                                 case 'function':
-                                                                                                                        // TODO: ....?
+                                                                                                                        nestedData[level] = theData ()
                                                                                                                         break
                                                                                                                 case 'primitive':
                                                                                                                         nestedData[level] = helpers[name]( theData )

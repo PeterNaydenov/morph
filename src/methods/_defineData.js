@@ -7,7 +7,7 @@ function _defineData ( d ) {
     let dataDeepLevel = 0;
 
     
-
+    if ( d == null             )   return {  dataDeepLevel:0, nestedData:[ null ] }
     if ( typeof d === 'string' )   return {  dataDeepLevel:0, nestedData:[d] }
     
            function findObjects ({key, value, breadcrumbs}) {
