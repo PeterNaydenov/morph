@@ -80,11 +80,7 @@ import render from './render.js'
                                                                         const 
                                                                              { dataDeepLevel, nestedData } = (data==='@all' || data===null) ? _defineData ( d ) : _defineData ( d[data] )
                                                                            , actSetup = _actionSupply ( _setupActions ( action, dataDeepLevel ), dataDeepLevel )
-                                                                           , buffer = {}
                                                                            ;
-                                                                        // console.log ( d.list )
-                                                                        
-                                                                        // console.log ( dataDeepLevel, nestedData )
 
                                                                         for ( let step of actSetup ) {
                                                                                         let { type, name, level } = step   // {level} is not in use
@@ -110,21 +106,17 @@ import render from './render.js'
                                                                                                                                 theData['text'] = render ( theData, routeName, helpers )
                                                                                                                                 break
                                                                                                                         case 'primitive':
-                                                                                                                                nestedData[level][data] = render ( theData, routeName, helpers )
+                                                                                                                                nestedData[level] = render ( theData, routeName, helpers )
                                                                                                                                 break
                                                                                                                 }
                                                                                                         break        
-                                                                                                case 'data':
-                                                                                                        
-                                                                                                        // console.log ( nestedData )
+                                                                                                case 'data':                                                                                                        
                                                                                                         switch ( dataType ) {
                                                                                                                 case 'array':
                                                                                                                         theData.forEach ( (d,i) => theData[i] = helpers[name]( d ) )                                                                                                                        
-                                                                                                                        // buffer[data] = theData.map ( d => helpers[name]( d ) )                                                                                                                        
                                                                                                                         break
                                                                                                                 case 'object':
                                                                                                                         nestedData[level] = helpers[name]( theData )
-                                                                                                                        // buffer[data] = helpers[name]( theData )
                                                                                                                         break
                                                                                                                 case 'function':
                                                                                                                         // TODO: ....?
@@ -135,8 +127,7 @@ import render from './render.js'
                                                                                                                 } // switch dataType
                                                                                                         initialRound = false
                                                                                                         break
-                                                                                                case 'render':
-                                                                                                        
+                                                                                                case 'render':                                                                                                        
                                                                                                         const isRenderFunction = typeof helpers[name] === 'function';   // Render could be a function and template.
                                                                                                         switch ( dataType ) {
                                                                                                                 case 'array':
@@ -150,21 +141,17 @@ import render from './render.js'
                                                                                                                                                         }) 
                                                                                                                         else                      theData.forEach ( (d,i) => {
                                                                                                                                                                 if ( d == null ) return
-                                                                                                                                                                const dType = _defineDataType ( d );
-                                                                                                                                                                // TODO: remove debuging if (ul=='ul')
-                                                                                                                                                                if ( name ==='ul') {  
-                                                                                                                                                                                console.log ( d )
-                                                                                                                                                                                console.log ( dType )
-                                                                                                                                                                   }
-                                                                                                                                                                const text = render ( d, name, helpers )
-                                                                                                                                                                if ( text == null ) return
+                                                                                                                                                                const 
+                                                                                                                                                                       dType = _defineDataType ( d )
+                                                                                                                                                                     , text = render ( d, name, helpers )
+                                                                                                                                                                     ;
+                                                                                                                                                                if ( text == null ) theData[i] = null
                                                                                                                                                                 if ( dType === 'object' ) d['text']  = text
                                                                                                                                                                 else                      theData[i] = text
                                                                                                                                                         }) 
                                                                                                                         break
                                                                                                                 case 'primitive':
                                                                                                                         nestedData[level] = render ( theData, name, helpers )
-                                                                                                                        // buffer[data] = render ( theData, name, helpers )
                                                                                                                         break
                                                                                                                 case 'object':
                                                                                                                         theData['text'] = render ( theData, name, helpers )
@@ -175,10 +162,8 @@ import render from './render.js'
                                                                                                 case 'mix':  
                                                                                                         if ( name === '' ) {   // when is anonymous mixing helper
                                                                                                                 switch ( dataType ) {
-                                                                                                                                // !!! Don't need primitiive case here.
-                                                                                                                                // case 'primitive':
-                                                                                                                                //         buffer[data] = theData
-                                                                                                                                //         break
+                                                                                                                                case 'primitive':
+                                                                                                                                        break
                                                                                                                                 case 'array':
                                                                                                                                         nestedData[level] = theData.map ( x => {
                                                                                                                                                                         let xType = _defineDataType ( x );
@@ -191,8 +176,8 @@ import render from './render.js'
                                                                                                                                 case 'object':
                                                                                                                                         nestedData[level]['text'] = theData.text
                                                                                                                                         break
-                                                                                                                }}
-                                                                                                        
+                                                                                                                        }
+                                                                                                            }
                                                                                                         else                 nestedData[level] = helpers[name]( theData )
                                                                                                         initialRound = false
                                                                                                         break
