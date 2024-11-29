@@ -25,6 +25,14 @@ function _setupActions ( actions, dataDeepLevel=10 ) {
                                                     })
                                     return true
                             }
+                    if ( act.startsWith ( '@' ) ) {   // it's a extended render action
+                                    actSetup[actLevel].push ({
+                                                      type: 'extendedRender'
+                                                    , name: act.replace ( '@', '' )
+                                                    , level: actLevel
+                                                    })
+                                    return true
+                            }
                     if ( act.startsWith ( '[]' )) {   // it's a mixing action
                                     actSetup[actLevel].push ({
                                                       type: 'mix'

@@ -157,6 +157,16 @@ import render            from './render.js'
                                                                                                                 } // switch renderDataType 
                                                                                                         initialRound = false
                                                                                                         break;
+                                                                                                case 'extendedRender':
+                                                                                                        // TODO: Test extendedRender
+                                                                                                        const isValid = typeof helpers[name] === 'function';   // Render could be a function and template.
+                                                                                                        if ( isValid ) {
+                                                                                                                        nestedData[0] = helpers[name]( nestedData[0] )
+                                                                                                                }
+                                                                                                        else {
+                                                                                                                        // TODO: Error...
+                                                                                                                }
+                                                                                                        break
                                                                                                 case 'mix':  
                                                                                                         if ( name === '' ) {   // when is anonymous mixing helper
                                                                                                                 switch ( dataType ) {
