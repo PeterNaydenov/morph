@@ -411,9 +411,9 @@ describe ( 'transformer: build', () => {
 
 
 
-    it ( 'Data deep levels 2', () => {
+    it ( 'Data deep object', () => {
                 const myTpl = {
-                                  template : `Profile: {{ me: ul , [], li, #, [], line }}.`
+                                  template : `Profile: {{ me: ul , [], li, #, line }}.`
                                 , helpers: {
                                                 line: `({{ height}}cm,{{ weight}}kg)`
                                               , ul: `<ul>{{ text }}</ul>`
@@ -434,7 +434,7 @@ describe ( 'transformer: build', () => {
                 const templateFn = morphAPI.build ( myTpl );
                 const result = templateFn ( data );
                 expect ( result ).to.be.equal ( 'Profile: <ul><li>Peter - (180cm,66kg)</li></ul>.' )
-        }) // it Data deep levels 2
+        }) // it Data deep object
 
 
     

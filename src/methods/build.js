@@ -127,7 +127,6 @@ import walk from '@peter.naydenov/walk'
                                                                                                         
                                                                                                         break
                                                                                                 case 'render':    
-                                                                                                // console.log ( name )                                                                                                    
                                                                                                         const isRenderFunction = typeof helpers[name] === 'function';   // Render could be a function and template.
                                                                                                         switch ( dataType ) {
                                                                                                                 case 'array':
