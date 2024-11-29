@@ -17,18 +17,18 @@ function _setupActions ( actions, dataDeepLevel=10 ) {
                                     if ( actLevel > dataDeepLevel )  return false
                                     return true
                             }
-                    if ( act.startsWith ( '!' ) ) {   // it's a route action
+                    if ( act.startsWith ( '?' ) ) {   // it's a condition render action
                                     actSetup[actLevel].push ({
                                                       type: 'route'
-                                                    , name: act.replace ( '!', '' )
+                                                    , name: act.replace ( '?', '' )
                                                     , level: actLevel
                                                     })
                                     return true
                             }
-                    if ( act.startsWith ( '@' ) ) {   // it's a extended render action
+                    if ( act.startsWith ( '+' ) ) {   // it's a extended render action
                                     actSetup[actLevel].push ({
                                                       type: 'extendedRender'
-                                                    , name: act.replace ( '@', '' )
+                                                    , name: act.replace ( '+', '' )
                                                     , level: actLevel
                                                     })
                                     return true

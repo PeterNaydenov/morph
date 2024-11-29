@@ -169,7 +169,7 @@ import walk from '@peter.naydenov/walk'
                                                                                                                         // TODO: Error...
                                                                                                                 }
                                                                                                         break
-                                                                                                case 'mix':  
+                                                                                                case 'mix':                                                                                                  
                                                                                                         if ( name === '' ) {   // when is anonymous mixing helper
                                                                                                                 switch ( dataType ) {
                                                                                                                                 case 'object':

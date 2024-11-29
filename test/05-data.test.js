@@ -52,7 +52,7 @@ describe ( 'morph: Data', () => {
     it ( 'Conditional rendering with string literals', () => {
       // TODO: Not finished. Need description and more reading
                 const myTpl = {
-                          template : "Hello, I'm {{ persons: []coma, !web, hello }}"
+                          template : "Hello, I'm {{ persons: []coma, ?web, hello }}"
                         , helpers  : {
                                       hello: ( data ) => {
                                                     const { name, age } = data;

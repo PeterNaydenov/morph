@@ -47,7 +47,8 @@ function _readTemplate ( tpl ) {
             if ( !holder.action ) return
             holder.action.every ( act => {
                                     if ( act === '#' ) return true
-                                    if ( act.startsWith ( '!' )) act = act.replace ( '!', '' )
+                                    if ( act.startsWith ( '?' )) act = act.replace ( '?', '' )
+                                    if ( act.startsWith ( '+' )) act = act.replace ( '+', '' )
                                     if ( act.startsWith ( '[]' )) act = act.replace ( '[]', '' )
                                     if ( act.startsWith ( '>' )) act = act.replace ( '>', '' )
                                     if ( act === ''   ) return true

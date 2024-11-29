@@ -381,7 +381,7 @@ describe ( 'transformer: build', () => {
 
 
 
-    it ( 'Data deep levels', () => {
+    it ( 'List - Data deep object', () => {
                 const myTpl = {
                                   template : `My list: {{ list: ul , [], li, #, line }}.`
                                 , helpers: {
@@ -407,11 +407,11 @@ describe ( 'transformer: build', () => {
                 const templateFn = morphAPI.build ( myTpl );
                 const result = templateFn ( data );
                 expect ( result ).to.be.equal ( 'My list: <ul><li>John</li><li>Milen - 25</li><li>Vladislav</li><li>Stoyan - 30</li></ul>.' )
-        }) // it Data deep levels
+        }) // it list - data deep object
 
 
 
-    it ( 'Data deep object', () => {
+    it ( 'Object - Data deep object', () => {
                 const myTpl = {
                                   template : `Profile: {{ me: ul , [], li, #, line }}.`
                                 , helpers: {
@@ -419,23 +419,52 @@ describe ( 'transformer: build', () => {
                                               , ul: `<ul>{{ text }}</ul>`
                                               , li: `<li>{{ name }} - {{stats}}</li>`
                                         }
-                                                
                         };
                 const data = {
                         me : {
                                   name: 'Peter'
                                 , stats : {
-                                          age: 50
-                                        , height: 180
-                                        , weight: 66
+                                                  age: 50
+                                                , height: 180
+                                                , weight: 66
                                         }
                             }
                         };
                 const templateFn = morphAPI.build ( myTpl );
                 const result = templateFn ( data );
                 expect ( result ).to.be.equal ( 'Profile: <ul><li>Peter - (180cm,66kg)</li></ul>.' )
-        }) // it Data deep object
+        }) // it object - data deep object
 
 
+
+     it ( 'Use extra renders: "+" ', () =>  {
+                let touch = false;
+                const myTpl = {
+                                  template : `Profile: {{ me: +line }}.`
+                                , helpers: {
+                                                line: ( x ) => {
+                                                                expect ( x ).to.have.property ( 'stats' )
+                                                                expect ( x ).to.have.property ( 'name' )
+                                                                const { height, weight } = x.stats;
+                                                                touch = true
+                                                                return `${x.name} - (${height}cm,${weight}kg)`
+                                                        } // line helper
+                                        } // helpers
+                        };
+                const data = {
+                        me : {
+                                  name: 'Peter'
+                                , stats : {
+                                                  age: 50
+                                                , height: 180
+                                                , weight: 66
+                                        }
+                            }
+                        };
+                const templateFn = morphAPI.build ( myTpl );
+                const result = templateFn ( data );
+                expect ( result ).to.be.equal ( 'Profile: Peter - (180cm,66kg).' )
+                expect ( touch ).to.be.true
+         }) // it use extra renders "+"
     
 }) // Describe
