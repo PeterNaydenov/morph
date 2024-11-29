@@ -76,12 +76,12 @@ import render            from './render.js'
                                                                 } // dataOnly
                                                         else {   // Data and Actions
                                                                         const 
-                                                                             { dataDeepLevel, nestedData } = (data==='@all' || data===null ) ? _defineData ( d ) : _defineData ( d[data] )
+                                                                             { dataDeepLevel, nestedData } = (data==='@all' || data===null || data==='@root' ) ? _defineData ( d ) : _defineData ( d[data] )
                                                                            , actSetup = _actionSupply ( _setupActions ( action, dataDeepLevel ), dataDeepLevel )
                                                                            ;
 
                                                                         for ( let step of actSetup ) {
-                                                                                        let { type, name, level } = step   // {level} is not in use
+                                                                                        let { type, name, level } = step
                                                                                         let 
                                                                                                   theData = nestedData[level]
                                                                                                 , dataType = _defineDataType ( theData )
