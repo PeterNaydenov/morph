@@ -55,7 +55,6 @@ import render            from './render.js'
                                                              { index, data, action } = holder
                                                            , dataOnly   = !action && data
                                                            ;
-                                                        let initialRound = true   // Take data from source? False - take it from buffer       
 
                                                         if ( dataOnly ) {
                                                                         const 
