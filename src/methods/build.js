@@ -20,14 +20,14 @@ import render            from './render.js'
                 }
         else {  // If no errors:
                         let cuts = structuredClone ( chop );
-                        // *** Template recognition complete. Start building the rendering function -->                        
+                        // *** Template recognition complete. Start building the rendering function -->
+
                         return function success ( d={} ) {
-                                        
                                         const 
                                              topLevelType = _defineDataType ( d )
                                            , endData = []
                                            ;
-
+                                        // Commands : raw, demo, handshake, placeholders
                                         if ( typeof d === 'string' ) {   // 'd' is a string when we want to debug the template
                                                    switch ( d ) {
                                                         case 'raw':
@@ -123,7 +123,7 @@ import render            from './render.js'
                                                                                                                         nestedData[level] = helpers[name]( theData )
                                                                                                                         break
                                                                                                                 } // switch dataType
-                                                                                                        initialRound = false
+                                                                                                        
                                                                                                         break
                                                                                                 case 'render':                                                                                                        
                                                                                                         const isRenderFunction = typeof helpers[name] === 'function';   // Render could be a function and template.
@@ -155,13 +155,12 @@ import render            from './render.js'
                                                                                                                         theData['text'] = render ( theData, name, helpers )
                                                                                                                         break
                                                                                                                 } // switch renderDataType 
-                                                                                                        initialRound = false
                                                                                                         break;
                                                                                                 case 'extendedRender':
                                                                                                         // TODO: Test extendedRender
                                                                                                         const isValid = typeof helpers[name] === 'function';   // Render could be a function and template.
                                                                                                         if ( isValid ) {
-                                                                                                                        nestedData[0] = helpers[name]( nestedData[0] )
+                                                                                                                        nestedData[level] = helpers[name]( nestedData[0] )
                                                                                                                 }
                                                                                                         else {
                                                                                                                         // TODO: Error...
@@ -186,7 +185,6 @@ import render            from './render.js'
                                                                                                                         } // switch dataType
                                                                                                             } // if name === ''
                                                                                                         else                 nestedData[level] = helpers[name]( theData )
-                                                                                                        initialRound = false
                                                                                                         break
                                                                                                 default:
                                                                                                         break
