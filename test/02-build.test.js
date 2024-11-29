@@ -152,9 +152,10 @@ describe ( 'transformer: build', () => {
 
 
 
-     it ( 'Use all data: @all', () => {   // *** Address full data to placeholder -> @all
+     it ( 'Use all data: @all, @root', () => {   // *** Address full data to placeholder -> @all
+                // Both are equivalent: @all === @root
                 const myTpl = {
-                                  template : `My name is {{ name }}. My web page is {{ @all : a, >morphWeb }}. Contact me on  {{ @all : a , >morphMail }}.`
+                                  template : `My name is {{ name }}. My web page is {{ @all : a, >morphWeb }}. Contact me on  {{ @root : a , >morphMail }}.`
                                 , helpers  : {
                                                 a : `<a href="{{link}}">{{text}}</a>`
                                                 , morphWeb : ( data ) => { 
@@ -233,6 +234,18 @@ describe ( 'transformer: build', () => {
                                         });
                 expect ( result ).to.be.equal ( 'My name is Peter.' )
         }) // it how to hide a placeholder
+
+
+
+     it ( 'Data as null or undefined', () => {
+        // If data is null or undefined, should return the template without any changes
+                const myTpl = {
+                                template : `My name is {{ name }}.{{ extraData}}`
+                        }
+                const templateFn = morphAPI.build ( myTpl );
+                const result = templateFn( null );
+                expect ( result ).to.be.equal ( myTpl.template )
+        }) // it data as null or undefined
 
 
 
@@ -395,6 +408,33 @@ describe ( 'transformer: build', () => {
                 const result = templateFn ( data );
                 expect ( result ).to.be.equal ( 'My list: <ul><li>John</li><li>Milen - 25</li><li>Vladislav</li><li>Stoyan - 30</li></ul>.' )
         }) // it Data deep levels
+
+
+
+    it ( 'Data deep levels 2', () => {
+                const myTpl = {
+                                  template : `Profile: {{ me: ul , [], li, #, [], line }}.`
+                                , helpers: {
+                                                line: `({{ height}}cm,{{ weight}}kg)`
+                                              , ul: `<ul>{{ text }}</ul>`
+                                              , li: `<li>{{ name }} - {{stats}}</li>`
+                                        }
+                                                
+                        };
+                const data = {
+                        me : {
+                                  name: 'Peter'
+                                , stats : {
+                                          age: 50
+                                        , height: 180
+                                        , weight: 66
+                                        }
+                            }
+                        };
+                const templateFn = morphAPI.build ( myTpl );
+                const result = templateFn ( data );
+                expect ( result ).to.be.equal ( 'Profile: <ul><li>Peter - (180cm,66kg)</li></ul>.' )
+        }) // it Data deep levels 2
 
 
     

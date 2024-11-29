@@ -8,6 +8,7 @@ import _defineDataType   from "./_defineType.js"
 import render            from './render.js'
 
 
+import walk from '@peter.naydenov/walk'
 
 
 
@@ -27,6 +28,7 @@ import render            from './render.js'
                                              topLevelType = _defineDataType ( d )
                                            , endData = []
                                            ;
+                                        if ( topLevelType === 'null' )   return cuts.join ( '' )
                                         // Commands : raw, demo, handshake, placeholders
                                         if ( typeof d === 'string' ) {   // 'd' is a string when we want to debug the template
                                                    switch ( d ) {
@@ -124,7 +126,8 @@ import render            from './render.js'
                                                                                                                 } // switch dataType
                                                                                                         
                                                                                                         break
-                                                                                                case 'render':                                                                                                        
+                                                                                                case 'render':    
+                                                                                                // console.log ( name )                                                                                                    
                                                                                                         const isRenderFunction = typeof helpers[name] === 'function';   // Render could be a function and template.
                                                                                                         switch ( dataType ) {
                                                                                                                 case 'array':
@@ -151,7 +154,9 @@ import render            from './render.js'
                                                                                                                         nestedData[level] = render ( theData, name, helpers )
                                                                                                                         break
                                                                                                                 case 'object':
-                                                                                                                        theData['text'] = render ( theData, name, helpers )
+                                                                                                                        let kTest = Object.keys ( theData ).find ( k => k.includes ( '/' )   );   // Check if keys are breadcrumbs
+                                                                                                                        if ( kTest )   Object.entries( theData ).forEach( ([k,v]) => v['text'] = render ( v, name, helpers )  )
+                                                                                                                        else           theData['text'] = render ( theData, name, helpers )
                                                                                                                         break
                                                                                                                 } // switch renderDataType 
                                                                                                         break;
@@ -168,9 +173,17 @@ import render            from './render.js'
                                                                                                 case 'mix':  
                                                                                                         if ( name === '' ) {   // when is anonymous mixing helper
                                                                                                                 switch ( dataType ) {
-                                                                                                                                case 'primitive':
-                                                                                                                                        break
                                                                                                                                 case 'object':
+                                                                                                                                        let kTest = Object.keys ( theData ).find ( k => k.includes ( '/' )   );   // Check if keys are breadcrumbs
+                                                                                                                                        if ( kTest ) Object.entries( theData ).forEach( ([k,v]) =>  nestedData[level][k] = v['text'] )
+                                                                                                                                        else         nestedData[level] = theData['text']
+                                                                                                                                        for ( let i=level-1; i >= 0; i-- ) {
+                                                                                                                                                    nestedData[i] = walk ({data:nestedData[i], objectCallback:check})
+                                                                                                                                                }
+                                                                                                                                        function check ({ value, breadcrumbs }) {
+                                                                                                                                                        if ( nestedData[level][breadcrumbs] )    return nestedData[level][breadcrumbs]
+                                                                                                                                                        return value
+                                                                                                                                                } // check
                                                                                                                                         break
                                                                                                                                 case 'array':
                                                                                                                                         nestedData[level] = theData.map ( x => {
