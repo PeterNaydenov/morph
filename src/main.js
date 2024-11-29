@@ -1,3 +1,16 @@
+/***
+ *   Morph (@peter.naydenov/morph)
+ * 
+ *   Text based template engine
+ * 
+ * 
+ *   History notes:
+ *   - Idea was born on October 28th, 2024.  
+ *   - Published on GitHub for first time: November 30th, 2024
+ * 
+ */
+
+
 import build from "./methods/build.js"
 
 

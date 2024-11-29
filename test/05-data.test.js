@@ -50,7 +50,9 @@ describe ( 'morph: Data', () => {
 
 
     it ( 'Conditional rendering with string literals', () => {
-      // TODO: Not finished. Need description and more reading
+      // Conditional rendering mean that helper rendering could be called 
+      // if data coresponds to some condition.
+      // Returning null means: do not render this data
                 const myTpl = {
                           template : "Hello, I'm {{ persons: []coma, ?web, hello }}"
                         , helpers  : {
@@ -59,15 +61,14 @@ describe ( 'morph: Data', () => {
                                                     if ( age < 28 )   return null
                                                     else              return `${name} - ${age} years old`
                                                 }
-                                                // filter is required to remove cancelled renders
-                                    , coma: (res) => res
-                                                        .filter ( x => x != null)
+                                      , coma: (res) => res                          // Coma is a mixing helper
+                                                        .filter ( x => x != null)   // filter is required to remove cancelled renders
                                                         .map ( x => x.text )
                                                         .join ( ', ' )
                                     , a : `<a href="{{href}}">{{text}}</a>`
                                     , web: ( d ) => {
-                                                    if ( d.href )  return 'a'
-                                                    else           return null
+                                                    if ( d.href )  return 'a'  // response 'a' means: render this data with helper 'a'
+                                                    else           return null // response 'null' in conditional render means: do not render
                                             }
                                 }
                     };

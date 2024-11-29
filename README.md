@@ -1,9 +1,14 @@
 # Morph (@peter.naydenov/morph)
-
-
 ***Template engine for JavaScript.***
 
-***Under heavy development!***
+![version](https://img.shields.io/github/package-json/v/peterNaydenov/morph)
+![license](https://img.shields.io/github/license/peterNaydenov/morph)
+![GitHub issues](https://img.shields.io/github/issues/peterNaydenov/morph)
+![GitHub top language](https://img.shields.io/github/languages/top/peterNaydenov/morph)
+![npm package minimized gzipped size (select exports)](https://img.shields.io/bundlejs/size/%40peter.naydenov%2Fmorph)
+
+`Very experimantal stage. Do not use in production.`
+
 
 
 ## General Information
