@@ -1,13 +1,11 @@
 # Morph (@peter.naydenov/morph)
-***Template engine for JavaScript.***
+**Experimental stage. Not tested well yet.**
 
 ![version](https://img.shields.io/github/package-json/v/peterNaydenov/morph)
 ![license](https://img.shields.io/github/license/peterNaydenov/morph)
 ![GitHub issues](https://img.shields.io/github/issues/peterNaydenov/morph)
 ![GitHub top language](https://img.shields.io/github/languages/top/peterNaydenov/morph)
 ![npm package minimized gzipped size (select exports)](https://img.shields.io/bundlejs/size/%40peter.naydenov%2Fmorph)
-
-`Very experimantal stage. Do not use in production.`
 
 
 
@@ -23,53 +21,25 @@ Some features of Morph:
 - Nesting templates as part of the action system;
 - Partial rendering (render only available data);
 - Option to connect templates to external data sources;
+- Post process plugin mechanism;
 
 
 
 
 
-## Placeholders
+## Installation
 
-Template placeholders can contain data-source and actions separated by ':'. Data-source is a field of the data object used for the placeholder. Actions describe how the data should be decorated. Action is a list of operations separated by comma. Result from the first action is going as a argument to the second and so on. Executetion of actions is from right to left. Actions are optional.
-
-```js
-`{{ name : act2, act1 }}`
-// placeholder should take data from field 'name', execute 'act1' and 'act2' over it
-// actions are separated by ',' and are executed from right to left
-
-`{{ list : li, a }}`
-// take data from 'list' and render each element first with 'a' then with 'li' actions
-
-`{{ name }}` // render data from 'name'. Only data is provided to this placeholder
-`{{ :someAction}}` // no data, but the result of the action will fill the placeholder
-`{{ @all : someAction }}` // provide to action all the data
+```
+npm install @peter.naydenov/morph
 ```
 
-
-
-## Actions
-
-Actions are concise representations of a sequence of function calls. Some functions pertain to `data` manipulation, others to `rendering`, and some to `mixing`. We use a prefix system for enhanced readability and maintainability.
-
-`Render` functions are most used so they don't have any prefix. Data functions start with '>'. Mixing functions start with '[]'.
-
-Here are some examples: 
+Morph can be used in browser and node.js.
 ```js
-`
-{{ : li }} // example for render actions
-{{ : >setup}} // example for data actions
-{{ friends : []coma }} // example for mixing action
-{{ list : ul, [], li, a}} // example with render and mixing actions
-`
-// NOTE: See that mixing function has no name after the prefix. 
-// Anonymous mixing is a build in function that will do -> resultList.join ( '' )
-// The data will be rendered with 'a', then with 'li'
-// then all 'li' elements will be merged and will be provided to 'ul'
+import morph from "@peter.naydenov/morph"
+// Morpho supports also require:
+// const morph = require("@peter.naydenov/morph")
 ```
 
-When input data is array, the result will be an array. Result for each element will stay separated until come the mixing function.
-
-Learn more about how actions work in the section 'helper functions' below.
 
 
 
@@ -162,4 +132,76 @@ const myTemplateDescription = {
 }
 ```
 Functions will be discussed in details in next documentation section - 'Helper Functions'.
+
+
+
+
+
+## Placeholders
+
+Template placeholders can contain data-source and actions separated by ':'. Data-source is a field of the data object used for the placeholder. Actions describe how the data should be decorated. Action is a list of operations separated by comma. Result from the first action is going as a argument to the second and so on. Executetion of actions is from right to left. Actions are optional.
+
+```js
+`{{ name : act2, act1 }}`
+// placeholder should take data from field 'name', execute 'act1' and 'act2' over it
+// actions are separated by ',' and are executed from right to left
+
+`{{ list : li, a }}`
+// take data from 'list' and render each element first with 'a' then with 'li' actions
+
+`{{ name }}` // render data from 'name'. Only data is provided to this placeholder
+`{{ :someAction}}` // no data, but the result of the action will fill the placeholder
+`{{ @all : someAction }}` // provide all the data to the action 'someAction'
+```
+
+
+
+## Actions
+
+Actions are concise representations of a sequence of function calls. Some functions pertain to `data` manipulation, others to `rendering`, and some to `mixing`. We use a prefix system for enhanced readability and maintainability.
+
+- `Render` functions are most used so they don't have any prefix;
+- `Data` functions start with '>';
+- `Mixing` functions start with '[]';
+- `Conditional render` actions start with '?:';
+- `Extended render` start with '+';
+
+Here are some examples: 
+```js
+`
+{{ : li }} // example for render actions
+{{ : >setup}} // example for data actions
+{{ friends : []coma }} // example for mixing action
+{{ list : ul, [], li, a}} // example with render and mixing actions
+`
+// NOTE: See that mixing function has no name after the prefix. 
+// Anonymous mixing is a build in function that will do -> resultList.join ( '' )
+// The data will be rendered with 'a', then with 'li'
+// then all 'li' elements will be merged and will be provided to 'ul'
+```
+
+When input data is array, the result will be an array. Result for each element will stay separated until come the mixing function.
+
+Learn more about how actions work in the section 'helper functions' below.
+
+
+
+
+
+
+## Links
+- [Release history](Changelog.md)
+- [ Migration guide ](https://github.com/PeterNaydenov/morph/blob/master/Migration.guide.md)
+
+
+
+## Credits
+'@peter.naydenov/morph' was created and supported by Peter Naydenov.
+
+## License
+'@peter.naydenov/morph' is released under the MIT License.
+
+
+
+
 
