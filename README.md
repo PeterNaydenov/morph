@@ -53,15 +53,15 @@ const myTemplateDescription = {
                  template: `Hello, {{name}}!` // simple template - a string with a placeholder
             }
 const myTemplate = morph.build ( myTemplateDescription ); // myTemplate is a render function
-const htmlBlock = myTemplate ( { name: 'Peter' } )
+const htmlBlock = myTemplate ( { name: 'Peter' } )        // Provide data to the render function and get the result
 // htmlBlock === 'Hello, Peter!'
 ```
 
 Morph contains also a builtin template storage. Instead of creating variable for each template, we can use the storage.
 
 ```js
-morph.add ( 'myTemplate', morph.build ( myTemplateDescription )) // add template to the storage
-const htmlBlock = morph.get ( 'myTemplate' )({ name: 'Peter' })
+morph.add ( 'myTemplate', myTemplateDescription ) // add template to the storage. Automatically builds the render function
+const htmlBlock = morph.get ( 'myTemplate' )({ name: 'Peter' }) // get template from the storage and render it
 ```
 
 Let's see a more complex example before we go into details:
@@ -131,7 +131,7 @@ const myTemplateDescription = {
             }
 }
 ```
-Functions will be discussed in details in next documentation section - 'Helper Functions'.
+Helpers will be discussed in details in next documentation section - 'Helper Functions'.
 
 
 
@@ -163,7 +163,7 @@ Actions are concise representations of a sequence of function calls. Some functi
 - `Render` functions are most used so they don't have any prefix;
 - `Data` functions start with '>';
 - `Mixing` functions start with '[]';
-- `Conditional render` actions start with '?:';
+- `Conditional render` actions start with '?';
 - `Extended render` start with '+';
 
 Here are some examples: 
