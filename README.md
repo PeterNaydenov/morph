@@ -96,17 +96,19 @@ const htmlBlock = myTemplate ( { person: {
 ## Methods
 
 ```js
- build   : 'Build a component from template description'
-, get    : 'Get a component from component storage'
-, add    : 'Add a component to component storage'
-, list   : 'List all components in component storage'
-, clear  : 'Clear all templates in component storage'
-, remove : 'Remove a template from component storage'
+  build   : 'Build a component from template description'
+, get     : 'Get a component from component storage'
+, add     : 'Add a component to component storage'
+, list    : 'List all components in component storage'
+, clear   : 'Clear all templates in component storage'
+, remove  : 'Remove a template from component storage'
 ```
 
 
 
-## Template structure
+
+
+## Template Description Structure
 Templates are objects with tree properties: `template`, `helpers`, and `handshake`:
 ```js
 const myTemplateDescription = {
