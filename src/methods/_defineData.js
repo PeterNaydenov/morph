@@ -6,7 +6,7 @@ function _defineData ( d ) {
     const nestedData = {};
     let dataDeepLevel = 0;
 
-    
+    if ( d instanceof Function )   return {  dataDeepLevel:0, nestedData:[d()] }
     if ( d == null             )   return {  dataDeepLevel:0, nestedData:[ null ] }
     if ( typeof d === 'string' )   return {  dataDeepLevel:0, nestedData:[d] }
     

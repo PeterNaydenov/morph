@@ -86,5 +86,83 @@ describe ( 'morph: Data', () => {
 
 
 
+    it ( 'Post process functions', () => {
+                const myTpl = {
+                              template : `The template:`
+                          }
+                const
+                      post1 = ( data ) => `${data} >post1`
+                    , post2 = ( data ) => `${data} >post2`
+                    , post3 = ( data ) => `${data} >post3`
+                    ;
+                const templateFn = morph.build ( myTpl );
+                const result = templateFn ( {}, post1, post2, post3 );
+                expect ( result ).to.be.equal ( `The template: >post1 >post2 >post3` )
+        }) // it post process functions
+
+
+
+    it ( 'Read data from external state', () => {
+                const state = {
+                                name: 'Robert'
+                              , age: 30
+                              , job: 'software developer'
+                              }
+                const myTpl = {
+                            template : `Hello from {{ :name }}. I'm {{ :age }} years old {{ :job }}`
+                            , helpers : {
+                                          name: ( data ) => state.name
+                                        , age: ( data ) => state.age
+                                        , job: ( data ) => state.job
+                                  }
+                          }
+                const templateFn = morph.build ( myTpl );
+                const result = templateFn();
+                expect ( result ).to.be.equal ( `Hello from Robert. I'm 30 years old software developer` )
+        }) // it read data from external state
+
+
+
+    it ( 'Function arguments - data only', () => {
+                const state = {
+                                name: 'Robert'
+                              , age: 30
+                              , job: 'software developer'
+                              }
+                const myTpl = {
+                            template : `Hello from {{ name }}. I'm {{ age }} years old {{ job }}`
+                          }
+                const templateFn = morph.build ( myTpl );
+                const result = templateFn({
+                                        name: () => state.name
+                                      , age: () => state.age
+                                      , job: () => state.job
+                                    });
+                expect ( result ).to.be.equal ( `Hello from Robert. I'm 30 years old software developer` )
+        }) // it function arguments - data only
+
+
+
+    it ( 'Function arguments with actions', () => {
+                const state = {
+                                name: 'Robert'
+                              , age: 30
+                              , job: 'software developer'
+                              }
+                const myTpl = {
+                              template : `Hello from {{ name }}. I'm {{ age: extraAge }} years old {{ job }}`
+                            , helpers  : {
+                                            extraAge: ( data ) => data+3
+                                        }
+                            }
+                const templateFn = morph.build ( myTpl );
+                const result = templateFn({
+                                        name: () => state.name
+                                      , age: () => state.age
+                                      , job: () => state.job
+                                    });
+                expect ( result ).to.be.equal ( `Hello from Robert. I'm 33 years old software developer` )
+        }) // it function arguments with actions
+
         
 }) // describe

@@ -23,7 +23,7 @@ import walk from '@peter.naydenov/walk'
                         let cuts = structuredClone ( chop );
                         // *** Template recognition complete. Start building the rendering function -->
 
-                        return function success ( d={} ) {
+                        return function success ( d={}, ...args ) {
                                         const 
                                              topLevelType = _defineDataType ( d )
                                            , endData = []
@@ -62,8 +62,11 @@ import walk from '@peter.naydenov/walk'
                                                                         const 
                                                                              info = d[data]
                                                                            , type = _defineDataType ( info )
-                                                                           ;
+                                                                           ;                                                                            
                                                                         switch ( type ) {
+                                                                                case 'function' : 
+                                                                                        cuts[index] = info ()
+                                                                                        return
                                                                                 case 'primitive':
                                                                                         cuts[index] = info
                                                                                         return
@@ -87,7 +90,6 @@ import walk from '@peter.naydenov/walk'
                                                                                                   theData = nestedData[level]
                                                                                                 , dataType = _defineDataType ( theData )
                                                                                                 ;
-                                                                                        
                                                                                         switch ( type ) {   // Action type 'route','data', 'render', or mix -> different operations
                                                                                                 case 'route':
                                                                                                         switch ( dataType ) {
@@ -112,13 +114,13 @@ import walk from '@peter.naydenov/walk'
                                                                                                 case 'data':                                                                                                        
                                                                                                         switch ( dataType ) {
                                                                                                                 case 'array':
-                                                                                                                        theData.forEach ( (d,i) => theData[i] = helpers[name]( d ) )                                                                                                                        
+                                                                                                                        theData.forEach ( (d,i) => theData[i] = ( d instanceof Function ) ? helpers[name]( d() ) : helpers[name]( d ) )
                                                                                                                         break
                                                                                                                 case 'object':
                                                                                                                         nestedData[level] = helpers[name]( theData )
                                                                                                                         break
                                                                                                                 case 'function':
-                                                                                                                        nestedData[level] = theData ()
+                                                                                                                        nestedData[level] = helpers[name]( theData() )
                                                                                                                         break
                                                                                                                 case 'primitive':
                                                                                                                         nestedData[level] = helpers[name]( theData )
@@ -126,7 +128,7 @@ import walk from '@peter.naydenov/walk'
                                                                                                                 } // switch dataType
                                                                                                         
                                                                                                         break
-                                                                                                case 'render':    
+                                                                                                case 'render':
                                                                                                         const isRenderFunction = typeof helpers[name] === 'function';   // Render could be a function and template.
                                                                                                         switch ( dataType ) {
                                                                                                                 case 'array':
@@ -148,7 +150,7 @@ import walk from '@peter.naydenov/walk'
                                                                                                                                                                 if ( dType === 'object' ) d['text']  = text
                                                                                                                                                                 else                      theData[i] = text
                                                                                                                                                         }) 
-                                                                                                                        break
+                                                                                                                        break                                                                                                        
                                                                                                                 case 'primitive':
                                                                                                                         nestedData[level] = render ( theData, name, helpers )
                                                                                                                         break
@@ -221,8 +223,11 @@ import walk from '@peter.naydenov/walk'
                                                 }) // forEach placeholders
                                         endData.push ( cuts.join ( '' ))
                                         }) // forEach d
+
                                         if ( topLevelType === 'array' )  return endData
-                                        return                           endData.join ('')
+                                        if (args)   return args.reduce ( (acc, fn) => fn ( acc ), endData.join ( '' )  )
+                                        else        return endData.join ( '' )
+
                                 } // success func.
                 }
 } // build func.
