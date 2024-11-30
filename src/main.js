@@ -37,10 +37,12 @@ function get ( prop, strName='default' ) {
 
 function add ( name, tplfn, strName='default' ) {
     let fn = tplfn;
+    let successBuild = true;
     if( !storage[strName] )   storage[strName] = {}
-    if ( typeof tplfn !== 'function' ) fn = build ( tplfn );
-    if ( fn.name === 'success' )       storage[strName][name] = fn
-    else                               console.error ( `Error: Template "${name}" looks broken and is not added to storage.` )
+    if ( typeof tplfn !== 'function' )  [ successBuild, fn ] = build ( tplfn, true )
+        
+    if ( successBuild )   storage[strName][name] = fn
+    else                  console.error ( `Error: Template "${name}" looks broken and is not added to storage.` )
 } // add func.
 
 

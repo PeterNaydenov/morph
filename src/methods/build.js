@@ -12,18 +12,17 @@ import walk from '@peter.naydenov/walk'
 
 
 
- function build  ( tpl ) {
+ function build  ( tpl, extra=false ) {
         const { hasError, placeholders, chop, helpers, handshake } = _readTemplate ( tpl );
         if ( hasError ) {
-                        return function fail () {
-                                        return hasError
-                                }
+                        function fail () { return hasError }
+                        return extra ? [ false, fail ] : fail
                 }
-        else {  // If no errors:
+        else {  // If NO Error:
                         let cuts = structuredClone ( chop );
                         // *** Template recognition complete. Start building the rendering function -->
 
-                        return function success ( d={}, ...args ) {
+                        function success ( d={}, ...args ) {
                                         const 
                                              topLevelType = _defineDataType ( d )
                                            , endData = []
@@ -229,7 +228,9 @@ import walk from '@peter.naydenov/walk'
                                         else        return endData.join ( '' )
 
                                 } // success func.
+                        return extra ? [ true, success ] : success
                 }
+        
 } // build func.
 
 
