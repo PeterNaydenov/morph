@@ -60,8 +60,10 @@ const htmlBlock = myTemplate ( { name: 'Peter' } )        // Provide data to the
 Morph contains also a builtin template storage. Instead of creating variable for each template, we can use the storage.
 
 ```js
-morph.add ( 'myTemplate', myTemplateDescription ) // add template to the storage. Automatically builds the render function
-const htmlBlock = morph.get ( 'myTemplate' )({ name: 'Peter' }) // get template from the storage and render it
+// add template to the storage. Automatically builds the render function
+morph.add ( 'myTemplate', myTemplateDescription ) 
+// get template from the storage and render it
+const htmlBlock = morph.get ( 'myTemplate' )({ name: 'Peter' }) 
 ```
 
 Let's see a more complex example before we go into details:
@@ -99,8 +101,8 @@ const htmlBlock = myTemplate ( { person: {
   build   : 'Build a component from template description'
 , get     : 'Get a component from component storage'
 , add     : 'Add a component to component storage'
-, list    : 'List all components in component storage'
-, clear   : 'Clear all templates in component storage'
+, list    : 'List the names of all components in the component storage'
+, clear   : 'Clear up all the components in the storage'
 , remove  : 'Remove a template from component storage'
 ```
 
