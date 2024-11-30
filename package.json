@@ -1,7 +1,7 @@
 {
     "name": "@peter.naydenov/morph",
     "description": "Template engine",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "license": "MIT",
     "author": "Peter Naydenov",
     "main": "./dist/morph.umd.js",
@@ -22,9 +22,9 @@
         "build": "rollup -c"
     },
     "dependencies": {
-            "@peter.naydenov/stack": "^3.0.0",
-            "@peter.naydenov/walk": "^5.0.0"
-        },
+        "@peter.naydenov/stack": "^3.0.0",
+        "@peter.naydenov/walk": "^5.0.0"
+    },
     "devDependencies": {
         "@rollup/plugin-commonjs": "^28.0.0",
         "@rollup/plugin-node-resolve": "^15.3.0",
@@ -57,5 +57,4 @@
         "string",
         "function"
     ]
-    
 }
