@@ -36,7 +36,7 @@ npm install @peter.naydenov/morph
 Morph can be used in browser and node.js.
 ```js
 import morph from "@peter.naydenov/morph"
-// Morpho supports also require:
+// Morph supports also require:
 // const morph = require("@peter.naydenov/morph")
 ```
 
