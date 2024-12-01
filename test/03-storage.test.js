@@ -75,4 +75,44 @@ describe ( 'morph: storage', () => {
             expect ( list[0] ).to.be.equal ( 'myName' )
        }) // it add template definition to custom storage
 
+
+
+    it ( 'Remove component from storage', () => {
+            morph.clear ()
+            const myTpl = { template: `My name is {{ name }}.` };
+            morph.add ( 'myTpl', myTpl );
+            const list = morph.list ();
+            expect ( list ).to.have.length ( 1 )
+            morph.remove ( 'myTpl' );
+            const result = morph.list ();
+            expect ( result ).to.have.length ( 0 )
+        }) // it remove component from storage
+
+
+    it ( 'Try to get non existing storage/template', () => {
+            morph.clear ()
+            const fn = morph.get ( 'myTpl', 'extraStorage' );
+            expect ( fn() ).to.be.equal ( 'Error: Storage "extraStorage" does not exist.' )
+            const fn2 = morph.get ( 'myTpl' );
+            expect ( fn2() ).to.be.equal ( 'Error: Template "myTpl" does not exist in storage "default".' )
+        }) // it try to get non existing storage/template
+
+
+
+    it ( 'Remove from storage component that does not exist', () => {
+            morph.clear ()
+            let result = morph.remove ( 'myTpl', 'extraStorage' );
+            expect ( result ).to.be.equal ( 'Error: Storage "extraStorage" does not exist.' )
+            let result2 = morph.remove ( 'myTpl' )
+            expect ( result2 ).to.be.equal ( 'Error: Template "myTpl" does not exist in storage "default".' )
+        }) // it remove from storage component that does not exist
+
+
+
+    it ( 'list a non existing storage', () => {
+            morph.clear ()
+            const list = morph.list ( 'extraStorage' );
+            expect ( list ).to.have.length ( 0 )
+        })
+
 }) // describe
