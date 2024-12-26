@@ -15,11 +15,26 @@ import build from "./methods/build.js"
 
 
 
-const storage = { default: {}};
+const storage = ( () => ({default: {}}) ) ();
 
 
 
-function get ( prop, strName='default' ) {
+
+
+
+/**
+ *   Get a template from a storage.
+ * 
+ *   @param {string[]} location - The location of the template. Array of two elements.
+ *                             The first element is the name of the template. The second element
+ *                             is optional and is the name of the storage. Defaults to 'default'.
+ * 
+ *   @returns {function } The template (a render function) if it exists in the storage.
+ *                             An function that returns an error message if 
+ *                             either the storage or template does not exist.
+ */
+function get ( location ) {
+    const [prop, strName='default'] = location;
     if ( !storage[strName] ) {
             return function () {
                   return `Error: Storage "${strName}" does not exist.`
@@ -35,11 +50,32 @@ function get ( prop, strName='default' ) {
 
 
 
-function add ( name, tplfn, strName='default' ) {
+
+
+
+
+/**
+ *   Add a template to a storage.
+ * 
+ *   If the template is already a function, it is added to the storage.
+ *   If the template is a template description (an object), it is built and
+ *   added to the storage.
+ *   If the template is broken, an error message is printed in the console
+ *   and the template is not added to the storage.
+ * 
+ *   @param {string[]} location - The location to add the template to. Array of two elements.
+ *                             The first element is the name of the template. The second element
+ *                             is optional and is the name of the storage. Defaults to 'default'.
+ *   @param {object|function} tplfn - The template description or the already built template function.
+ *   @param {...any} args - Additional arguments to be passed to the build function.
+ *                           Only used if the first argument is a template description.
+ */
+function add ( location, tplfn, ...args ) {
+    const [ name, strName='default'] = location
     let fn = tplfn;
     let successBuild = true;
     if( !storage[strName] )   storage[strName] = {}
-    if ( typeof tplfn !== 'function' )  [ successBuild, fn ] = build ( tplfn, true )
+    if ( typeof tplfn !== 'function' )  [ successBuild, fn ] = build ( tplfn, true, ...args )
         
     if ( successBuild )   storage[strName][name] = fn
     else                  console.error ( `Error: Template "${name}" looks broken and is not added to storage.` )
@@ -47,13 +83,27 @@ function add ( name, tplfn, strName='default' ) {
 
 
 
-function list ( strName='default' ) {
-    if ( !storage[strName] )   return []
-    return Object.keys ( storage[strName] )  
+/**
+ *   Returns an array of all the names of all the templates in the given storages.
+ * 
+ *   @param {string[]} [storageNames=['default']] - The names of the storages to retrieve template names from.
+ * 
+ *   @returns {string[]} An array of all the template names in the given storages.
+ */
+function list ( storageNames=['default'] ) {
+    let r = storageNames.map ( strName => {
+                        if ( !storage[strName] ) return []
+                        else                     return Object.keys ( storage[strName])
+                }) 
+    return r.flat ()
 } // list func. 
 
 
 
+/**
+ * Clears all templates from the storages.
+ * This function deletes all storages. Storage 'default' will be reset to an empty object.
+ */
 function clear ( ) {
     const keys = Object.keys ( storage )
     keys.forEach ( key => {
@@ -64,7 +114,18 @@ function clear ( ) {
 
 
 
-function remove ( name, strName='default' ) {
+
+/**
+ *   Removes a template from the storage.
+ * 
+ *   @param {string[]} location - The location to remove the template from. Array of two elements.
+ *                             The first element is the name of the template. The second element
+ *                             is optional and is the name of the storage. Defaults to 'default'.
+ * 
+ *   @returns {void|string} An error message if the storage or template does not exist.
+ */
+function remove ( location ) {
+    const [name, strName='default'] = location;
     if ( !storage[strName]       )   return `Error: Storage "${strName}" does not exist.`
     if ( !storage[strName][name] )   return `Error: Template "${name}" does not exist in storage "${strName}".`
     delete storage[strName][name]

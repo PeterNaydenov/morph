@@ -96,7 +96,8 @@ describe ( 'morph: Data', () => {
                     , post3 = ( data ) => `${data} >post3`
                     ;
                 const templateFn = morph.build ( myTpl );
-                const result = templateFn ( {}, post1, post2, post3 );
+                // TemplateFn arguments are: data, dependencies, ...postProcessFunctions
+                const result = templateFn ( {}, {}, post1, post2, post3 );
                 expect ( result ).to.be.equal ( `The template: >post1 >post2 >post3` )
         }) // it post process functions
 

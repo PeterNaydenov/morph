@@ -12,7 +12,7 @@ import walk from '@peter.naydenov/walk'
 
 
 
- function build  ( tpl, extra=false ) {
+ function build  ( tpl, extra=false, buildDependencies ) {
         const { hasError, placeholders, chop, helpers, handshake } = _readTemplate ( tpl );
         if ( hasError ) {
                         function fail () { return hasError }
@@ -22,7 +22,23 @@ import walk from '@peter.naydenov/walk'
                         let cuts = structuredClone ( chop );
                         // *** Template recognition complete. Start building the rendering function -->
 
-                        function success ( d={}, ...args ) {
+                        /**
+                         * Function to render a template with data. 
+                         * @param {Object} [d={}] - The data to render with. If string, it's a command. 
+                         * @param {Object} [dependencies={}] - The dependencies to use for the rendering.
+                         * @param  {...any} args - The postprocessing functions to apply to the result.
+                         * @returns {string|string[]} The rendered template.
+                         * @description
+                         *      If 'd' is a string, it's a command. The available commands are:
+                         *      - 'raw' - returns the original template with placeholders
+                         *      - 'demo' - renders the template with the handshake data
+                         *      - 'handshake' - returns a copy of the handshake data
+                         *      - 'placeholders' - returns the placeholders as a comma separated string
+                         *      If 'd' is an object, it's the data to render with. If it's an array, it's an array of objects to render with.
+                         *      The function returns the rendered template.
+                         *      If 'args' are provided, they are applied to the result in order.
+                         */
+                        function success ( d={}, dependencies={}, ...args ) {
                                         const 
                                              topLevelType = _defineDataType ( d )
                                            , endData = []
@@ -98,15 +114,15 @@ import walk from '@peter.naydenov/walk'
                                                                                                                                                 const dType = _defineDataType ( d )
                                                                                                                                                 const routeName = helpers[name]( d );
                                                                                                                                                 if ( routeName == null )  return
-                                                                                                                                                if ( dType === 'object' ) theData[i]['text'] = render ( d, routeName, helpers )
-                                                                                                                                                else                      theData[i]         = render ( d, routeName, helpers )
+                                                                                                                                                if ( dType === 'object' ) theData[i]['text'] = render ( d, routeName, helpers, {...buildDependencies, ...dependencies} )
+                                                                                                                                                else                      theData[i]         = render ( d, routeName, helpers, {...buildDependencies, ...dependencies} )
                                                                                                                                         })
                                                                                                                                 break
                                                                                                                         case 'object':
-                                                                                                                                theData['text'] = render ( theData, routeName, helpers )
+                                                                                                                                theData['text'] = render ( theData, name, helpers, {...buildDependencies, ...dependencies} )
                                                                                                                                 break
                                                                                                                         case 'primitive':
-                                                                                                                                nestedData[level] = render ( theData, routeName, helpers )
+                                                                                                                                nestedData[level] = render ( theData, name, helpers, {...buildDependencies, ...dependencies} )
                                                                                                                                 break
                                                                                                                 }
                                                                                                         break        
@@ -143,7 +159,7 @@ import walk from '@peter.naydenov/walk'
                                                                                                                                                                 if ( d == null ) return
                                                                                                                                                                 const 
                                                                                                                                                                        dType = _defineDataType ( d )
-                                                                                                                                                                     , text = render ( d, name, helpers )
+                                                                                                                                                                     , text = render ( d, name, helpers, {...buildDependencies, ...dependencies} )
                                                                                                                                                                      ;
                                                                                                                                                                 if ( text == null ) theData[i] = null
                                                                                                                                                                 if ( dType === 'object' ) d['text']  = text
@@ -151,12 +167,12 @@ import walk from '@peter.naydenov/walk'
                                                                                                                                                         }) 
                                                                                                                         break                                                                                                        
                                                                                                                 case 'primitive':
-                                                                                                                        nestedData[level] = render ( theData, name, helpers )
+                                                                                                                        nestedData[level] = render ( theData, name, helpers, {...buildDependencies, ...dependencies} )
                                                                                                                         break
                                                                                                                 case 'object':
                                                                                                                         let kTest = Object.keys ( theData ).find ( k => k.includes ( '/' )   );   // Check if keys are breadcrumbs
-                                                                                                                        if ( kTest )   Object.entries( theData ).forEach( ([k,v]) => v['text'] = render ( v, name, helpers )  )
-                                                                                                                        else           theData['text'] = render ( theData, name, helpers )
+                                                                                                                        if ( kTest )   Object.entries( theData ).forEach( ([k,v]) => v['text'] = render ( v, name, helpers, {...buildDependencies, ...dependencies} )  )
+                                                                                                                        else           theData['text'] = render ( theData, name, helpers, {...buildDependencies, ...dependencies} )
                                                                                                                         break
                                                                                                                 } // switch renderDataType 
                                                                                                         break;
@@ -224,7 +240,11 @@ import walk from '@peter.naydenov/walk'
                                         }) // forEach d
 
                                         if ( topLevelType === 'array' )  return endData
-                                        if (args)   return args.reduce ( (acc, fn) => fn ( acc ), endData.join ( '' )  )
+                                        // Execute postprocess functions
+                                        if (args)   return args.reduce ( (acc, fn) => {
+                                                                                if ( typeof fn !== 'function' )  return acc
+                                                                                return fn ( acc, {...buildDependencies,...dependencies} )
+                                                                        }, endData.join ( '' )  )
                                         else        return endData.join ( '' )
 
                                 } // success func.

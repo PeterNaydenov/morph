@@ -4,13 +4,13 @@
     "version": "0.0.4",
     "license": "MIT",
     "author": "Peter Naydenov",
-    "main": "./dist/morph.umd.js",
+    "main": ".src/main.js",
     "type": "module",
     "exports": {
         ".": {
-            "import": "./dist/morph.esm.mjs",
+            "import": "./src/main.js",
             "require": "./dist/morph.cjs",
-            "default": "./dist/morph.umd.js"
+            "default": "./src/main.js"
         },
         "./package.json": "./package.json",
         "./dist/*": "./dist/*",
