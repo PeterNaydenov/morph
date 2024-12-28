@@ -2,17 +2,17 @@ import _renderHolder from "./_renderHolder.js"
 
 
 
-        /**
-         * 
-         *  Execute rendering and return the results
-         * 
-         * @param {object|string} theData - Data to be rendered. If it's a string, it's the value of 'text' property.
-         * @param {string} name - Name of the render to be executed.
-         * @param {object} helpers - Object with helper functions or templates.
-         * @param {...any} args - Extra arguments to be passed to the render function.
-         * 
-         * @returns {string} - Rendered string.
-         */
+/**
+ * 
+ *  Execute rendering and return the results
+ * 
+ * @param {object|string} theData - Data to be rendered. If it's a string, it's the value of 'text' property.
+ * @param {string} name - Name of the render to be executed.
+ * @param {object} helpers - Object with helper functions or templates.
+ * @param {...any} args - Extra arguments to be passed to the render function.
+ * 
+ * @returns {string} - Rendered string.
+ */
 function render ( theData, name, helpers, ...args ) {
 // *** Executes rendering and return the results
                 if ( theData instanceof Object ) {   // Make sure all properties are not objects

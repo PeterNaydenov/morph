@@ -7,6 +7,7 @@
  *   History notes:
  *   - Idea was born on October 28th, 2024.  
  *   - Published on GitHub for first time: November 30th, 2024
+ *   - Version 1.0.0: December 28st, 2024
  * 
  */
 
@@ -75,8 +76,11 @@ function add ( location, tplfn, ...args ) {
     let fn = tplfn;
     let successBuild = true;
     if( !storage[strName] )   storage[strName] = {}
-    if ( typeof tplfn !== 'function' )  [ successBuild, fn ] = build ( tplfn, true, ...args )
-        
+    if ( typeof tplfn !== 'function' ) { 
+                let r = build ( tplfn, true, ...args )
+                successBuild = r[0]
+                fn = r[1]
+        }
     if ( successBuild )   storage[strName][name] = fn
     else                  console.error ( `Error: Template "${name}" looks broken and is not added to storage.` )
 } // add func.
@@ -84,11 +88,11 @@ function add ( location, tplfn, ...args ) {
 
 
 /**
- *   Returns an array of all the names of all the templates in the given storages.
+ *   Returns an array of all the names of the templates in the given storages.
+ *   No arguments - will return the list of templates in the 'default' storage.
  * 
- *   @param {string[]} [storageNames=['default']] - The names of the storages to retrieve template names from.
- * 
- *   @returns {string[]} An array of all the template names in the given storages.
+ *   @param {string[]} [storageNames=['default']] - The names of the storages to retrieve template names from;
+ *   @returns {string[]} An array of all the template names in the given storages;
  */
 function list ( storageNames=['default'] ) {
     let r = storageNames.map ( strName => {
@@ -132,21 +136,8 @@ function remove ( location ) {
 } // remove func.
 
 
-
+//  Engine API
 const morphAPI = {
-                //  Engine API
-                /**
-                 *  
-                 *  build - 
-                 *  add - register a component to component storage
-                 *  get - get a component from component storage
-                 *  list - list all components in component storage
-                 *  clear - clear all templates in component storage
-                 *  remove - remove a template from component storage
-                 *  
-                 *  shine - extra step to remove all non used placeholders and <rs> tags
-                 * 
-                 */
                   build   // build a component from template description
                 , get     // get a component from component storage
                 , add     // add a component to component storage
@@ -155,8 +146,7 @@ const morphAPI = {
                 , remove  // remove a template from component storage
 } // morphAPI
 
-// TODO: How to change render templates on condition?
-// - Use compiled versions of simile templates
+
 
 export default morphAPI
 

@@ -10,9 +10,22 @@ import render            from './render.js'
 
 import walk from '@peter.naydenov/walk'
 
+/**
+ * @typedef {Object} Template
+ * @property {string} template - Data to be rendered;
+ * @property {object} [helpers] - Optional. Object with helper functions or simple templates for this template; 
+ * @property {object} [handshake] - Optional. Example for data to be rendered with;
+ */
 
 
- function build  ( tpl, extra=false, buildDependencies ) {
+/**
+ * 
+ * @param {Template} tpl - template definition;
+ * @param {boolean} [extra] - Optional. How to receive the answer - faslse:as a string(answer) or tuple[success, answer];
+ * @param {object} [buildDependencies] - Optional. External dependencies injected;
+ * @returns {function} - rendering function
+ */
+function build  ( tpl, extra=false, buildDependencies={} ) {
         const { hasError, placeholders, chop, helpers, handshake } = _readTemplate ( tpl );
         if ( hasError ) {
                         function fail () { return hasError }

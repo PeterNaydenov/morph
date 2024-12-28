@@ -52,8 +52,8 @@ import morph from "@peter.naydenov/morph"
 const myTemplateDescription = {
                  template: `Hello, {{name}}!` // simple template - a string with a placeholder
             }
-const myTemplate = morph.build ( myTemplateDescription ); // myTemplate is a render function
-const htmlBlock = myTemplate ( { name: 'Peter' } )        // Provide data to the render function and get the result
+const myTemplate = morph.build ( myTemplateDescription );  // myTemplate is a render function
+const htmlBlock = myTemplate ( { name: 'Peter' } )           // Provide data to the render function and get the result
 // htmlBlock === 'Hello, Peter!'
 ```
 
@@ -61,9 +61,10 @@ Morph contains also a builtin template storage. Instead of creating variable for
 
 ```js
 // add template to the storage. Automatically builds the render function
-morph.add ( 'myTemplate', myTemplateDescription ) 
+// Array of two elements. 0 - template name, 1 - optional. Storage name. Defaults to 'default'
+morph.add ( ['myTemplate'], myTemplateDescription ) 
 // get template from the storage and render it
-const htmlBlock = morph.get ( 'myTemplate' )({ name: 'Peter' }) 
+const htmlBlock = morph.get ( ['myTemplate'] )({ name: 'Peter' }) 
 ```
 
 Let's see a more complex example before we go into details:
