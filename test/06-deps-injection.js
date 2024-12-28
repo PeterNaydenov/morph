@@ -1,0 +1,130 @@
+import morph from '../src/main.js'
+import { expect } from 'chai'
+
+
+
+describe ( 'morph: Dependencies injection', () => {
+
+it ( 'During definition of template', () => {
+        function external () {
+                    return 'Peter'
+            }
+
+        const myTpl = {
+                    template: `My name is {{ : hello }}.`
+                    , helpers: { 
+                            hello: external
+                        }
+                }
+        let fn =morph.build ( myTpl )
+        let result = fn ()
+        expect ( result ).to.be.equal ( 'My name is Peter.' )
+}) // it During definition of template
+
+
+
+it ('During build()' , () => {
+        function external () {
+                return 'Peter'
+            }
+
+        const myTpl = {
+                    template: `My name is {{ : hello }}.`
+                    , helpers: { 
+                            hello: ( data, deps ) => deps.ex()
+                        }
+                }
+        let fn =morph.build ( myTpl, false, { ex : external })
+        let result = fn ()
+        expect ( result ).to.be.equal ( 'My name is Peter.' )
+}) // it During build
+
+
+
+it ( 'During add()', () => {    
+            function external () {
+                    return 'Peter'
+                }
+
+            const myTpl = {
+                        template: `My name is {{ : hello }}.`
+                        , helpers: { 
+                                hello: ( data, deps ) => deps.ex()
+                            }
+                    }
+            morph.add ( ['name'], myTpl, { ex : external })
+            let result = morph.get (['name'])()
+            expect ( result ).to.be.equal ( 'My name is Peter.' )
+}) // it During add
+
+
+
+it ( 'During render()', () => {
+            function external () {
+                    return 'Peter'
+                }
+
+            const myTpl = {
+                        template: `My name is {{ : hello }}.`
+                        , helpers: { 
+                                hello: ( data, deps ) => deps.ex()
+                            }
+                    }
+            morph.add ( ['name'], myTpl)
+            let result = morph.get (['name'])({},{ ex : external })
+            expect ( result ).to.be.equal ( 'My name is Peter.' )
+    }) // it During render
+
+
+
+it ( 'Mixed version - building and rendering', () => {
+            function peter () {
+                    return 'Peter'
+                }
+
+            function ivan () {
+                    return 'Ivan'
+                }
+
+            const myTpl = {
+                        template: `My name is {{ : hello }}.`
+                        , helpers: { 
+                                hello: ( data, deps ) => {
+                                            expect ( deps ).has.property ( 'ex' )
+                                            return deps.sec ()
+                                        }
+                            }
+                    }
+            morph.add ( ['name'], myTpl, { ex : peter })
+            // Note: If deps on add() and on render() have same names, render() has higher priority
+            let result = morph.get (['name'])({},{ sec: ivan })
+            expect ( result ).to.be.equal ( 'My name is Ivan.' )
+    }) // it Mixed version - building and rendering
+
+
+
+it ( 'Overwriting dependencies', () => {
+            function peter () {
+                                return 'Peter'
+                            }
+
+            function ivan () {
+                    return 'Ivan'
+                }
+
+            const myTpl = {
+                        template: `My name is {{ : hello }}.`
+                        , helpers: { 
+                                hello: ( data, deps ) => {
+                                            expect ( deps ).has.property ( 'ex' )
+                                            return deps.sec ()
+                                        }
+                            }
+                    }
+            morph.add ( ['name'], myTpl, { ex : peter })
+            // Note: If deps on add() and on render() have same names, render() has higher priority
+            let result = morph.get (['name'])({},{ sec: ivan })
+            expect ( result ).to.be.equal ( 'My name is Ivan.' )
+}) // it Overwriting dependencies
+
+}) // describe
