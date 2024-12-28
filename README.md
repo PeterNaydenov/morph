@@ -1,5 +1,4 @@
 # Morph (@peter.naydenov/morph)
-**Experimental stage. Not tested well yet.**
 
 ![version](https://img.shields.io/github/package-json/v/peterNaydenov/morph)
 ![license](https://img.shields.io/github/license/peterNaydenov/morph)
