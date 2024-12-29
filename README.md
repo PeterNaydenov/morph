@@ -201,7 +201,13 @@ When input data is array, the result will be an array. Result for each element w
 
 Learn more about how actions work in the section 'helper functions' below.
 
+## Helper Functions
 
+Helper functions are templates and functions that are used by actions to decorate the data. Helper functions can be used in templates as actions. Action type explains what to expect from the helper function.
+
+- `Render functions` should return a string - the data that will replace the placeholder. 
+- `Data functions` are created to manipulate the data. Expectation is to return data, that will continue to be used by other actions. 
+- `Mixing functions` should merge data in a single data result that will be used by other actions.  
 
 
 
