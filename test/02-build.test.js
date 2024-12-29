@@ -224,8 +224,13 @@ describe ( 'transformer: build', () => {
 
                         };
                 const templateFn = morph.build ( myTpl );
-                const result = templateFn({ person: 'Peter' });
-                expect ( result ).to.be.equal ( 'My name is {{ name }}.' )
+                if ( typeof templateFn === 'function' ) {
+                        const result = templateFn({ person: 'Peter' });
+                        expect ( result ).to.be.equal ( 'My name is {{ name }}.' )
+                   }
+                else  {
+                        throw new Error ( 'Test failed' )                        
+                    }
         }) // it Ignore rendering fields that have no data
 
 
@@ -236,11 +241,16 @@ describe ( 'transformer: build', () => {
                                 template : `My name is {{ name }}.{{ extraData}}`
                         }
                 const templateFn = morph.build ( myTpl );
-                const result = templateFn({ 
-                                                  name: 'Peter' 
-                                                , extraData: '' // Provide an empty string to hide a placeholder
-                                        });
-                expect ( result ).to.be.equal ( 'My name is Peter.' )
+                if ( typeof templateFn === 'function' ) {
+                                const result = templateFn({ 
+                                                                name: 'Peter' 
+                                                                , extraData: '' // Provide an empty string to hide a placeholder
+                                                        });
+                                expect ( result ).to.be.equal ( 'My name is Peter.' )        
+                        }
+                else  {
+                        throw new Error ( 'Test failed' )                        
+                    }
         }) // it how to hide a placeholder
 
 
