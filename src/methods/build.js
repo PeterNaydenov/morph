@@ -17,13 +17,20 @@ import walk from '@peter.naydenov/walk'
  * @property {object} [handshake] - Optional. Example for data to be rendered with;
  */
 
+/**
+ * @typedef {Array}  tupleResult
+ * @property {boolean} 0 - Indicates success (true) or failure (false).
+ * @property {function} 1 - The rendering function or an error function.
+ */
+
+
 
 /**
  * 
  * @param {Template} tpl - template definition;
  * @param {boolean} [extra] - Optional. How to receive the answer - faslse:as a string(answer) or tuple[success, answer];
  * @param {object} [buildDependencies] - Optional. External dependencies injected;
- * @returns {function} - rendering function
+ * @returns {function|tupleResult} - rendering function
  */
 function build  ( tpl, extra=false, buildDependencies={} ) {
         const { hasError, placeholders, chop, helpers, handshake } = _readTemplate ( tpl );
