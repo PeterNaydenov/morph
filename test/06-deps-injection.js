@@ -127,4 +127,43 @@ it ( 'Overwriting dependencies', () => {
             expect ( result ).to.be.equal ( 'My name is Ivan.' )
 }) // it Overwriting dependencies
 
+
+
+it ( 'As a data', () => {
+        function external () {
+                return 'Peter'
+            }
+
+        const myTpl = {
+                    template: `My name is {{ h : hello }}.`
+                    , helpers: {
+                           hello: ( data ) => data.text
+                        }
+                }
+        morph.add ( ['name'], myTpl )
+        // If data property is a function, it is called, and the result is used
+        let result = morph.get (['name'])({ h : external })
+        expect ( result ).to.be.equal ( 'My name is Peter.' )
+}) // it As a data
+
+
+
+it ( 'As a data 2', () => {
+        function external () {
+                return 'Peter'
+            }
+
+        const myTpl = {
+                    template: `My name is {{ h }}.`
+                }
+        morph.add ( ['name'], myTpl )
+        // If data property is a function, it is called, and the result is used
+        let result = morph.get (['name'])({ h : external })
+        expect ( result ).to.be.equal ( 'My name is Peter.' )
+}) // it As a data 2
+
+
+
 }) // describe
+
+
