@@ -1,6 +1,15 @@
 ## Release History
 
 
+### 1.0.1 (2025-01-08)
+- [x] Fix: Render functions are not receiving dependencies;
+
+
+
+### 1.0.0 (2024-12-28)
+- [x] Change of addressing templates and stores;
+- [ ] Bug: Render functions are not receiving dependencies;
+
 
 ### 0.0.4 (2017-12-24)
 - [x] Dependency update. @peter.naydenov/walk 5.0.1;
