@@ -170,7 +170,7 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                                                                                         if ( isRenderFunction  )  theData.forEach ( (d,i) => {
                                                                                                                                                                 if ( d == null ) return
                                                                                                                                                                 const dType = _defineDataType ( d );
-                                                                                                                                                                const text = helpers[name]( d );
+                                                                                                                                                                const text = helpers[name]( d, {...buildDependencies, ...dependencies} );
                                                                                                                                                                 if ( text == null ) theData[i] = null
                                                                                                                                                                 if ( dType === 'object' )  d['text'] = text
                                                                                                                                                                 else                      theData[i] = text                                                                                                                                                                
@@ -238,6 +238,7 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                                                                         break
                                                                                                 }
                                                                                 } // for step of actSetup
+                                                                                
                                                                                 let accType = _defineDataType ( nestedData[0] )
                                                                                 let fineData = nestedData[0]
                                                                                 
@@ -251,11 +252,13 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                                                                         cuts[index] = fineData['text']
                                                                                                         break
                                                                                                 case 'array':
-                                                                                                        cuts[index] = fineData.join ( '' )
+                                                                                                        const aType = _defineDataType ( fineData[0] )
+                                                                                                        if ( aType === 'object' )   cuts[index] = fineData.map ( x => x.text ).join ( '')
+                                                                                                        else                        cuts[index] = fineData.join ( '' )
                                                                                                         break
                                                                                         } // switch accType
                                                                 } // else other                
-                                                }) // forEach placeholders
+                                                }) // forEach placeholders                                        
                                         endData.push ( cuts.join ( '' ))
                                         }) // forEach d
 

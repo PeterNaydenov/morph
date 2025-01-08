@@ -243,7 +243,7 @@ describe ( 'transformer: build', () => {
                 const templateFn = morph.build ( myTpl );
                 if ( typeof templateFn === 'function' ) {
                                 const result = templateFn({ 
-                                                                name: 'Peter' 
+                                                                  name: 'Peter' 
                                                                 , extraData: '' // Provide an empty string to hide a placeholder
                                                         });
                                 expect ( result ).to.be.equal ( 'My name is Peter.' )        
@@ -252,6 +252,56 @@ describe ( 'transformer: build', () => {
                         throw new Error ( 'Test failed' )                        
                     }
         }) // it how to hide a placeholder
+
+
+
+     it ( 'Data changes without render', () => {
+                const myTpl = {
+                        template : `{{ : blank, >setName }}My name is {{name}}.`
+                        , helpers  : {
+                                        setName : ( data ) => {
+                                                        data.name='Peter'
+                                                        return data
+                                                }
+                                        , blank : () => ``
+                                }
+                        }
+                const templateFn = morph.build ( myTpl );
+                const result = ( typeof templateFn === 'function' ) ? templateFn () : false;
+                expect ( result ).to.be.equal ( 'My name is Peter.' )
+     }) // it Data changes without render
+
+
+
+     it ( 'Call external template with array data', () => {
+                const myTpl = {
+                        template : `{{ list : executeExternal }}`
+                        , helpers  : {
+                                executeExternal : function ( data, x ) {
+                                                        let res = x.ex ( data )
+                                                        return res
+                                                }
+                                }
+                        };   // end myTpl
+                const external = {
+                                template : `Hi,{{ name }}!`
+                        };
+
+                morph. add ( ['external'], external )
+                morph.add ( ['myTpl'], myTpl )
+
+                const myData = { list : [
+                                                { name : 'Peter' },
+                                                { name : 'Ivan' },
+                                                { name : 'Stoyan' }
+                                        ]}
+
+
+                
+                let deps = { ex: morph.get ( ['external'] )};
+                const result = morph.get ( ['myTpl'] )( myData, deps)
+                expect ( result ).to.be.equal ( 'Hi,Peter!Hi,Ivan!Hi,Stoyan!' )
+     }) // it Call external template with array data
 
 
 
