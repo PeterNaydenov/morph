@@ -28,7 +28,7 @@ import walk from '@peter.naydenov/walk'
 /**
  * 
  * @param {Template} tpl - template definition;
- * @param {boolean} [extra] - Optional. How to receive the answer - faslse:as a string(answer) or tuple[success, answer];
+ * @param {boolean} [extra] - Optional. How to receive the answer - false:as a string(answer) or tuple[success, answer];
  * @param {object} [buildDependencies] - Optional. External dependencies injected;
  * @returns {function|tupleResult} - rendering function
  */
@@ -63,6 +63,8 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                              topLevelType = _defineDataType ( d )
                                            , endData = []
                                            ;
+                                        d = walk ({data:d})
+                       
                                         if ( topLevelType === 'null' )   return cuts.join ( '' )
                                         // Commands : raw, demo, handshake, placeholders
                                         if ( typeof d === 'string' ) {   // 'd' is a string when we want to debug the template
@@ -71,7 +73,7 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                                 return cuts.join('')   // Original template with placeholders
                                                         case 'demo':
                                                                 if ( !handshake ) return `Error: No handshake data.`
-                                                                d = handshake // Render with handshake object
+                                                                d = handshake   // Render with handshake object
                                                                 break
                                                         case 'handshake':
                                                                 if ( !handshake ) return `Error: No handshake data.`
@@ -86,16 +88,16 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                         if ( topLevelType !== 'array' )   d = [ d ]
                                         
                                         // TODO: If 'd' is null -> then no data for all the placeholders        
-                                        d.forEach ( d => {
+                                        d.forEach ( dElement => {
                                         placeholders.forEach ( holder => {   // Placeholders
                                                         const 
-                                                             { index, data, action } = holder
+                                                             { index, data, action } = holder   // index - placeholder index, data - key of data, action - list of operations
                                                            , dataOnly   = !action && data
                                                            ;
 
                                                         if ( dataOnly ) {
                                                                         const 
-                                                                             info = d[data]
+                                                                             info = dElement[data]
                                                                            , type = _defineDataType ( info )
                                                                            ;                                                                            
                                                                         switch ( type ) {
@@ -113,14 +115,14 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                                                         return
                                                                                 } // switch
                                                                 } // dataOnly
-                                                        else {   // Data and Actions
+                                                        else {   // Data and Actions or only Actions
                                                                         const 
-                                                                             { dataDeepLevel, nestedData } = (data==='@all' || data===null || data==='@root' ) ? _defineData ( d ) : _defineData ( d[data] )
+                                                                             { dataDeepLevel, nestedData } = (data==='@all' || data===null || data==='@root' ) ? _defineData ( dElement, action ) : _defineData ( dElement[data], action )
                                                                            , actSetup = _actionSupply ( _setupActions ( action, dataDeepLevel ), dataDeepLevel )
                                                                            ;
 
                                                                         for ( let step of actSetup ) {
-                                                                                        let { type, name, level } = step
+                                                                                        let { type, name, level } = step;
                                                                                         let 
                                                                                                   theData = nestedData[level]
                                                                                                 , dataType = _defineDataType ( theData )
@@ -171,6 +173,7 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                                                                                                                                 if ( d == null ) return
                                                                                                                                                                 const dType = _defineDataType ( d );
                                                                                                                                                                 const text = helpers[name]( d, {...buildDependencies, ...dependencies} );
+                                                                                                                                                             
                                                                                                                                                                 if ( text == null ) theData[i] = null
                                                                                                                                                                 if ( dType === 'object' )  d['text'] = text
                                                                                                                                                                 else                      theData[i] = text                                                                                                                                                                
@@ -185,14 +188,20 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                                                                                                                                 if ( dType === 'object' ) d['text']  = text
                                                                                                                                                                 else                      theData[i] = text
                                                                                                                                                         }) 
-                                                                                                                        break                                                                                                        
+                                                                                                                        break     
+                                                                                                                case 'function':
+                                                                                                                        nestedData[level] = helpers[name]( theData() ) 
+                                                                                                                        break                                                                                                   
                                                                                                                 case 'primitive':
                                                                                                                         nestedData[level] = render ( theData, name, helpers, {...buildDependencies, ...dependencies} )
                                                                                                                         break
                                                                                                                 case 'object':
-                                                                                                                        let kTest = Object.keys ( theData ).find ( k => k.includes ( '/' )   );   // Check if keys are breadcrumbs
-                                                                                                                        if ( kTest )   Object.entries( theData ).forEach( ([k,v]) => v['text'] = render ( v, name, helpers, {...buildDependencies, ...dependencies} )  )
-                                                                                                                        else           theData['text'] = render ( theData, name, helpers, {...buildDependencies, ...dependencies} )
+                                                                                                                        if ( isRenderFunction )  nestedData[level]['text'] = helpers[name]( theData, {...buildDependencies, ...dependencies} )
+                                                                                                                        else {
+                                                                                                                                let kTest = Object.keys ( theData ).find ( k => k.includes ( '/' )   );   // Check if keys are breadcrumbs
+                                                                                                                                if ( kTest )   Object.entries( theData ).forEach( ([k,v]) => v['text'] = render ( v, name, helpers, {...buildDependencies, ...dependencies} )  )
+                                                                                                                                else           theData['text'] = render ( theData, name, helpers, {...buildDependencies, ...dependencies} )
+                                                                                                                           }
                                                                                                                         break
                                                                                                                 } // switch renderDataType 
                                                                                                         break;
@@ -241,7 +250,7 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                                                 
                                                                                 let accType = _defineDataType ( nestedData[0] )
                                                                                 let fineData = nestedData[0]
-                                                                                
+                                                                      
                                                                                 switch ( accType ) {
                                                                                                 case 'primitive':
                                                                                                         if ( fineData == null )   return
