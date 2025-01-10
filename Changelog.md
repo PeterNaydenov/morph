@@ -3,13 +3,14 @@
 
 
 ### 1.0.3 (2025-01-10)
-- [x] Fix: Render functions should receive dependencies;
+- [x] Fix: Action should receive dependencies when data is a function;
 
 
 
 ### 1.0.2 (2025-01-09)
 - [x] Fix: Render nested components;
-- [ ] Bug: Render functions should receive dependencies;
+- [x] Refactoring: Placeholder with actions when data is a function;
+- [ ] Bug: Action should receive dependencies when data is a function;
 
 
 
