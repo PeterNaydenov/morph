@@ -190,7 +190,7 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                                                                                                                         }) 
                                                                                                                         break     
                                                                                                                 case 'function':
-                                                                                                                        nestedData[level] = helpers[name]( theData() ) 
+                                                                                                                        nestedData[level] = helpers[name]( theData(), {...buildDependencies, ...dependencies} ) 
                                                                                                                         break                                                                                                   
                                                                                                                 case 'primitive':
                                                                                                                         nestedData[level] = render ( theData, name, helpers, {...buildDependencies, ...dependencies} )
