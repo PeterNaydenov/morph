@@ -2,8 +2,15 @@
 
 
 
+### 1.0.3 (2025-01-10)
+- [x] Fix: Render functions should receive dependencies;
+
+
+
 ### 1.0.2 (2025-01-09)
 - [x] Fix: Render nested components;
+- [ ] Bug: Render functions should receive dependencies;
+
 
 
 ### 1.0.1 (2025-01-08)
