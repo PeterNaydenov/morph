@@ -16,8 +16,14 @@ function _readTemplate ( tpl ) {
             , placeholders = []
             ;
 
+    // Remove from template all html comments and multiple spaces
+    const Thetemplate = (typeof template === 'string')  ? template
+                                                                .replace(/<!--[\s\S]*?-->/g, '')
+                                                                .replace ( /\s{2,}/g, ' ' ) 
+                                                        : template
+
     let hasError = null;
-    const chop = _chopTemplate (settings)( template );
+    const chop = _chopTemplate (settings)( Thetemplate );
 
     if ( typeof chop  === 'string' )   hasError = chop
     else {
