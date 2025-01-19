@@ -1,6 +1,10 @@
 ## Release History
 
 
+### 1.1.0 ( 2025-01-19 )
+- [x] Ignore html comment sections in templates;
+
+
 
 ### 1.0.3 (2025-01-10)
 - [x] Fix: Action should receive dependencies when data is a function;
