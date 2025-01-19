@@ -184,7 +184,7 @@ describe ( 'transformer: build', () => {
                                                 , web   : 'example.com'
                                                 , email : 'peter@example.com'
                                         })
-                expect ( result ).to.be.equal ( 'My name is Peter. My web page is <a href="example.com">example.com</a>. Contact me on  <a href="peter@example.com">e-mail</a>.' )
+                expect ( result ).to.be.equal ( 'My name is Peter. My web page is <a href="example.com">example.com</a>. Contact me on <a href="peter@example.com">e-mail</a>.' )
         }) // it use all data @all
 
 
@@ -537,5 +537,22 @@ describe ( 'transformer: build', () => {
          }) // it use extra renders "+"
 
 
+
+    it ( 'Ignore comments from template', () => {
+                const
+                   myTpl = {
+                                  template : `My name is 
+                                           <!-- 
+                                                multiline comment section
+                                                ... testing
+
+                                                --> 
+                                                {{ name }}.`
+                        };
+                const templateFn = morph.build ( myTpl );
+                const result = templateFn({ name: 'Peter' });
+                expect ( result ).to.be.equal ( 'My name is Peter.' )
+
+         }) // it ignore comments from template
     
 }) // Describe
