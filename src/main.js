@@ -35,6 +35,11 @@ const storage = ( () => ({default: {}}) ) ();
  *                             either the storage or template does not exist.
  */
 function get ( location ) {
+    if ( !(location instanceof Array) ) {  
+                return function () { 
+                        return 'Error: Argument "location" is a string. Should be an array. E.g. ["templateName", "storageName"].' 
+                    } 
+        }
     const [prop, strName='default'] = location;
     if ( !storage[strName] ) {
             return function () {
