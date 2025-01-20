@@ -2,7 +2,7 @@
 
 
 
-### 1.1.1 ( 2025-01-20 )
+### 1.1.2 ( 2025-01-20 )
 - [x] Improve: Error messages when using method "set" with string;
 
 
