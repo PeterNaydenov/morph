@@ -1,6 +1,12 @@
 ## Release History
 
 
+
+### 1.1.1 ( 2025-01-20 )
+- [x] Improve: Error messages when using method "set" with string;
+
+
+
 ### 1.1.0 ( 2025-01-19 )
 - [x] Ignore html comment sections in templates;
 
