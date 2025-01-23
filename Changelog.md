@@ -2,6 +2,11 @@
 
 
 
+### 1.1.3 (2025-01-23)
+- [x] Improve: Error messages when using method "add" with template -> null;
+
+
+
 ### 1.1.2 ( 2025-01-20 )
 - [x] Improve: Error messages when using method "set" with string;
 
