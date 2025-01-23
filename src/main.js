@@ -72,15 +72,20 @@ function get ( location ) {
  *   @param {string[]} location - The location to add the template to. Array of two elements.
  *                             The first element is the name of the template. The second element
  *                             is optional and is the name of the storage. Defaults to 'default'.
- *   @param {object|function} tplfn - The template description or the already built template function.
+ *   @param {object|function|null} tplfn - The template description or the already built template function.
  *   @param {...any} args - Additional arguments to be passed to the build function.
  *                           Only used if the first argument is a template description.
  */
 function add ( location, tplfn, ...args ) {
     const [ name, strName='default'] = location
+    if ( tplfn == null )  {
+            console.warn ( `Warning: Template ${strName}/${name} is not added to storage. The template is null.` )
+            return
+        }
     let fn = tplfn;
     let successBuild = true;
     if( !storage[strName] )   storage[strName] = {}
+
     if ( typeof tplfn !== 'function' ) { 
                 let r = build ( tplfn, true, ...args )
                 successBuild = r[0]

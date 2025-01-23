@@ -26,5 +26,20 @@ it ( 'Get a non existing component', () => {
     }) // it get a non existing component
 
 
+it ( 'Add component - null', () => {
+            let triggered = false;
+            morph.clear ()
+            console.warn = function (str) {
+                    expect ( str ).to.be.equal ( 'Warning: Template default/myName is not added to storage. The template is null.' )
+                    triggered = true
+                }
+            const template = null;
+            morph.add ( ['myName'], template );
+            expect ( triggered ).to.be.equal ( true )
+            const result = morph.get ( ['myName'] )({ name: 'Peter' }) 
+            expect ( result ).to.be.equal ( 'Error: Template "myName" does not exist in storage "default".' )
+    }) // it add component - null
+
+
 
 }) // describe
