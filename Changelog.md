@@ -2,6 +2,12 @@
 
 
 
+### 1.2.0 (2025-03-14)
+- [x] Bug fix: Deeply nested data;
+- [x] Improve: Error message if actions do not have deepness of the data (very difficult to debug);
+
+
+
 ### 1.1.3 (2025-01-23)
 - [x] Improve: Error messages when using method "add" with template -> null;
 

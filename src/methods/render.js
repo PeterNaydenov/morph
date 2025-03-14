@@ -15,9 +15,11 @@ import _renderHolder from "./_renderHolder.js"
  */
 function render ( theData, name, helpers, ...args ) {
 // *** Executes rendering and return the results
+
                 if ( theData instanceof Object ) {   // Make sure all properties are not objects
                         Object.entries ( theData ).forEach ( ([key, value]) => {
                                         if ( value instanceof Object   ) theData[key] = value['text']
+                                        if ( value instanceof Array    ) theData[key] = value[0]
                                 })
                     }
                 function setRenderData ( d={} ) {

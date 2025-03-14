@@ -1,15 +1,21 @@
 function _setupActions ( actions, dataDeepLevel=10 ) {
     let 
       actSetup = {}
-    , actLevel = 0
     , actionList = [...actions]
+    , actLevel = 0
     , i = 0
+    , countHashes = 0
     ;
-    
+
+    actionList.forEach ( action => {   if ( action === '#' )  countHashes++   })
+    if ( countHashes < dataDeepLevel )   console.error ( `Error: Actions doesn't describe all levels of data. Actions: ${actions}` )
+
     do {
             actSetup[i] = []
             i++
     } while ( i <= dataDeepLevel )
+
+
 
     actionList.every ( act => {
                     if ( act === '#' ) {   // it's a change level action
@@ -52,6 +58,7 @@ function _setupActions ( actions, dataDeepLevel=10 ) {
                     if ( act === '' ) {  
                                     return true
                             }
+                            
             actSetup[actLevel].push ({
                                               type: 'render'
                                             , name: act
@@ -59,6 +66,7 @@ function _setupActions ( actions, dataDeepLevel=10 ) {
                                             })
             return true
             }) // actionList every
+
     return actSetup
 } // _setupActions func.
 

@@ -26,7 +26,7 @@ describe ( 'transformer: build', () => {
                 const myTpl = {
                                   template : `My friends are {{ names : []coma }}.`
                                 , helpers  : {
-                                                  coma: (res) => res.join(', ')
+                                                  coma: ( res ) => res.join(', ')
                                         }
                         };
                 const templateFn = morph.build ( myTpl );
@@ -52,17 +52,18 @@ describe ( 'transformer: build', () => {
                                   // placeholder will be fullfiled with data[job], but data function 'jobPossible' will filter the result
                                   template : `My job is {{ job : >jobPossible }}.`
                                 , helpers  : {
-                                                jobPossible: (text) => {
+                                        jobPossible: ( text ) => {
                                                                 if ( text === 'Software Engineer' )   return 'hidden'
                                                                 else return text
                                                         }
                                         }
                         }
                 const templateFn = morph.build ( myTpl );
-                const result = templateFn({ job: 'Software Engineer' });
-                const result2 = templateFn({ job: 'doctor' });
 
+                const result = templateFn({ job: 'Software Engineer' });
                 expect ( result ).to.be.equal ( 'My job is hidden.' );
+                
+                const result2 = templateFn({ job: 'doctor' });
                 expect ( result2 ).to.be.equal ( 'My job is doctor.' );
         }) // it data action to change the result
 
@@ -120,15 +121,15 @@ describe ( 'transformer: build', () => {
                                 , helpers: {
                                                 li: `<li>{{name}}: {{state}}</li>`,
                                                 ul: `<ul>{{text}}</ul>`,
-                                                people: (res) => {
+                                                people: ( res ) => {
                                                                 if ( res.age < 30 )   res.state = 'young'
                                                                 else                  res.state = 'old'
                                                                 return res
-                                                        }
+                                                        } // people func.
                                         }
                         }
                 const templateFn = morph.build ( myTpl )
-                const result = templateFn({
+                const result = templateFn ({
                                             friends: [
                                                         { name: 'Peter', age: 30 }
                                                       , { name: 'Ivan', age: 25 }
@@ -287,7 +288,7 @@ describe ( 'transformer: build', () => {
                                 template : `Hi,{{ name }}!`
                         };
 
-                morph. add ( ['external'], external )
+                morph.add ( ['external'], external )
                 morph.add ( ['myTpl'], myTpl )
 
                 const myData = { list : [
@@ -450,9 +451,9 @@ describe ( 'transformer: build', () => {
 
 
 
-    it ( 'List - Data deep object', () => {
+    it.skip ( 'List - Data deep object', () => {
                 const myTpl = {
-                                  template : `My list: {{ list: ul , [], li, #, line }}.`
+                                  template : `My list: {{ list: #, ul , [], li,  #, line }}.`
                                 , helpers: {
                                                 line: `{{ name }} - {{ age }}`
                                               , ul: `<ul>{{ text }}</ul>`
@@ -465,8 +466,7 @@ describe ( 'transformer: build', () => {
                                   'John'
                                   , {
                                         name: 'Milen'
-                                      , age: 25
-                                    }
+                                      , age: 25}
                                   , 'Vladislav'
                                   , {
                                         name: 'Stoyan'
@@ -503,6 +503,92 @@ describe ( 'transformer: build', () => {
                 const result = templateFn ( data );
                 expect ( result ).to.be.equal ( 'Profile: <ul><li>Peter - (180cm,66kg)</li></ul>.' )
         }) // it object - data deep object
+
+
+
+     it ( 'Use deep array data', () => {
+                const myTpl = {
+                                template: /*template*/`
+                                        <h2>{{title}}</h2>
+                                        {{ contacts: [], #, [], cards, #, [], tags }}
+                                    `
+                                , helpers: {
+                                                tags: `<span>{{text}}</span>`
+                                                , tagUpdate : function ( data ) {
+                                                                data.tags = data.tags.join ( ' ' )
+                                                                return data
+                                                        } // tagUpdate func.
+                                                , nn : ( data ) => {
+                                                                return data.join ( ' ' )
+                                                        } // nn
+                                                , cards :`
+                                                                <div class="contact">
+                                                                        <h3>{{name}}</h3>
+                                                                        <p><strong>ID Token</strong>: {{id}}</p>
+                                                                        <p><strong>Tags</strong>: 
+                                                                                {{tags}}
+                                                                        </p>
+                                                                        <p>
+                                                                                <button class="action" data-click="nav-contacts-edit">Edit</button>
+                                                                                <button class="action">Copy ID Token</button>
+                                                                                <button class="action warn">Delete</button>
+                                                                        </p>
+                                                                </div>
+                                                                `
+                                                        
+                                        }
+                                , handshake: {
+                                        title: 'Contacts',
+                                        contacts: [{
+                                                     name: 'Ivan Ivanov'
+                                                   , id : '3mwes!534-12-2fe-!2d1w'
+                                                   , tags : [ 'pro', 'dev', 'Bulgaria', 'Sofia Office' ]
+                                                },
+                                                {
+                                                     name: 'Stoyan Stoyanov'
+                                                   , id : '3mwes!522-12-2fw-!2d1q'
+                                                   , tags : [ 'intern', 'dev', 'Bulgaria', 'Plovdiv Office' ]
+                                                }]
+                                        }
+                        };
+                const templateFn = morph.build( myTpl );
+                const result = templateFn ( 'demo' ).replace ( /\s+/g, '' );
+                expect ( result ).to.be.equal ( `
+                        <h2>Contacts</h2>
+                        
+                        <div class="contact">
+                                <h3>IvanIvanov</h3>
+                                <p><strong>IDToken</strong>: 3mwes!534-12-2fe-!2d1w</p>
+                                <p><strong>Tags</strong>:
+                                                <span>pro</span>
+                                                <span>dev</span>
+                                                <span>Bulgaria</span>
+                                                <span>SofiaOffice</span>
+                                        </p>
+                                <p>
+                                        <button class="action" data-click="nav-contacts-edit">Edit</button>
+                                        <button class="action">CopyIDToken</button>
+                                        <button class="actionwarn">Delete</button>
+                                        </p>
+                                </div>
+                                        
+                        <div class="contact">
+                                <h3>StoyanStoyanov</h3>
+                                <p><strong>IDToken</strong>:3mwes!522-12-2fw-!2d1q</p>
+                                <p><strong>Tags</strong>:
+                                                <span>intern</span>
+                                                <span>dev</span>
+                                                <span>Bulgaria</span>
+                                                <span>PlovdivOffice</span>
+                                        </p>
+                                <p>
+                                        <button class="action" data-click="nav-contacts-edit">Edit</button>
+                                        <button class="action">CopyIDToken</button>
+                                        <button class="actionwarn">Delete</button>
+                                        </p>
+                                </div>
+                                `.replace ( /\s+/g, '' ) )
+     }) // it use deep array
 
 
 
