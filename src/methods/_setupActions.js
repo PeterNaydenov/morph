@@ -8,7 +8,7 @@ function _setupActions ( actions, dataDeepLevel=10 ) {
     ;
 
     actionList.forEach ( action => {   if ( action === '#' )  countHashes++   })
-    if ( countHashes < dataDeepLevel )   console.error ( `Error: Actions doesn't describe all levels of data. Actions: ${actions}` )
+    if ( countHashes < dataDeepLevel )   console.error ( `Error: Not enough level markers (#) for data with depth level ${dataDeepLevel}. Found ${countHashes} level markers in actions: ${actions.join(', ')}` )
 
     do {
             actSetup[i] = []

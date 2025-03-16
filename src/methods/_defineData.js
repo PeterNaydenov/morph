@@ -1,5 +1,4 @@
 import walk from '@peter.naydenov/walk'
-// import _defineDataType from './_defineType';'../methods/_defineType.js'
 
 
 

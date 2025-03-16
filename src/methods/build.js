@@ -86,7 +86,8 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                         
                                         if ( topLevelType !== 'array' )   d = [ d ]
                                         
-                                        // TODO: If 'd' is null -> then no data for all the placeholders   
+                                        // Handle null data case - just return the template without placeholders
+                                        if ( topLevelType === 'null' )   return cuts.join ( '' ).replace(/{{.*?}}/g, '')
                                         
                                         d.forEach ( dElement => {
                                         placeholders.forEach ( holder => {   // Placeholders
