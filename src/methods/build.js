@@ -61,6 +61,7 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                         function success ( d={}, dependencies={}, ...args ) {
                                         const endData = [];
                                         let topLevelType = _defineDataType ( d );
+                                        let deps = { ...buildDependencies, ...dependencies }
                                         d = walk ({data:d})
                        
                                         if ( topLevelType === 'null' )   return cuts.join ( '' )
@@ -87,7 +88,7 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                         if ( topLevelType !== 'array' )   d = [ d ]
                                         
                                         // Handle null data case - just return the template without placeholders
-                                        if ( topLevelType === 'null' )   return cuts.join ( '' ).replace(/{{.*?}}/g, '')
+                                        if ( topLevelType === 'null' )   return cuts.join ( '' )
                                         
                                         d.forEach ( dElement => {
                                         placeholders.forEach ( holder => {   // Placeholders
@@ -140,15 +141,12 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                                                                                                                 const dType = _defineDataType ( d )
                                                                                                                                                 const routeName = helpers[name]( d );
                                                                                                                                                 if ( routeName == null )  return
-                                                                                                                                                if ( dType === 'object' ) theData[i]['text'] = render ( d, routeName, helpers, {...buildDependencies, ...dependencies} )
-                                                                                                                                                else                      theData[i]         = render ( d, routeName, helpers, {...buildDependencies, ...dependencies} )
+                                                                                                                                                if ( dType === 'object' ) theData[i]['text'] = render ( d, routeName, helpers, deps )
+                                                                                                                                                else                      theData[i]         = render ( d, routeName, helpers, deps )
                                                                                                                                         })
                                                                                                                                 break
                                                                                                                         case 'object':
-                                                                                                                                theData['text'] = render ( theData, name, helpers, {...buildDependencies, ...dependencies} )
-                                                                                                                                break
-                                                                                                                        case 'primitive':
-                                                                                                                                nestedData[level] = render ( theData, name, helpers, {...buildDependencies, ...dependencies} )
+                                                                                                                                theData['text'] = render ( theData, name, helpers, deps )
                                                                                                                                 break
                                                                                                                 }
                                                                                                         break        
@@ -176,7 +174,7 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                                                                                         if ( isRenderFunction  )  theData.forEach ( (d,i) => {
                                                                                                                                                                 if ( d == null ) return
                                                                                                                                                                 const dType = _defineDataType ( d );
-                                                                                                                                                                const text = helpers[name]( d, {...buildDependencies, ...dependencies} );
+                                                                                                                                                                const text = helpers[name]( d, deps );
                                                                                                                                                              
                                                                                                                                                                 if ( text == null ) theData[i] = null
                                                                                                                                                                 if ( dType === 'object' )  d['text'] = text
@@ -186,7 +184,7 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                                                                                                                                 if ( d == null ) return
                                                                                                                                                                 const 
                                                                                                                                                                           dType = _defineDataType ( d )
-                                                                                                                                                                        , text = render ( d, name, helpers, {...buildDependencies, ...dependencies} )
+                                                                                                                                                                        , text = render ( d, name, helpers, deps )
                                                                                                                                                                         ;
                                                                                                                                                                 if ( text == null       )   theData[i] = null
                                                                                                                                                                 else if ( dType === 'object' )   d['text']  = text
@@ -194,17 +192,17 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                                                                                                                         })
                                                                                                                         break     
                                                                                                                 case 'function':
-                                                                                                                        nestedData[level] = helpers[name]( theData(), {...buildDependencies, ...dependencies} ) 
+                                                                                                                        nestedData[level] = helpers[name]( theData(), deps ) 
                                                                                                                         break                                                                                                   
                                                                                                                 case 'primitive':
-                                                                                                                        nestedData[level] = render ( theData, name, helpers, {...buildDependencies, ...dependencies} )
+                                                                                                                        nestedData[level] = render ( theData, name, helpers, deps )
                                                                                                                         break
                                                                                                                 case 'object':
-                                                                                                                        if ( isRenderFunction ) nestedData[level][0]['text'] = helpers[name]( theData, {...buildDependencies, ...dependencies} )
+                                                                                                                        if ( isRenderFunction ) nestedData[level][0]['text'] = helpers[name]( theData, deps )
                                                                                                                         else {
                                                                                                                                 let kTest = Object.keys ( theData ).find ( k => k.includes ( '/' )   );   // Check if keys are breadcrumbs
-                                                                                                                                if ( kTest )   Object.entries( theData ).forEach( ([k,v]) => v['text'] = render ( v, name, helpers, {...buildDependencies, ...dependencies} )  )
-                                                                                                                                else           theData['text'] = render ( theData, name, helpers, {...buildDependencies, ...dependencies} )
+                                                                                                                                if ( kTest )   Object.entries( theData ).forEach( ([k,v]) => v['text'] = render ( v, name, helpers, deps )  )
+                                                                                                                                else           theData['text'] = render ( theData, name, helpers, deps )
                                                                                                                            }
                                                                                                                         break
                                                                                                                 } // switch renderDataType 
@@ -314,7 +312,7 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                         // Execute postprocess functions
                                         if (args)   return args.reduce ( (acc, fn) => {
                                                                                 if ( typeof fn !== 'function' )  return acc
-                                                                                return fn ( acc, {...buildDependencies,...dependencies} )
+                                                                                return fn ( acc, deps )
                                                                         }, endData.join ( '' )  )
                                         else        return endData.join ( '' )
 
