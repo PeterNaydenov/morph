@@ -451,9 +451,9 @@ describe ( 'transformer: build', () => {
 
 
 
-    it.skip ( 'List - Data deep object', () => {
+    it ( 'List - Data deep object', () => {
                 const myTpl = {
-                                  template : `My list: {{ list: #, ul , [], li,  #, line }}.`
+                                  template : `My list: {{ list:  ul , [], li,  #, line }}.`
                                 , helpers: {
                                                 line: `{{ name }} - {{ age }}`
                                               , ul: `<ul>{{ text }}</ul>`
@@ -482,7 +482,7 @@ describe ( 'transformer: build', () => {
 
     it ( 'Object - Data deep object', () => {
                 const myTpl = {
-                                  template : `Profile: {{ me: ul , [], li, #, line }}.`
+                                  template : `Profile: {{ me: ul , li, #, line }}.`
                                 , helpers: {
                                                 line: `({{ height}}cm,{{ weight}}kg)`
                                               , ul: `<ul>{{ text }}</ul>`
@@ -490,14 +490,14 @@ describe ( 'transformer: build', () => {
                                         }
                         };
                 const data = {
-                        me : {
-                                  name: 'Peter'
-                                , stats : {
-                                                  age: 50
-                                                , height: 180
-                                                , weight: 66
-                                        }
-                            }
+                                me : {
+                                          name: 'Peter'
+                                        , stats : {
+                                                        age: 50
+                                                        , height: 180
+                                                        , weight: 66
+                                                }
+                                    }
                         };
                 const templateFn = morph.build ( myTpl );
                 const result = templateFn ( data );
