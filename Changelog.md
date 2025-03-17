@@ -2,6 +2,11 @@
 
 
 
+### 1.2.2 (2025-03-17)
+- [x] Improvment: Optimized code to improve performance;
+
+
+
 ### 1.2.1 (2025-03-16)
 - [x]Enhanced Error Handling in setupActions.js: Improved the error message to provide more context about the missing level markers, making it easier to debug;
 - [x] Added TypeScript Type Definitions: Created a types directory with an index.d.ts file containing TypeScript definitions for the library, and added the "types" field to package.json for better TypeScript support;
@@ -9,8 +14,8 @@
 
 
 ### 1.2.0 (2025-03-14)
-- [x] Bug fix: Deeply nested data;
-- [x] Improve: Error message if actions do not have deepness of the data (very difficult to debug);
+- [x] Fix: Deeply nested data;
+- [x] Improvement: Error message if actions do not have deepness of the data (very difficult to debug);
 
 
 
