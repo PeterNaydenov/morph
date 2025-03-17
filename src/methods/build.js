@@ -89,7 +89,7 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                         
                                         // Handle null data case - just return the template without placeholders
                                         if ( topLevelType === 'null' )   return cuts.join ( '' )
-                                        
+                      
                                         d.forEach ( dElement => {
                                         placeholders.forEach ( holder => {   // Placeholders
                                                         const 
@@ -212,7 +212,7 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                                                                         // TODO: Test extendedRender
                                                                                                         const isValid = typeof helpers[name] === 'function';   // Render could be a function and template.
                                                                                                         if ( isValid ) {
-                                                                                                                        nestedData[level] = helpers[name]( nestedData[0][0] )
+                                                                                                                        nestedData[0].forEach ( (d,i) =>  nestedData[0][i] = helpers[name]( d )   ) 
                                                                                                                 }
                                                                                                         else {
                                                                                                                         // TODO: Error...
