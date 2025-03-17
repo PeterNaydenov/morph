@@ -126,12 +126,12 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                                         for ( let step of actSetup ) {
                                                                                         let 
                                                                                                   { type, name, level } = step
-                                                                                                , levelData = nestedData[level]
+                                                                                                , levelData = nestedData[level] || []
                                                                                                 ;
 
                                                                                         levelData.forEach ( theData => {
-                                                                                                
                                                                                         let dataType = _defineDataType ( theData )
+                                                                                        
                                                                                         switch ( type ) {   // Action type 'route','data', 'render', or mix -> different operations
                                                                                                 case 'route':
                                                                                                         switch ( dataType ) {
@@ -169,6 +169,7 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                                                                         break
                                                                                                 case 'render':
                                                                                                         const isRenderFunction = typeof helpers[name] === 'function';   // Render could be a function and template.
+                                                                                                        
                                                                                                         switch ( dataType ) {
                                                                                                                 case 'array':
                                                                                                                         if ( isRenderFunction  )  theData.forEach ( (d,i) => {
@@ -182,6 +183,8 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                                                                                                                         }) 
                                                                                                                         else                      theData.forEach ( (d,i) => {
                                                                                                                                                                 if ( d == null ) return
+                                                                                                                                                                
+                                                                                                                                                                
                                                                                                                                                                 const 
                                                                                                                                                                           dType = _defineDataType ( d )
                                                                                                                                                                         , text = render ( d, name, helpers, deps )
@@ -200,9 +203,7 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                                                                                 case 'object':
                                                                                                                         if ( isRenderFunction ) nestedData[level][0]['text'] = helpers[name]( theData, deps )
                                                                                                                         else {
-                                                                                                                                let kTest = Object.keys ( theData ).find ( k => k.includes ( '/' )   );   // Check if keys are breadcrumbs
-                                                                                                                                if ( kTest )   Object.entries( theData ).forEach( ([k,v]) => v['text'] = render ( v, name, helpers, deps )  )
-                                                                                                                                else           theData['text'] = render ( theData, name, helpers, deps )
+                                                                                                                             theData [ 'text' ] = render ( theData, name, helpers, deps )
                                                                                                                            }
                                                                                                                         break
                                                                                                                 } // switch renderDataType 

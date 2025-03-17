@@ -15,15 +15,19 @@ function _defineData ( d, action ) {
             nestedData.push ( [d] )
             return { dataDeepLevel:0, nestedData }
         }
-    
-           function findObjects ({key, value, breadcrumbs}) {
-                    dataDeepLevel = breadcrumbs.split('/').length -1;
 
+    // nestedData[0] = [d]
+
+    function findObjects ({key, value, breadcrumbs}) {
+                    if ( key === breadcrumbs ) {
+                            nestedData[0] = [ value ]
+                            return value
+                       }
+                    dataDeepLevel = breadcrumbs.split('/').length-1;
                     if ( !nestedData[dataDeepLevel] )   nestedData[dataDeepLevel] = [];
-                    if ( value instanceof Array ) nestedData[dataDeepLevel].push(value)
-                    else                          nestedData[dataDeepLevel].push([ value ])                     
+                    nestedData[dataDeepLevel].push ( value )                     
                     return value
-            } // step func.
+            } // findObjects func.
 
     walk ({ data:d, objectCallback:findObjects })
     return { dataDeepLevel, nestedData }
