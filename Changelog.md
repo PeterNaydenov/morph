@@ -2,6 +2,11 @@
 
 
 
+### 1.2.3 (2025-03-17)
+- [x] Refactoring: Extended render;
+
+
+
 ### 1.2.2 (2025-03-17)
 - [x] Improvment: Optimized code to improve performance;
 
