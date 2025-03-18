@@ -15,9 +15,7 @@ function _defineData ( d, action ) {
             nestedData.push ( [d] )
             return { dataDeepLevel:0, nestedData }
         }
-
-    // nestedData[0] = [d]
-
+        
     function findObjects ({key, value, breadcrumbs}) {
                     if ( key === breadcrumbs ) {
                             nestedData[0] = [ value ]

@@ -62,7 +62,7 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                         const endData = [];
                                         let topLevelType = _defineDataType ( d );
                                         let deps = { ...buildDependencies, ...dependencies }
-                                        d = walk ({data:d})
+                                        d = walk ({data:d})  // Creates copy of data to avoid mutation of the original
                        
                                         if ( topLevelType === 'null' )   return cuts.join ( '' )
                                         // Commands : raw, demo, handshake, placeholders
@@ -94,7 +94,7 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                         placeholders.forEach ( holder => {   // Placeholders
                                                         const 
                                                              { index, data, action } = holder   // index - placeholder index, data - key of data, action - list of operations
-                                                           , dataOnly   = !action && data
+                                                           , dataOnly = !action && data
                                                            ;                                                           
 
                                                         if ( dataOnly ) {
