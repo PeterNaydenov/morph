@@ -60,6 +60,7 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                          */
                         function success ( d={}, dependencies={}, ...args ) {
                                         const endData = [];
+                                        const memory = {};
                                         let topLevelType = _defineDataType ( d );
                                         let deps = { ...buildDependencies, ...dependencies }
                                         d = walk ({data:d})  // Creates copy of data to avoid mutation of the original
@@ -149,7 +150,10 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                                                                                                 theData['text'] = render ( theData, name, helpers, deps )
                                                                                                                                 break
                                                                                                                 }
-                                                                                                        break        
+                                                                                                        break      
+                                                                                                case 'save' :
+                                                                                                        memory[name] = structuredClone ( theData )
+                                                                                                        break  
                                                                                                 case 'data':           
                                                                                                         switch ( dataType ) {
                                                                                                                 case 'array':
