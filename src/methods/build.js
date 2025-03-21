@@ -96,6 +96,8 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                         const 
                                                              { index, data, action } = holder   // index - placeholder index, data - key of data, action - list of operations
                                                            , dataOnly = !action && data
+                                                           , mem = structuredClone ( memory )
+                                                           , extendArguments = { dependencies: deps, memory:mem }
                                                            ;                                                           
 
                                                         if ( dataOnly ) {
@@ -133,6 +135,7 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                                                         levelData.forEach ( theData => {
                                                                                         let dataType = _defineDataType ( theData )
                                                                                         
+                                                                                        
                                                                                         switch ( type ) {   // Action type 'route','data', 'render', or mix -> different operations
                                                                                                 case 'route':
                                                                                                         switch ( dataType ) {
@@ -140,7 +143,7 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                                                                                                 theData.forEach ( (d,i) => {
                                                                                                                                                 if ( d == null ) return
                                                                                                                                                 const dType = _defineDataType ( d )
-                                                                                                                                                const routeName = helpers[name]( d );
+                                                                                                                                                const routeName = helpers[name]( {data:d, ...extendArguments});
                                                                                                                                                 if ( routeName == null )  return
                                                                                                                                                 if ( dType === 'object' ) theData[i]['text'] = render ( d, routeName, helpers, deps )
                                                                                                                                                 else                      theData[i]         = render ( d, routeName, helpers, deps )
@@ -154,32 +157,31 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                                                                 case 'save' :
                                                                                                         memory[name] = structuredClone ( theData )
                                                                                                         break  
-                                                                                                case 'data':           
+                                                                                                case 'data': 
                                                                                                         switch ( dataType ) {
                                                                                                                 case 'array':
-                                                                                                                        theData.forEach ( (d,i) => theData[i] = ( d instanceof Function ) ? helpers[name]( d() ) : helpers[name]( d ) )
+                                                                                                                        theData.forEach ( (d,i) => theData[i] = ( d instanceof Function ) ? helpers[name]({ data:d(), ...extendArguments }) : helpers[name]( {data:d, ...extendArguments} ) )
                                                                                                                         break
                                                                                                                 case 'object':
-                                                                                                                        nestedData[level] = [helpers[name]( theData )]
+                                                                                                                        nestedData[level] = [helpers[name]( {data:theData,...extendArguments} )]
                                                                                                                         break
                                                                                                                 case 'function':
-                                                                                                                        nestedData[level] = [helpers[name]( theData() )]
+                                                                                                                        nestedData[level] = [helpers[name]( {data:theData(),...extendArguments} )]
                                                                                                                         break
                                                                                                                 case 'primitive':
-                                                                                                                        nestedData[level] = helpers[name]( theData )
+                                                                                                                        nestedData[level] = helpers[name]( {data:theData,...extendArguments} )
                                                                                                                         break
                                                                                                                 } // switch dataType
                                                                                                         
                                                                                                         break
                                                                                                 case 'render':
                                                                                                         const isRenderFunction = typeof helpers[name] === 'function';   // Render could be a function and template.
-                                                                                                        
                                                                                                         switch ( dataType ) {
                                                                                                                 case 'array':
                                                                                                                         if ( isRenderFunction  )  theData.forEach ( (d,i) => {
                                                                                                                                                                 if ( d == null ) return
                                                                                                                                                                 const dType = _defineDataType ( d );
-                                                                                                                                                                const text = helpers[name]( d, deps );
+                                                                                                                                                                const text = helpers[name]( {data:d, ...extendArguments} );
                                                                                                                                                              
                                                                                                                                                                 if ( text == null ) theData[i] = null
                                                                                                                                                                 if ( dType === 'object' )  d['text'] = text
@@ -187,8 +189,6 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                                                                                                                         }) 
                                                                                                                         else                      theData.forEach ( (d,i) => {
                                                                                                                                                                 if ( d == null ) return
-                                                                                                                                                                
-                                                                                                                                                                
                                                                                                                                                                 const 
                                                                                                                                                                           dType = _defineDataType ( d )
                                                                                                                                                                         , text = render ( d, name, helpers, deps )
@@ -199,13 +199,13 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                                                                                                                         })
                                                                                                                         break     
                                                                                                                 case 'function':
-                                                                                                                        nestedData[level] = helpers[name]( theData(), deps ) 
+                                                                                                                        nestedData[level] = helpers[name]( {data:theData(), ...extendArguments} ) 
                                                                                                                         break                                                                                                   
                                                                                                                 case 'primitive':
                                                                                                                         nestedData[level] = render ( theData, name, helpers, deps )
                                                                                                                         break
                                                                                                                 case 'object':
-                                                                                                                        if ( isRenderFunction ) nestedData[level][0]['text'] = helpers[name]( theData, deps )
+                                                                                                                        if ( isRenderFunction ) nestedData[level][0]['text'] = helpers[name]({ data:theData, ...extendArguments} )
                                                                                                                         else {
                                                                                                                              theData [ 'text' ] = render ( theData, name, helpers, deps )
                                                                                                                            }
@@ -216,7 +216,7 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                                                                         // TODO: Test extendedRender
                                                                                                         const isValid = typeof helpers[name] === 'function';   // Render could be a function and template.
                                                                                                         if ( isValid ) {
-                                                                                                                        nestedData[0].forEach ( (d,i) =>  nestedData[0][i] = helpers[name]( d )   ) 
+                                                                                                                        nestedData[0].forEach ( (d,i) =>  nestedData[0][i] = helpers[name]( {data:d, ...extendArguments} )   ) 
                                                                                                                 }
                                                                                                         else {
                                                                                                                         // TODO: Error...
@@ -260,7 +260,7 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                                                                             } // if name === ''
                                                                                                         else {              
                                                                                                                 let 
-                                                                                                                     val = helpers[name]( theData )
+                                                                                                                     val = helpers[name]({ data:theData, ...extendArguments })
                                                                                                                    , valType = _defineDataType ( val )
                                                                                                                    ;
                                                                                                                 
