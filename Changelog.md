@@ -1,6 +1,12 @@
 ## Release History
 
 
+### 2.0.0 (2025-03-25)
+- [x] Memory action intoduced;
+- [x] Change in arguments format for helper functions;
+
+
+
 
 ### 1.2.3 (2025-03-17)
 - [x] Refactoring: Extended render;
