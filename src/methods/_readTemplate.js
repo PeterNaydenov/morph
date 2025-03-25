@@ -52,13 +52,15 @@ function _readTemplate ( tpl ) {
     placeholders.forEach ( holder => {
             if ( !holder.action ) return
             holder.action.every ( act => {
-                                    if ( act === '#' ) return true
+                                    if ( act === '#'  )   return true
+                                    if ( act === '^^' )   return true
+                                    if ( act.startsWith('^') && act !== '^^' )   return true
                                     if ( act.startsWith ( '?' )) act = act.replace ( '?', '' )
                                     if ( act.startsWith ( '+' )) act = act.replace ( '+', '' )
                                     if ( act.startsWith ( '[]' )) act = act.replace ( '[]', '' )
                                     if ( act.startsWith ( '>' )) act = act.replace ( '>', '' )
-                                    if ( act === ''   ) return true
-                                    if ( helpers[act] ) return true 
+                                    if ( act === ''   )   return true
+                                    if ( helpers[act] )   return true 
                                     else {
                                             hasError = `Error: Missing helper: ${act}`
                                             return false

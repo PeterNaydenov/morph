@@ -2,13 +2,15 @@ import walk from '@peter.naydenov/walk'
 
 
 
-function _defineData ( d, action ) {
+function _defineData ( dSource, action ) {
     const nestedData = [];
     let dataDeepLevel = 0;
 
-    if ( d instanceof Function )   return {  dataDeepLevel:0, nestedData:[[d()]] }
-    if ( d == null             )   return {  dataDeepLevel:0, nestedData:[ null ] }
-    if ( typeof d === 'string' )   return {  dataDeepLevel:0, nestedData:[[d]] }
+    if ( dSource instanceof Function )   return {  dataDeepLevel:0, nestedData:[[dSource()]] }
+    if ( dSource == null             )   return {  dataDeepLevel:0, nestedData:[ null ] }
+    if ( typeof dSource === 'string' )   return {  dataDeepLevel:0, nestedData:[[dSource]] }
+
+    const d = structuredClone ( dSource )
  
     // Note: Nest data only if action has '#'
     if ( !action.includes('#') ) {

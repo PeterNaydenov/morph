@@ -256,9 +256,9 @@ describe ( 'transformer: build', () => {
 
 
 
-     it ( 'Data changes without render', () => {
+     it ( 'Data changes - overwrite', () => {
                 const myTpl = {
-                        template : `{{ : blank, >setName }}My name is {{name}}.`
+                          template : `{{ : blank, ^^, >setName }}My name is {{name}}.`
                         , helpers  : {
                                         setName : ({ data }) => {
                                                         data.name='Peter'

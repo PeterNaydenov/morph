@@ -157,6 +157,9 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                                                                 case 'save' :
                                                                                                         memory[name] = structuredClone ( theData )
                                                                                                         break  
+                                                                                                case 'overwrite':
+                                                                                                        dElement = structuredClone ( theData )
+                                                                                                        break
                                                                                                 case 'data': 
                                                                                                         switch ( dataType ) {
                                                                                                                 case 'array':
