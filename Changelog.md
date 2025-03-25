@@ -2,7 +2,7 @@
 
 
 ### 2.0.0 (2025-03-25)
-- [x] Memory action intoduced;
+- [x] Memory action intoduced - memory is available in data functions;
 - [x] Change in arguments format for helper functions;
 - [x] Overwrite action introduced - when change in data should be available for all placeholders;
 
