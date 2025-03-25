@@ -2,7 +2,9 @@
 
 
 ## 1.x.x -> 2.x.x
-Modification of data is available only for current placeholder. If you need to remember changes in data, use the new memory action. Memory will make a snapshot of the current data and will be available in data functions. If you need to provide changes to all placeholders, use overwrite action. It's a snapshot that will be remember as a main data and will be available for all placeholders.
+Modification of data is available only for current placeholder. If you need to remember changes in data, use the new memory action - '^something' where '^' is for memory and 'something' is the name. Memory will make a snapshot of the current data and will be available in helper functions. If you need to provide changes to all placeholders, use overwrite action. It's a snapshot that will be remember as a main data and will be available for all placeholders.
+
+Arguments for helper functions are chaged. Because we want to have many arguments and we don't want to think about their order, we make an object with named arguments. Available arguments are: data, dependencies, memory. 
 
 
 
