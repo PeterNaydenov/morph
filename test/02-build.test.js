@@ -274,6 +274,25 @@ describe ( 'transformer: build', () => {
 
 
 
+     it ( 'Data save and use', () => {
+                        const myTpl = {
+                          template : `{{ : blank, ^buffer, >setName }}My name is {{ : >getFromBuffer}}.`
+                        , helpers  : {
+                                        setName : ({ data }) => {
+                                                        data.name='Peter'
+                                                        return data
+                                                }
+                                        , getFromBuffer : ({ memory}) => memory.buffer.name
+                                        , blank : () => ``
+                                }
+                        }
+                const templateFn = morph.build ( myTpl );
+                const result = ( typeof templateFn === 'function' ) ? templateFn () : false;
+                expect ( result ).to.be.equal ( 'My name is Peter.' )
+     }) // it Data save and use
+
+
+
      it ( 'Call external template with array data', () => {
                 const myTpl = {
                         template : `{{ list : executeExternal }}`
