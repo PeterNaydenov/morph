@@ -11,7 +11,8 @@ describe ( 'morph: Data', () => {
                 const myTpl = {
                               template : `My name is {{ person: hello }}.`
                             , helpers  : {
-                                        hello: ({name, age}) => {
+                                        hello: ({ data }) => {
+                                                    const {name, age} = data
                                                     return `${name}o. Age is ${age}`
                                                 }
                                     }
@@ -33,7 +34,7 @@ describe ( 'morph: Data', () => {
                 const myTpl = {
                           template : `My name is {{ person: hello }}.`
                         , helpers  : {
-                                    hello: ({name, age}) => null
+                                    hello: () => null
                                 }
                     };
                 const templateFn = morph.build ( myTpl );
@@ -56,17 +57,17 @@ describe ( 'morph: Data', () => {
                 const myTpl = {
                           template : "Hello, I'm {{ persons: []coma, ?web, hello }}"
                         , helpers  : {
-                                      hello: ( data ) => {
+                                      hello: ({ data }) => {
                                                     const { name, age } = data;
                                                     if ( age < 28 )   return null
                                                     else              return `${name} - ${age} years old`
                                                 }
-                                      , coma: (res) => res                          // Coma is a mixing helper
+                                      , coma: ({ data:res}) => res                          // Coma is a mixing helper
                                                         .filter ( x => x != null)   // filter is required to remove cancelled renders
                                                         .map ( x => x.text )
                                                         .join ( ', ' )
                                     , a : `<a href="{{href}}">{{text}}</a>`
-                                    , web: ( d ) => {
+                                    , web: ({ data:d }) => {
                                                     if ( d.href )  return 'a'  // response 'a' means: render this data with helper 'a'
                                                     else           return null // response 'null' in conditional render means: do not render
                                             }
@@ -112,9 +113,9 @@ describe ( 'morph: Data', () => {
                 const myTpl = {
                             template : `Hello from {{ :name }}. I'm {{ :age }} years old {{ :job }}`
                             , helpers : {
-                                          name: ( data ) => state.name
-                                        , age: ( data ) => state.age
-                                        , job: ( data ) => state.job
+                                          name: ({ data }) => state.name
+                                        , age: ({ data }) => state.age
+                                        , job: ({ data }) => state.job
                                   }
                           }
                 const templateFn = morph.build ( myTpl );

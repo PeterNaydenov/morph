@@ -8,6 +8,15 @@
 
 
 
+## What's new in version 2.x.x
+- Data helper functions modifies the data per placeholder;
+- Arguments for helper functions are named arguments;
+- Memory action introduced - memory is available in helper functions as a named argument;
+- Overwrite action introduced - when change in data should be available for all placeholders;
+
+
+
+
 ## General Information
 
 `Morph` has a logic-less template syntax. Placeholders are places surrounded by double curly braces `{{ }}` and they represents the pleces where the data will be inserted.
@@ -17,10 +26,15 @@ Some features of Morph:
 - Simple logic-less template syntax;
 - Builtin storage;
 - Powerfull action system for data decoration;
+- Demo request can render the template with the builtin data;
 - Nesting templates as part of the action system;
 - Partial rendering (render only available data);
 - Option to connect templates to external data sources;
 - Post process plugin mechanism;
+
+
+
+
 
 
 
@@ -50,13 +64,22 @@ import morph from "@peter.naydenov/morph"
 
 const myTemplateDescription = {
                  template: `Hello, {{name}}!` // simple template - a string with a placeholder
+                 , helers : {
+                            // helper functions
+                        }
+                 , handshake : {
+                           // ... demo data here
+                           name : 'Ivan'
+                        }
             }
 const myTemplate = morph.build ( myTemplateDescription );  // myTemplate is a render function
 const htmlBlock = myTemplate ( { name: 'Peter' } )           // Provide data to the render function and get the result
 // htmlBlock === 'Hello, Peter!'
+const demo = myTemplate ( 'demo' )
+// demo === 'Hello, Ivan!'
 ```
 
-Morph contains also a builtin template storage. Instead of creating variable for each template, we can use the storage.
+Morph contains also a builtin template storages. Instead of creating variable for each template, we can use the storages.
 
 ```js
 // add template to the storage. Automatically builds the render function
@@ -64,6 +87,14 @@ Morph contains also a builtin template storage. Instead of creating variable for
 morph.add ( ['myTemplate'], myTemplateDescription ) 
 // get template from the storage and render it
 const htmlBlock = morph.get ( ['myTemplate'] )({ name: 'Peter' }) 
+// it's same as text above
+morph.add ( ['myTemplate', 'default'], myTemplateDescription )
+const htmlBlock = morph.get ( ['myTemplate', 'default'] )({ name: 'Peter' })
+// if we use custom storage:
+morph.add ( ['myTemplate', 'hidden'], myTemplateDescription ) // write template in storage 'hidden'
+const htmlBlock = morph.get ( ['myTemplate', 'hidden'] )({ name: 'Peter' }) // render template from 'hidden' storage
+morph.get ( ['myTemplate'] )({ name: 'Peter' }) // call template 'myTemplate' from default storage
+// will return error, because default storage does not have template "myTemplate"
 ```
 
 Let's see a more complex example before we go into details:
@@ -80,6 +111,9 @@ const myTemplateDescription = {
                           , a: `<a href="{{href}}">{{text}}</a>`
                           , getAge: (person) => person.age
                     }
+             , handshake: {
+                        // ... demo data here           
+                }
             }
 const myTemplate = morph.build ( myTemplateDescription );
 const htmlBlock = myTemplate ( { person: {
@@ -182,6 +216,10 @@ Actions are concise representations of a sequence of function calls. Some functi
 - `Mixing` functions start with '[]';
 - `Conditional render` actions start with '?';
 - `Extended render` start with '+';
+- `Memory` actions start with '^'. Memory action will take a data snapshot and will be available in helper functions as a named argument 'memory'. The name after the prefix is the name of the snapshot. Request saved data from helper functions by calling 'memory[name]';
+- `Overwrite` action is marked with '^^'. Means that the current data will be available for all placeholders, not only for the current placeholder;
+
+
 
 Here are some examples: 
 ```js

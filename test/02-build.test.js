@@ -26,7 +26,7 @@ describe ( 'transformer: build', () => {
                 const myTpl = {
                                   template : `My friends are {{ names : []coma }}.`
                                 , helpers  : {
-                                                  coma: ( res ) => res.join(', ')
+                                                  coma: ({ data:res }) => res.join(', ')
                                         }
                         };
                 const templateFn = morph.build ( myTpl );
@@ -52,7 +52,7 @@ describe ( 'transformer: build', () => {
                                   // placeholder will be fullfiled with data[job], but data function 'jobPossible' will filter the result
                                   template : `My job is {{ job : >jobPossible }}.`
                                 , helpers  : {
-                                        jobPossible: ( text ) => {
+                                        jobPossible: ( {data:text} ) => {
                                                                 if ( text === 'Software Engineer' )   return 'hidden'
                                                                 else return text
                                                         }
@@ -74,7 +74,7 @@ describe ( 'transformer: build', () => {
                                   // placeholder will be fullfiled with data[job], but data function 'jobPossible' will filter the result
                                   template : `My job is {{ job : >jobPossible }}.`
                                 , helpers  : {
-                                                jobPossible: (text) => {
+                                                jobPossible: ({data:text}) => {
                                                                 if ( text === 'Software Engineer' ) return null  // null means: Do not render this field
                                                                 else return text
                                                         }
@@ -99,7 +99,7 @@ describe ( 'transformer: build', () => {
                 const myTpl = {
                           template: `Hello, {{  name : ul, [], li, >fromList }}! {{ more }}`
                         , helpers: {
-                                  fromList: name => (['Peter', 'Ivan'].includes(name) ? name : 'stranger')
+                                  fromList: ({data:name}) => (['Peter', 'Ivan'].includes(name) ? name : 'stranger')
                                         
                                 , ul : `<ul>{{text}}</ul>`
                                 , li : `<li>{{text}}</li>`
@@ -121,7 +121,7 @@ describe ( 'transformer: build', () => {
                                 , helpers: {
                                                 li: `<li>{{name}}: {{state}}</li>`,
                                                 ul: `<ul>{{text}}</ul>`,
-                                                people: ( res ) => {
+                                                people: ( {data:res} ) => {
                                                                 if ( res.age < 30 )   res.state = 'young'
                                                                 else                  res.state = 'old'
                                                                 return res
@@ -167,12 +167,12 @@ describe ( 'transformer: build', () => {
                                   template : `My name is {{ name }}. My web page is {{ @all : a, >morphWeb }}. Contact me on  {{ @root : a , >morphMail }}.`
                                 , helpers  : {
                                                 a : `<a href="{{link}}">{{text}}</a>`
-                                                , morphWeb : ( data ) => { 
+                                                , morphWeb : ({ data }) => { 
                                                                 data.link = data.web
                                                                 data.text = data.web
                                                                 return data
                                                         } 
-                                                , morphMail: ( data ) => {
+                                                , morphMail: ({ data }) => {
                                                                 data.link = data.email
                                                                 data.text = 'e-mail'
                                                                 return data
@@ -197,7 +197,7 @@ describe ( 'transformer: build', () => {
                         , helpers  : {
                                           ul : `<ul>{{text}}</ul>`
                                         , li : `<li>{{name}} - {{job}}</li>`
-                                        , jobItems : ( data ) => { // It's a data function
+                                        , jobItems : ({ data }) => { // It's a data function
                                                         // If data-function returns null, it will be ignored in template render
                                                         if ( !data.name || !data.job )   return null
                                                         else                             return data
@@ -256,11 +256,11 @@ describe ( 'transformer: build', () => {
 
 
 
-     it ( 'Data changes without render', () => {
+     it ( 'Data changes - overwrite', () => {
                 const myTpl = {
-                        template : `{{ : blank, >setName }}My name is {{name}}.`
+                          template : `{{ : blank, ^^, >setName }}My name is {{name}}.`
                         , helpers  : {
-                                        setName : ( data ) => {
+                                        setName : ({ data }) => {
                                                         data.name='Peter'
                                                         return data
                                                 }
@@ -274,11 +274,30 @@ describe ( 'transformer: build', () => {
 
 
 
+     it ( 'Data save and use', () => {
+                        const myTpl = {
+                          template : `{{ : blank, ^buffer, >setName }}My name is {{ : >getFromBuffer}}.`
+                        , helpers  : {
+                                        setName : ({ data }) => {
+                                                        data.name='Peter'
+                                                        return data
+                                                }
+                                        , getFromBuffer : ({ memory}) => memory.buffer.name
+                                        , blank : () => ``
+                                }
+                        }
+                const templateFn = morph.build ( myTpl );
+                const result = ( typeof templateFn === 'function' ) ? templateFn () : false;
+                expect ( result ).to.be.equal ( 'My name is Peter.' )
+     }) // it Data save and use
+
+
+
      it ( 'Call external template with array data', () => {
                 const myTpl = {
                         template : `{{ list : executeExternal }}`
                         , helpers  : {
-                                executeExternal : function ( data, x ) {
+                                executeExternal : function ({ data, dependencies:x }) {
                                                         let res = x.ex ( data )
                                                         return res
                                                 }
@@ -363,7 +382,7 @@ describe ( 'transformer: build', () => {
                 const myTpl = {
                             template: `My name is {{ : [], >name }}`
                           , helpers: {
-                                        name: ( data ) => data.name 
+                                        name: ({ data }) => data.name 
                                 }
                         }
                 const templateFn = morph.build ( myTpl );
@@ -379,7 +398,7 @@ describe ( 'transformer: build', () => {
                                 template : `My {{ {{ welcome }}`
                         };
                 const templateFn = morph.build ( myTpl );
-                const result = templateFn();
+                const result = templateFn ();
                 expect ( result ).to.be.equal ( 'Error: Nested placeholders. Close placeholder before open new one.' )
         }) // it broken template
 
@@ -435,10 +454,10 @@ describe ( 'transformer: build', () => {
                 const myTpl = { // Top level template
                                   template : `My name is {{ name }}. {{ friends: friendListing, []coma }}`
                                 , helpers: {
-                                                friendListing: ( d ) => {
+                                                friendListing: ({ data: d }) => {
                                                                 return secTemplateFn ({ names : d })   // Nested template render
                                                         }
-                                                , coma: ( res ) => res.join(', ')
+                                                , coma: ({ data:res }) => res.join(', ')
                                         }
                         }
                 const templateFn = morph.build ( myTpl );
@@ -514,11 +533,11 @@ describe ( 'transformer: build', () => {
                                     `
                                 , helpers: {
                                                 tags: `<span>{{text}}</span>`
-                                                , tagUpdate : function ( data ) {
+                                                , tagUpdate : function ({ data }) {
                                                                 data.tags = data.tags.join ( ' ' )
                                                                 return data
                                                         } // tagUpdate func.
-                                                , nn : ( data ) => {
+                                                , nn : ({ data }) => {
                                                                 return data.join ( ' ' )
                                                         } // nn
                                                 , cards :`
@@ -597,7 +616,7 @@ describe ( 'transformer: build', () => {
                 const myTpl = {
                                   template : `Profile: {{ me: +line }}.`
                                 , helpers: {
-                                                line: ( x ) => {
+                                                line: ({ data:x }) => {
                                                                 expect ( x ).to.have.property ( 'stats' )
                                                                 expect ( x ).to.have.property ( 'name' )
                                                                 const { height, weight } = x.stats;

@@ -31,7 +31,7 @@ it ('During build()' , () => {
         const myTpl = {
                     template: `My name is {{ : hello }}.`
                     , helpers: { 
-                            hello: ( data, deps ) => deps.ex()
+                            hello: ({ data, dependencies }) => dependencies.ex()
                         }
                 }
         let fn =morph.build ( myTpl, false, { ex : external })
@@ -49,7 +49,7 @@ it ( 'During add()', () => {
             const myTpl = {
                         template: `My name is {{ : hello }}.`
                         , helpers: { 
-                                hello: ( data, deps ) => deps.ex()
+                                hello: ({ data, dependencies:deps }) => deps.ex()
                             }
                     }
             morph.add ( ['name'], myTpl, { ex : external })
@@ -67,7 +67,7 @@ it ( 'During render()', () => {
             const myTpl = {
                         template: `My name is {{ : hello }}.`
                         , helpers: { 
-                                hello: ( data, deps ) => deps.ex()
+                                hello: ({ data, dependencies:deps }) => deps.ex()
                             }
                     }
             morph.add ( ['name'], myTpl)
@@ -89,7 +89,7 @@ it ( 'Mixed version - building and rendering', () => {
             const myTpl = {
                         template: `My name is {{ : hello }}.`
                         , helpers: { 
-                                hello: ( data, deps ) => {
+                                hello: ({ dependencies: deps }) => {
                                             expect ( deps ).has.property ( 'ex' )
                                             return deps.sec ()
                                         }
@@ -115,7 +115,7 @@ it ( 'Overwriting dependencies', () => {
             const myTpl = {
                         template: `My name is {{ : hello }}.`
                         , helpers: { 
-                                hello: ( data, deps ) => {
+                                hello: ({ dependencies: deps }) => {
                                             expect ( deps ).has.property ( 'ex' )
                                             return deps.sec ()
                                         }

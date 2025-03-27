@@ -1,6 +1,13 @@
 # Migration Guides
 
 
+## 1.x.x -> 2.x.x
+Modification of data is available only for current placeholder. If you need to remember changes in data, use the new memory action - '^something' where '^' is for memory and 'something' is the name. Memory will make a snapshot of the current data and will be available in helper functions. If you need to provide changes to all placeholders, use overwrite action. It's a snapshot that will be remember as a main data and will be available for all placeholders.
+
+Arguments for helper functions are chaged. Because we want to have many arguments and we don't want to think about their order, we make an object with named arguments. Available arguments are: data, dependencies, memory. 
+
+
+
 ## 0.x.x -> 1.x.x
 Main change is how you address templates. Before template name and storage were separated arguments. Now they are a single argument where the first element is the template name and the second element is the storage name. Storage name is optional and defaults to 'default'.
 
