@@ -6,6 +6,34 @@ Modification of data is available only for current placeholder. If you need to r
 
 Arguments for helper functions are chaged. Because we want to have many arguments and we don't want to think about their order, we make an object with named arguments. Available arguments are: data, dependencies, memory. 
 
+```js
+// Before
+const template = {
+    template : `Hello from {{ @all : name }}. I'm {{ age }} years old {{ job }}`
+    , helpers  : {
+            name: ( data ) => data.name // Change in arguments of helper functions!
+        }
+    , handshake: {
+              name: 'Peter'
+            , age: 40
+            , job: 'developer'
+        }
+}
+
+// After
+const template = {
+    template : `Hello from {{ @all : name }}. I'm {{ age }} years old {{ job }}`
+    , helpers  : {
+            name: ({ data, memory, dependencies }) => data.name // data is named argument
+        }
+    , handshake: {
+                name: 'Peter'
+              , age: 40
+              , job: 'developer'
+    }
+
+```
+
 
 
 ## 0.x.x -> 1.x.x
