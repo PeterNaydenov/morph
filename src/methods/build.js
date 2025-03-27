@@ -132,9 +132,8 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                                                                 , levelData = nestedData[level] || []
                                                                                                 ;
 
-                                                                                        levelData.forEach ( theData => {
-                                                                                        let dataType = _defineDataType ( theData )
-                                                                                        
+                                                                                        levelData.forEach ( (theData, iData ) => {
+                                                                                        let dataType = _defineDataType ( theData )                                                                                        
                                                                                         
                                                                                         switch ( type ) {   // Action type 'route','data', 'render', or mix -> different operations
                                                                                                 case 'route':
@@ -208,7 +207,7 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                                                                                         nestedData[level] = render ( theData, name, helpers, deps )
                                                                                                                         break
                                                                                                                 case 'object':
-                                                                                                                        if ( isRenderFunction ) nestedData[level][0]['text'] = helpers[name]({ data:theData, ...extendArguments} )
+                                                                                                                        if ( isRenderFunction ) nestedData[level][iData]['text'] = helpers[name]({ data:theData, ...extendArguments} )
                                                                                                                         else {
                                                                                                                              theData [ 'text' ] = render ( theData, name, helpers, deps )
                                                                                                                            }
