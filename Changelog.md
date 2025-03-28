@@ -4,7 +4,7 @@
 
 ### 2.0.1 (2025-03-25)
 - [x] Fix: Deep data render index;
-- [ ] Bug: Some of render helper functions still expect the older set of arguments.
+
 
 
 
@@ -13,7 +13,6 @@
 - [x] Change in arguments format for helper functions;
 - [x] Overwrite action introduced - when change in data should be available for all placeholders;
 - [ ] Bug: Fix: Deep data render index;
-- [ ] Bug: Some of render helper functions still expect the older set of arguments.
 
 
 ### 1.2.3 (2025-03-17)
