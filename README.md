@@ -13,6 +13,7 @@
 - Arguments for helper functions are named arguments;
 - Memory action introduced - memory is available in helper functions as a named argument;
 - Overwrite action introduced - when change in data should be available for all placeholders;
+- Deep data-sources ( after version 2.1.0 );
 
 
 
@@ -203,6 +204,30 @@ Template placeholders can contain data-source and actions separated by ':'. Data
 `{{ name }}` // render data from 'name'. Only data is provided to this placeholder
 `{{ :someAction}}` // no data, but the result of the action will fill the placeholder
 `{{ @all : someAction }}` // provide all the data to the action 'someAction'
+```
+### Deep data-sources ( after version 2.1.0 )
+
+Setup a deep data-source by using breadcrumbs.
+```js
+const myTpl = {
+                  template : `Profile: {{ me/stats : line }}.`  // data-source will be data.me.stats
+                , helpers: {
+                                line: `({{ height}}cm,{{ weight}}kg)`
+                        }
+        };
+const data = {
+                me : {
+                          name: 'Peter'
+                        , stats : {
+                                          age: 50
+                                        , height: 180
+                                        , weight: 66
+                                }
+                    }
+        };
+const templateFn = morph.build ( myTpl );
+const result = templateFn ( data );
+// ---> Profile: (180cm,66kg).
 ```
 
 
