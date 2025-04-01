@@ -1,6 +1,10 @@
 ## Release History
 
 
+### 2.1.0 (2025-04-01)
+- [x] Feature: Access a deep property as a breadcrumbs;
+
+
 
 ### 2.0.1 (2025-03-25)
 - [x] Fix: Deep data render index;
