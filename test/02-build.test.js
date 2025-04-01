@@ -525,6 +525,52 @@ describe ( 'transformer: build', () => {
 
 
 
+    it ( 'Access a deep object', () => {
+                const myTpl = {
+                                  template : `Profile: {{ me/stats : line }}.`
+                                , helpers: {
+                                                line: `({{ height}}cm,{{ weight}}kg)`
+                                        }
+                        };
+                const data = {
+                                me : {
+                                          name: 'Peter'
+                                        , stats : {
+                                                          age: 50
+                                                        , height: 180
+                                                        , weight: 66
+                                                }
+                                    }
+                        };
+                const templateFn = morph.build ( myTpl );
+                const result = templateFn ( data );
+                expect ( result ).to.be.equal ( 'Profile: (180cm,66kg).' )
+        }) // it object - data deep object
+
+
+
+    it ( 'Access a deep property', () => {
+                const myTpl = {
+                                  template : `Age: {{ me/stats/age }}.`
+                                , helpers: {}
+                        };
+                const data = {
+                                me : {
+                                          name: 'Peter'
+                                        , stats : {
+                                                        age: 50
+                                                        , height: 180
+                                                        , weight: 66
+                                                }
+                                    }
+                        };
+                const templateFn = morph.build ( myTpl );
+                const result = templateFn ( data );
+                expect ( result ).to.be.equal ( 'Age: 50.' )
+        }) // it Access a deep property
+
+
+
      it ( 'Use deep array data', () => {
                 const myTpl = {
                                 template: /*template*/`

@@ -93,18 +93,30 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                       
                                         d.forEach ( dElement => {
                                         placeholders.forEach ( holder => {   // Placeholders
+
+                                                        
                                                         const 
                                                              { index, data, action } = holder   // index - placeholder index, data - key of data, action - list of operations
                                                            , dataOnly = !action && data
                                                            , mem = structuredClone ( memory )
                                                            , extendArguments = { dependencies: deps, memory:mem }
-                                                           ;                                                           
+                                                           ;   
+                                                        let info = dElement;
+                                                           
 
+                                                        if ( data && data.includes('/') ) {
+                                                                        data.split('/').forEach ( d => {
+                                                                                if ( info.hasOwnProperty(d) )   info = info[d]
+                                                                                else info = []
+                                                                           })
+                                                            } // If data contains '/'
+                                                        else if ( data==='@all' || data===null || data==='@root' )   info = dElement
+                                                        else if ( data )   info = info[data]
+
+                                                        
+                                                        
                                                         if ( dataOnly ) {
-                                                                        const 
-                                                                             info = dElement[data]
-                                                                           , type = _defineDataType ( info )
-                                                                           ;
+                                                                        const type = _defineDataType ( info );                                                                           
                                                                         switch ( type ) {
                                                                                 case 'function' : 
                                                                                         cuts[index] = info ()
@@ -122,7 +134,7 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                                 } // dataOnly
                                                         else {   // Data and Actions or only Actions
                                                                         let 
-                                                                             { dataDeepLevel, nestedData } = (data==='@all' || data===null || data==='@root' ) ? _defineData ( dElement, action ) : _defineData ( dElement[data], action )
+                                                                             { dataDeepLevel, nestedData } = _defineData ( info, action )
                                                                            , actSetup = _actionSupply ( _setupActions ( action, dataDeepLevel ), dataDeepLevel )
                                                                            ;
 
@@ -133,6 +145,7 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                                                                 ;
 
                                                                                         levelData.forEach ( (theData, iData ) => {
+                                                                                        
                                                                                         let dataType = _defineDataType ( theData )                                                                                        
                                                                                         
                                                                                         switch ( type ) {   // Action type 'route','data', 'render', or mix -> different operations
