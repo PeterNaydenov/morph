@@ -276,6 +276,42 @@ Helpers are templates and functions that are used by actions to decorate the dat
 
 
 
+## Good Practices and Examples
+
+### Modify root data before start rendering
+Sometimes we need to modify data and modification should be valid for all placeholders. Add in the begining of the template a placeholder like `{{ : blank, ^^, >myModification }}`, where myModification is a helper function that will modify the data, `^^` is overwrite action and `blank` is a render helper function that will return an empty string (placeholder disapears ). Look at the example here:
+
+```js
+const myTemplateDescription = {
+                template: `
+                          {{  : blank, ^^ , >myModification }}  
+                          <h1>{{title}}</h1>
+                          {{list: ul,[],li,a}}
+                      `
+              , helpers: {
+                          myModification : ({data}) => {   // Modify original input data 
+                                          data.list.forEach ( (item,i) =>  item.count = i )
+                                          return data
+                                }
+                          , blank : () => `` // use this helper function to remove the placeholder
+                          , a: `<a href="{{href}}">{{ count }}.{{text}}</a>`
+                          , li: `<li>{{text}}</li>`
+                          , ul: `<ul>{{text}}</ul>`
+                      }
+              , handshake: {
+                          title: 'My title'
+                        , list: [
+                                    { text: 'Item 1', href: 'item1.com' }
+                                  , { text: 'Item 2', href: 'item2.com' }
+                                  , { text: 'Item 3', href: 'item3.com' }
+                              ]
+                      }
+          }
+        const templateFn = morph.build ( myTemplateDescription );
+        const result = templateFn ( 'demo' );
+        // result ---> '<h1>My title</h1><ul><li><a href="item1.com">0.Item 1</a></li><li><a href="item2.com">1.Item 2</a></li><li><a href="item3.com">2.Item 3</a></li></ul>'
+```
+
 
 ## Links
 - [Release history](Changelog.md)
