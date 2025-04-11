@@ -1,14 +1,21 @@
 ## Release History
 
 
+
+### 2.1.1 ( 2025-04-11 )
+- [x] Fix: Value '0' is not rendered in helper templates;
+
+
+
 ### 2.1.0 (2025-04-01)
 - [x] Feature: Access a deep property as a breadcrumbs;
+- [ ] Bug: Value '0' is not rendered in helper templates;
 
 
 
 ### 2.0.1 (2025-03-25)
 - [x] Fix: Deep data render index;
-
+- [ ] Bug: Value '0' is not rendered in helper templates;
 
 
 
@@ -17,6 +24,7 @@
 - [x] Change in arguments format for helper functions;
 - [x] Overwrite action introduced - when change in data should be available for all placeholders;
 - [ ] Bug: Fix: Deep data render index;
+- [ ] Bug: Value '0' is not rendered in helper templates;
 
 
 ### 1.2.3 (2025-03-17)
