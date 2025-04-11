@@ -499,7 +499,7 @@ describe ( 'transformer: build', () => {
 
 
 
-    it.only ( 'Modify root data', () => {
+    it ( 'Modify root data', () => {
         const myTemplateDescription = {
                 template: `
                           {{  : blank, ^^ , >myModification }}
