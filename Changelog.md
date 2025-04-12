@@ -1,10 +1,14 @@
 ## Release History
 
 
+### 2.1.2 ( 2025-04-12 )
+- [x] Fix: Helper templates should ignore value 'null' and 'undefined';
+
+
 
 ### 2.1.1 ( 2025-04-11 )
 - [x] Fix: Value '0' is not rendered in helper templates;
-
+- [ ] Bug: Helper templates should ignore value 'null' and 'undefined';
 
 
 ### 2.1.0 (2025-04-01)
