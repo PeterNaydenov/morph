@@ -69,6 +69,24 @@ describe ( 'transformer: build', () => {
 
 
 
+      it ( 'Primitive data with helper function', () => {
+                const myTpl = {
+                                  template : `My job is {{ job : jobPossible }}.`
+                                , helpers  : {
+                                                jobPossible: ({data}) => {
+                                                                if ( data === 'Software Engineer' ) return null  // null means: Do not render this field
+                                                                else return data
+                                                        }
+                                        }
+                        }
+                const templateFn = morph.build ( myTpl );
+                const result = templateFn({ job: 'programmer' });
+                expect ( result ).to.be.equal ( 'My job is programmer.' );
+          }) // it primitive data with helper function
+
+
+
+
      it ( 'Keep a placeholder', () => {
                 const myTpl = {
                                   // placeholder will be fullfiled with data[job], but data function 'jobPossible' will filter the result
