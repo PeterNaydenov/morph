@@ -196,7 +196,7 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                                                                                         if ( isRenderFunction  )  theData.forEach ( (d,i) => {
                                                                                                                                                                 if ( d == null ) return
                                                                                                                                                                 const dType = _defineDataType ( d );
-                                                                                                                                                                const text = helpers[name]( {data:d, ...extendArguments} );
+                                                                                                                                                                const text = helpers[name]( {data:d, ...extendArguments });
                                                                                                                                                              
                                                                                                                                                                 if ( text == null ) theData[i] = null
                                                                                                                                                                 if ( dType === 'object' )  d['text'] = text
@@ -217,7 +217,8 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                                                                                         nestedData[level] = helpers[name]( {data:theData(), ...extendArguments} ) 
                                                                                                                         break                                                                                                   
                                                                                                                 case 'primitive':
-                                                                                                                        nestedData[level] = render ( theData, name, helpers, deps )
+                                                                                                                        if ( isRenderFunction ) nestedData[level] = helpers[name]({ data:theData, ...extendArguments} )
+                                                                                                                        else                    nestedData[level] = render ( theData, name, helpers, deps )
                                                                                                                         break
                                                                                                                 case 'object':
                                                                                                                         if ( isRenderFunction ) nestedData[level][iData]['text'] = helpers[name]({ data:theData, ...extendArguments} )
