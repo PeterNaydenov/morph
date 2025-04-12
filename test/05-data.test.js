@@ -154,11 +154,11 @@ describe ( 'morph: Data', () => {
                 const myTpl = {
                               template : `Hello from {{ name }}. I'm {{ age: extraAge }} years old {{ job }}`
                             , helpers  : {
-                                            extraAge: ( data ) => data+3
+                                            extraAge: ({ data }) => data+3
                                         }
                             }
                 const templateFn = morph.build ( myTpl );
-                const result = templateFn({
+                const result = templateFn ({
                                         name: () => state.name
                                       , age: () => state.age
                                       , job: () => state.job
