@@ -278,6 +278,15 @@ Helpers are templates and functions that are used by actions to decorate the dat
 
 ## Good Practices and Examples
 
+
+
+### Setup a development environment
+Setting up your development environment for working with the Morph components will help you to get the most out of it. First, what you need to do is to start showing HTML markup inside JavaScript. For editor 'Video Studio Code', you can use an extension [es6-string-html](https://marketplace.visualstudio.com/items?itemName=Tobermory.es6-string-html). Now simple comment will turn your HTML string into colored HTML markup.
+
+Second - make sure that `emmet` works for your javascript files. For editor 'Video Studio Code', go to settings, write 'emmet' in search box. Find a section 'Emmet: Include Languages' and press 'Add item'. Set item 'javascript' and value 'html'. Save settings. Now you can write HTML markup in your JS files. 
+
+
+
 ### Modify root data before start rendering
 Sometimes we need to modify data and modification should be valid for all placeholders. Add in the begining of the template a placeholder like `{{ : blank, ^^, >myModification }}`, where myModification is a helper function that will modify the data, `^^` is overwrite action and `blank` is a render helper function that will return an empty string (placeholder disapears ). Look at the example here:
 
