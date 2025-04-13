@@ -286,8 +286,8 @@ Setting up your development environment for working with the Morph components wi
 Second - make sure that `emmet` works for your javascript files. For editor 'Video Studio Code', go to settings, write 'emmet' in search box. Find a section 'Emmet: Include Languages' and press 'Add item'. Set item 'javascript' and value 'html'. Save settings. Now you can write emmet snippets to speed up your markup writing. 
 
 
-### A Component Snippet for VS Code
-Here is the snippet that you can add to your VS Code snippets to make your morph components:
+### VS Code Snippet for Morph Components
+To speed up the creation of Morph components in Visual Studio Code, you can use the following snippet. Add it to your VS Code snippets configuration:
 
 ```json
 "morph":{
