@@ -286,6 +286,25 @@ Setting up your development environment for working with the Morph components wi
 Second - make sure that `emmet` works for your javascript files. For editor 'Video Studio Code', go to settings, write 'emmet' in search box. Find a section 'Emmet: Include Languages' and press 'Add item'. Set item 'javascript' and value 'html'. Save settings. Now you can write HTML markup in your JS files. 
 
 
+### A Component Snippet for VS Code
+Here is the snippet that you can add to your VS Code snippets to make your morph components:
+
+```json
+"morph":{
+		"prefix": "mc",
+		"body": [
+			"const ${1:componentName} = {",
+			"     template: /*template*/`",
+			"           $2",
+			"       `",
+			", helpers: {}",
+			", handshake: {}",
+			"}",
+		],
+		"description": "Morphs component snippet"
+	}
+```
+
 
 ### Modify root data before start rendering
 Sometimes we need to modify data and modification should be valid for all placeholders. Add in the begining of the template a placeholder like `{{ : blank, ^^, >myModification }}`, where myModification is a helper function that will modify the data, `^^` is overwrite action and `blank` is a render helper function that will return an empty string (placeholder disapears ). Look at the example here:
