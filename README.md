@@ -306,6 +306,19 @@ To speed up the creation of Morph components in Visual Studio Code, you can use 
 ```
 
 
+
+### Use the handshake property
+Handshake is a non-required property inside Morph components but is a good practice to have it. Handshake shows how the component looks as the data object. Programmersn who work with Morph components don't have to understand the template rules, they just can look at the handshake object. It's their data-model.
+
+The Handshake property acts as a placeholder for dummy data, allowing you to visualize the appearance of the component. It is particularly useful during the design phase of a project.
+```js
+ const codeSnippet = morph.get(['templateThatHaveHandshake'])('demo')
+ 
+```
+
+
+
+
 ### Modify root data before start rendering
 Sometimes we need to modify data and modification should be valid for all placeholders. Add in the begining of the template a placeholder like `{{ : blank, ^^, >myModification }}`, where myModification is a helper function that will modify the data, `^^` is overwrite action and `blank` is a render helper function that will return an empty string (placeholder disapears ). Look at the example here:
 
