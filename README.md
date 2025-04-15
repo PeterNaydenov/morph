@@ -103,14 +103,14 @@ Let's see a more complex example before we go into details:
 const myTemplateDescription = {
               template: `Hello, {{ person : a, >getReady }}! Your age is {{ person : >getAge}}.` 
             , helpers: {
-                            getReady: (person) => {
+                            getReady: ({data:person}) => {
                                             return {
                                                       text: person.name
                                                     , href: person.web
                                                 }
                                         }
                           , a: `<a href="{{href}}">{{text}}</a>`
-                          , getAge: (person) => person.age
+                          , getAge: ({data}) => data.age
                     }
              , handshake: {
                         // ... demo data here           
@@ -205,6 +205,9 @@ Template placeholders can contain data-source and actions separated by ':'. Data
 `{{ :someAction}}` // no data, but the result of the action will fill the placeholder
 `{{ @all : someAction }}` // provide all the data to the action 'someAction'
 ```
+
+
+
 ### Deep data-sources ( after version 2.1.0 )
 
 Setup a deep data-source by using breadcrumbs.
