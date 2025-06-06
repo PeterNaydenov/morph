@@ -105,10 +105,15 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                            
 
                                                         if ( data && data.includes('/') ) {
-                                                                        data.split('/').forEach ( d => {
-                                                                                if ( info.hasOwnProperty(d) )   info = info[d]
-                                                                                else info = []
-                                                                           })
+                                                                        if ( info.hasOwnProperty ( data )) {  
+                                                                                info = info[data]
+                                                                           }
+                                                                        else {
+                                                                                data.split('/').forEach ( d => {
+                                                                                        if ( info.hasOwnProperty(d) )   info = info[d]
+                                                                                        else info = []
+                                                                                })
+                                                                           }
                                                             } // If data contains '/'
                                                         else if ( data==='@all' || data===null || data==='@root' )   info = dElement
                                                         else if ( data )   info = info[data]
