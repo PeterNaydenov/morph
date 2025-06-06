@@ -2,6 +2,11 @@
 
 
 
+### 2.2.0 ( 2025-06-06)
+- [x] New: Source property can contains a symbol '/';
+
+
+
 ### 2.1.3 ( 2025-04-12 )
 - [x] Fix: Wrong set of arguments for helper functions when data is a primitive value;
 
