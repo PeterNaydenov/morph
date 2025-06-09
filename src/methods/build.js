@@ -62,6 +62,7 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                         function success ( d={}, dependencies={}, ...args ) {
                                         const endData = [];
                                         const memory = {};
+                                        let onlySnippets = false;
                                         let topLevelType = _defineDataType ( d );
                                         let deps = { ...buildDependencies, ...dependencies }
                                         d = walk ({data:d})  // Creates copy of data to avoid mutation of the original
@@ -69,6 +70,12 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                         if ( topLevelType === 'null' )   return cuts.join ( '' )
                                         // Commands : raw, demo, handshake, placeholders
                                         if ( typeof d === 'string' ) {   // 'd' is a string when we want to debug the template
+                                                   if ( d.startsWith ( 'snippets:')   ) {
+                                                                onlySnippets = true
+                                                                let snippetNames = d.split ( ':' ).slice ( 1 )[0].split ( ',' )
+                                                                console.log ( snippetNames )
+                                                                return ''
+                                                       }
                                                    switch ( d ) {
                                                         // TODO: case snippet in format 'snippet/snippetName'
                                                         case 'raw':
