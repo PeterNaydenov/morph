@@ -37,6 +37,7 @@ function _readTemplate ( tpl ) {
                                            
                                     if ( isPlaceholder ) {
                                                     const x = finding.exec ( item )
+                                                    if ( !x ) return
                                                     let holder = {
                                                                       index: i
                                                                     , data   : readData    ( x[1] )
