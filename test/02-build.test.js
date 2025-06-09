@@ -97,7 +97,7 @@ describe ( 'transformer: build', () => {
 
     it ( 'Long chain with variaty of actions: Data, render, and mixing', () => {
                 const myTpl = {
-                          template: `Hello, {{  name : ul, [], li, >fromList }}! {{ more }}`
+                          template: `Hello, {{  name : ul, [], li, >fromList : nano }}! {{ more }}`
                         , helpers: {
                                   fromList: ({data:name}) => (['Peter', 'Ivan'].includes(name) ? name : 'stranger')
                                         

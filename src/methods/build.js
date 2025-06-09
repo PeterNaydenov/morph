@@ -34,6 +34,7 @@ import walk from '@peter.naydenov/walk'
  */
 function build  ( tpl, extra=false, buildDependencies={} ) {
         const { hasError, placeholders, chop, helpers, handshake } = _readTemplate ( tpl );
+        
         if ( hasError ) {
                         function fail () { return hasError }
                         return extra ? [ false, fail ] : fail
@@ -69,6 +70,7 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                         // Commands : raw, demo, handshake, placeholders
                                         if ( typeof d === 'string' ) {   // 'd' is a string when we want to debug the template
                                                    switch ( d ) {
+                                                        // TODO: case snippet in format 'snippet/snippetName'
                                                         case 'raw':
                                                                 return cuts.join ( '' )   // Original template with placeholders
                                                         case 'demo':
