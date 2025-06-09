@@ -43,8 +43,8 @@ function _readTemplate ( tpl ) {
                                                                     , action : x[2] ? x[2].split(',').map ( x => x.trim()) : null 
                                                                     , name   : x[3] ? x[3].trim() : null
                                                                 }
-                                                    snippets[i] = holder
                                                     placeholders.push ( holder )
+                                                    snippets[placeholders.length-1] = holder
                                                     if ( holder.name )   snippets[holder.name] = holder
                                             } // if isPlaceholder
                             }) // forEach chop
