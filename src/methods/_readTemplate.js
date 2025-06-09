@@ -81,6 +81,7 @@ function _readTemplate ( tpl ) {
             , chop
             , helpers
             , handshake
+            , snippets
             }
 } // _readTemplate func.
 
