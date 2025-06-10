@@ -71,7 +71,7 @@ it ( 'During render()', () => {
                             }
                     }
             morph.add ( ['name'], myTpl)
-            let result = morph.get (['name'])({},{ ex : external })
+            let result = morph.get (['name'])('render', {}, { ex : external })
             expect ( result ).to.be.equal ( 'My name is Peter.' )
     }) // it During render
 
@@ -97,7 +97,7 @@ it ( 'Mixed version - building and rendering', () => {
                     }
             morph.add ( ['name'], myTpl, { ex : peter })
             // Note: If deps on add() and on render() have same names, render() has higher priority
-            let result = morph.get (['name'])({},{ sec: ivan })
+            let result = morph.get (['name'])('render', {}, { sec: ivan })
             expect ( result ).to.be.equal ( 'My name is Ivan.' )
     }) // it Mixed version - building and rendering
 
@@ -123,7 +123,7 @@ it ( 'Overwriting dependencies', () => {
                     }
             morph.add ( ['name'], myTpl, { ex : peter })
             // Note: If deps on add() and on render() have same names, render() has higher priority
-            let result = morph.get (['name'])({},{ sec: ivan })
+            let result = morph.get (['name'])('render', {}, { sec: ivan })
             expect ( result ).to.be.equal ( 'My name is Ivan.' )
 }) // it Overwriting dependencies
 
@@ -139,7 +139,7 @@ it ( 'As a data', () => {
                 }
         morph.add ( ['name'], myTpl )
         // If data property is a function, it is called, and the result is used
-        let result = morph.get (['name'])({ h : externalFn })
+        let result = morph.get (['name'])('render', { h : externalFn })
         expect ( result ).to.be.equal ( 'My name is Peter.' )
 }) // it As a data
 
@@ -155,7 +155,7 @@ it ( 'As a data 2', () => {
                 }
         morph.add ( ['name'], myTpl )
         // If data property is a function, it is called, and the result is used
-        let result = morph.get (['name'])({ h : external })
+        let result = morph.get (['name'])('render', { h : external })
         expect ( result ).to.be.equal ( 'My name is Peter.' )
 }) // it As a data 2
 
