@@ -85,7 +85,7 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                                 case 'placeholders':
                                                                         return placeholders.map ( h => cuts[h.index] ).join ( ', ')
                                                                 default:
-                                                                        return `Error: Wrong command "${d}". Available commands: raw, demo, handshake, placeholders.`
+                                                                        return `Error: Wrong instruction "${d}". Available commands: raw, demo, handshake, placeholders.`
                                                         }
                                                 } // if d is string
                                         
