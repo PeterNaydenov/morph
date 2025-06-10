@@ -61,7 +61,7 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                          *      The function returns the rendered template.
                          *      If 'args' are provided, they are applied to the result in order.
                          */
-                        function success ( command, d, dependencies={}, ...args ) {
+                        function success ( command='render', d={}, dependencies={}, ...args ) {
                                         let onlySnippets = false;
                                         if ( command.startsWith ( 'snippets') && command.includes ( ':' ) ) {
                                                         onlySnippets = true
@@ -88,7 +88,6 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                                         return `Error: Wrong command "${d}". Available commands: raw, demo, handshake, placeholders.`
                                                         }
                                                 } // if d is string
-                                       
                                         
                                         const endData = [];
                                         const memory = {};
@@ -324,6 +323,7 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                                                         } // switch accType
                                                                 } // else other                
                                                 }) // forEach placeholders
+                                                
                                                 if ( onlySnippets )  endData.push ( placeholders.map ( x => cuts[x.index] ).join ( '<~>' ) )
                                                 else                 endData.push ( cuts.join ( '' ))
                                         }) // forEach d
