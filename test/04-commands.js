@@ -45,7 +45,7 @@ describe ( 'morph: commands', () => {
 
 
     
-    it.only ( 'Wrong command to component', () => {
+    it ( 'Wrong command to component', () => {
         // Commands other than 'raw', 'handshake' and 'demo' should return an error.
                 let demo = { name: 'Stoyan' }
                 const myTpl = { 
