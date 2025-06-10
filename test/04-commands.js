@@ -45,6 +45,21 @@ describe ( 'morph: commands', () => {
 
 
     
+    it.only ( 'Wrong command to component', () => {
+        // Commands other than 'raw', 'handshake' and 'demo' should return an error.
+                let demo = { name: 'Stoyan' }
+                const myTpl = { 
+                          template  : `My name is {{ name }}.` 
+                        , handshake : demo
+                    };
+                morph.add ( ['myName'], myTpl );
+                const result = morph.get ( ['myName'] )( 'fake' )
+
+                expect ( result ).to.be.equal ( 'Error: Wrong command "fake". Available commands: render, debug, snippets.' )
+        }) // it wrong command to component
+
+
+
     it ( 'Wrong instruction to component', () => {
         // Commands other than 'raw', 'handshake' and 'demo' should return an error.
                 let demo = { name: 'Stoyan' }
@@ -54,10 +69,11 @@ describe ( 'morph: commands', () => {
                     };
                 morph.add ( ['myName'], myTpl );
                 const result = morph.get ( ['myName'] )( 'debug', 'fake' )
-                expect ( result ).to.be.equal ( 'Error: Wrong instruction "fake". Available commands: raw, demo, handshake, placeholders.' )
+                expect ( result ).to.be.equal ( 'Error: Wrong instruction "fake". Available instructions: raw, demo, handshake, placeholders.' )
         }) // it wrong command to component
     
-    
+
+        
     it ( 'See placeholders', () => {
         let demo = { name: 'Stoyan', age: 30 }
                 const myTpl = { 
