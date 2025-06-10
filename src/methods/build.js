@@ -33,7 +33,7 @@ import walk from '@peter.naydenov/walk'
  * @returns {function|tupleResult} - rendering function
  */
 function build  ( tpl, extra=false, buildDependencies={} ) {
-        const { hasError, placeholders, chop, helpers, handshake } = _readTemplate ( tpl );
+        let { hasError, placeholders, chop, helpers, handshake, snippets } = _readTemplate ( tpl );
         
         if ( hasError ) {
                         function fail () { return hasError }
@@ -45,6 +45,8 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
 
                         /**
                          * Function to render a template with data. 
+                         * @typedef { 'render' | 'debug' | 'snippets' } Command
+                         * @param {Command} command - Different flavours of function execution. Fixed values are: render, debug, snippets
                          * @param {Object} [d={}] - The data to render with. If string, it's a command. 
                          * @param {Object} [dependencies={}] - The dependencies to use for the rendering.
                          * @param  {...any} args - The postprocessing functions to apply to the result.
@@ -59,42 +61,42 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                          *      The function returns the rendered template.
                          *      If 'args' are provided, they are applied to the result in order.
                          */
-                        function success ( d={}, dependencies={}, ...args ) {
+                        function success ( command, d, dependencies={}, ...args ) {
+                                        let onlySnippets = false;
+                                        if ( command.startsWith ( 'snippets') && command.includes ( ':' ) ) {
+                                                        onlySnippets = true
+                                                        let snippetNames = command.split ( ':' ).slice ( 1 )[0].split ( ',' )
+                                                        placeholders = snippetNames.map ( item => snippets [ item ])
+                                                }
+                                        else if ( command === 'snippets' ) {
+                                                        onlySnippets = true
+                                                }
+                                        if ( typeof d === 'string' ) {
+                                                        switch ( d ) {
+                                                                case 'raw':
+                                                                        return cuts.join ( '' )   // Original template with placeholders
+                                                                case 'demo':
+                                                                        if ( !handshake ) return `Error: No handshake data.`
+                                                                        d = handshake   // Render with handshake object
+                                                                        break
+                                                                case 'handshake':
+                                                                        if ( !handshake ) return `Error: No handshake data.`
+                                                                        return structuredClone (handshake)   // return a copy of handshake object
+                                                                case 'placeholders':
+                                                                        return placeholders.map ( h => cuts[h.index] ).join ( ', ')
+                                                                default:
+                                                                        return `Error: Wrong command "${d}". Available commands: raw, demo, handshake, placeholders.`
+                                                        }
+                                                } // if d is string
+                                       
+                                        
                                         const endData = [];
                                         const memory = {};
-                                        let onlySnippets = false;
+
                                         let topLevelType = _defineDataType ( d );
                                         let deps = { ...buildDependencies, ...dependencies }
                                         d = walk ({data:d})  // Creates copy of data to avoid mutation of the original
-                       
                                         if ( topLevelType === 'null' )   return cuts.join ( '' )
-                                        // Commands : raw, demo, handshake, placeholders
-                                        if ( typeof d === 'string' ) {   // 'd' is a string when we want to debug the template
-                                                   if ( d.startsWith ( 'snippets:')   ) {
-                                                                onlySnippets = true
-                                                                let snippetNames = d.split ( ':' ).slice ( 1 )[0].split ( ',' )
-                                                                console.log ( snippetNames )
-                                                                return ''
-                                                       }
-                                                   switch ( d ) {
-                                                        // TODO: case snippet in format 'snippet/snippetName'
-                                                        case 'raw':
-                                                                return cuts.join ( '' )   // Original template with placeholders
-                                                        case 'demo':
-                                                                if ( !handshake ) return `Error: No handshake data.`
-                                                                d = handshake   // Render with handshake object
-                                                                topLevelType = _defineDataType ( d )
-                                                                break
-                                                        case 'handshake':
-                                                                if ( !handshake ) return `Error: No handshake data.`
-                                                                return structuredClone (handshake)   // return a copy of handshake object
-                                                        case 'placeholders':
-                                                                return placeholders.map ( h => cuts[h.index] ).join ( ', ')
-                                                        default:
-                                                                return `Error: Wrong command "${d}". Available commands: raw, demo, handshake, placeholders.`
-                                                        }
-                                                } // if 'd' is string
-                                        
                                         if ( topLevelType !== 'array' )   d = [ d ]
                                         
                                         // Handle null data case - just return the template without placeholders
@@ -321,8 +323,9 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                                                                         break
                                                                                         } // switch accType
                                                                 } // else other                
-                                                }) // forEach placeholders                                        
-                                        endData.push ( cuts.join ( '' ))
+                                                }) // forEach placeholders
+                                                if ( onlySnippets )  endData.push ( placeholders.map ( x => cuts[x.index] ).join ( '<~>' ) )
+                                                else                 endData.push ( cuts.join ( '' ))
                                         }) // forEach d
 
                                         if ( topLevelType === 'array' )  return endData
