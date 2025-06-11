@@ -8,12 +8,16 @@
 
 
 
-## What's new in version 2.x.x
-- Data helper functions modifies the data per placeholder;
-- Arguments for helper functions are named arguments;
-- Memory action introduced - memory is available in helper functions as a named argument;
-- Overwrite action introduced - when change in data should be available for all placeholders;
+## What's new in version 3.x.x
+Version 3 introduces the ability to render only specific placeholders, rather than rerendering the entire template. This means that if your template represents a full page, you can rerender only the placeholders affected by changed data.
 
+
+The `render` function now takes a command as its first argument. Available commands are: `'render'`, `'debug'`, and `'snippets'`. Other arguments have no changes. Just shifted right. The second argument becomes the data, the third is dependencies, and the fourth is a list of post-processing functions.
+
+In version 3.x.x, the data is always the second argument. It can be a string, as in version 2.x.x. The term "command" is no longer used for this argument; instead, it is called "instructions". Available instructions include: `'raw'`, `'demo'`, `'handshake'`, and `'placeholders'`.
+
+To migrate to version 3.x.x, please read:
+- [Migration guide](./Migration.guide.md)
 
 
 
@@ -72,10 +76,10 @@ const myTemplateDescription = {
                            name : 'Ivan'
                         }
             }
-const myTemplate = morph.build ( myTemplateDescription );  // myTemplate is a render function
-const htmlBlock = myTemplate ( { name: 'Peter' } )           // Provide data to the render function and get the result
+const myTemplate = morph.build ( myTemplateDescription );      // myTemplate is a render function
+const htmlBlock = myTemplate ( 'render', { name: 'Peter' } )   // Provide data to the render function and get the result
 // htmlBlock === 'Hello, Peter!'
-const demo = myTemplate ( 'demo' )
+const demo = myTemplate ( 'render', 'demo' )
 // demo === 'Hello, Ivan!'
 ```
 
@@ -89,11 +93,11 @@ morph.add ( ['myTemplate'], myTemplateDescription )
 const htmlBlock = morph.get ( ['myTemplate'] )({ name: 'Peter' }) 
 // it's same as text above
 morph.add ( ['myTemplate', 'default'], myTemplateDescription )
-const htmlBlock = morph.get ( ['myTemplate', 'default'] )({ name: 'Peter' })
+const htmlBlock = morph.get ( ['myTemplate', 'default'] )( 'render', { name: 'Peter' })
 // if we use custom storage:
 morph.add ( ['myTemplate', 'hidden'], myTemplateDescription ) // write template in storage 'hidden'
-const htmlBlock = morph.get ( ['myTemplate', 'hidden'] )({ name: 'Peter' }) // render template from 'hidden' storage
-morph.get ( ['myTemplate'] )({ name: 'Peter' }) // call template 'myTemplate' from default storage
+const htmlBlock = morph.get ( ['myTemplate', 'hidden'] )( 'render', { name: 'Peter' }) // render template from 'hidden' storage
+morph.get ( ['myTemplate'] )('render', { name: 'Peter' }) // call template 'myTemplate' from default storage
 // will return error, because default storage does not have template "myTemplate"
 ```
 
@@ -116,7 +120,7 @@ const myTemplateDescription = {
                 }
             }
 const myTemplate = morph.build ( myTemplateDescription );
-const htmlBlock = myTemplate ( { person: {
+const htmlBlock = myTemplate ( 'render', { person: {
                                               name: 'Peter'
                                             , age : 40
                                             , web : 'example.com'
@@ -197,12 +201,17 @@ Template placeholders can contain data-source and actions separated by ':'. Data
 // placeholder should take data from field 'name', execute 'act1' and 'act2' over it
 // actions are separated by ',' and are executed from right to left
 
+// placeholder could have a name. It's optional and is in the end of the placeholder definition separated by ':'
+`{{ name : act2, act1 : placeholderName }}`
+// Placeholder names are useful when we want to render only few of them and we preffer to call them by name
+
 `{{ list : li, a }}`
 // take data from 'list' and render each element first with 'a' then with 'li' actions
 
 `{{ name }}` // render data from 'name'. Only data is provided to this placeholder
 `{{ :someAction}}` // no data, but the result of the action will fill the placeholder
 `{{ @all : someAction }}` // provide all the data to the action 'someAction'
+`{{:someAction : placeName }}` // action 'someAction' will fullfill content of placeholder and placeholder name will be 'placeName'
 ```
 
 
@@ -250,6 +259,54 @@ Helpers are templates and functions that are used by actions to decorate the dat
 - `Conditional render functions` could return null, that means: ignore this action. The result could be also a string: the name of other helper function that will render the data.
 
 
+
+## Commands
+The first argument of the render function is the command. Available commands are: `render`, `debug`, and `snippets`. Default command is `render` so if template doesn't need external information we can call the function without arguments. 
+
+
+## Snippets
+Snippets are a way to render only specific placeholders instead of always rerendering the entire template. Render function arguments were changed in version 3.x.x to serve this purpose. 
+
+How to access snippets:
+```js
+ const template = {
+                template:`
+                            <h1>{{title}}</h1>
+                            <p>{{description}}</p>
+                            <div class="contact">
+                                    {{ name : setupName : theName }}
+                            </div>
+                            <p>{{ tags : +comma : tagList }}</p>
+                    `,
+                helpers: {
+                            setupName : ( {data} ) => `${data.name} ${data.surname}`,
+                            comma : ({data}) =>  data.map ( tag => `<span>${tag}</span>` ).join ( ',' )
+                        },
+                handshake: {
+                            title : 'Contacts',
+                            description : 'Contact description text',
+                            name : { name: 'Ivan', surname: 'Petrov' },
+                            tags : ['tag1', 'tag2', 'tag3'],
+                        }
+          } // template
+  
+const fn = morph.build ( template );
+
+let res1 = fn ( 'snippets', 'demo' )
+// will return a string with the render results of all placeholders separated by '<~>' string
+// `Contacts<~>Contact description text<~>Ivan Petrov<~><span>tag1</span>,<span>tag2</span>,<span>tag3</span><~>`
+let res2 = fn ( 'snippets:theName', 'demo' )
+// will return a string with the render result of 'name' placeholder. No delimiter because is only one placeholder
+// `Ivan Petrov`
+
+let res3 = fn ( 'snippets:theName,tagList', 'demo' )
+// will return a string with the render results of 'name' and 'tags' placeholders separated by '<~>' string
+// `Ivan Petrov<~><span>tag1</span>,<span>tag2</span>,<span>tag3</span>`
+
+// snippets can be accessed also with index - starting from 0. Index mean the order of placeholders in the template.
+let res4 = fn ( 'snippets:2,3', 'demo' )
+// it's the same as res3. Use names or indexes according to your preferences. With indexes placeholder will not need to have a name.
+```
 
 
 ## Links
