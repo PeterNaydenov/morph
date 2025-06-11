@@ -72,7 +72,11 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                         if ( ![ 'render', 'debug', 'snippets'].includes ( command )  && !command.startsWith('snippets') )   return `Error: Wrong command "${command}". Available commands: render, debug, snippets.`
                                         if ( command.startsWith ( 'snippets') && command.includes ( ':' ) ) {
                                                         onlySnippets = true
-                                                        let snippetNames = command.split ( ':' ).slice ( 1 )[0].split ( ',' )
+                                                        let snippetNames = command.split ( ':' )
+                                                                                  .slice ( 1 )[0]
+                                                                                  .trim()
+                                                                                  .split ( ',' )
+                                                                                  .map ( t => t.trim() )
                                                         placeholders = snippetNames.map ( item => snippets [ item ])
                                                 }
                                         else if ( command === 'snippets' ) {

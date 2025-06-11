@@ -123,7 +123,7 @@ describe ( 'morph: commands', () => {
                     } // template
   
             const fn = morph.build ( template );
-            const result = fn ( 'snippets:theName,tagList', 'demo' );
+            const result = fn ( 'snippets : theName, tagList', 'demo' );
             expect ( result ).to.be.equal (`Ivan Petrov<~><span>tag1</span>,<span>tag2</span>,<span>tag3</span>`)
         }) // it call snippets by name
 
@@ -152,7 +152,7 @@ describe ( 'morph: commands', () => {
                     } // template
   
             const fn = morph.build ( template );
-            const result = fn ( 'snippets:2,3', 'demo' );
+            const result = fn ( 'snippets: 2,3', 'demo' );
             expect ( result ).to.be.equal (`Ivan Petrov<~><span>tag1</span>,<span>tag2</span>,<span>tag3</span>`)
             
             // separate results with <~>
