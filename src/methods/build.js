@@ -42,24 +42,30 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
         else {  // If NO Error:
                         let cuts = structuredClone ( chop );
                         // *** Template recognition complete. Start building the rendering function -->
-
                         /**
-                         * Function to render a template with data. 
+                         * Processes template rendering commands with provided data, dependencies, and optional post-processing functions.
+                         *
+                         * @function success
                          * @typedef { 'render' | 'debug' | 'snippets' } Command
-                         * @param {Command} command - Different flavours of function execution. Fixed values are: render, debug, snippets
-                         * @param {Object} [d={}] - The data to render with. If string, it's a command. 
-                         * @param {Object} [dependencies={}] - The dependencies to use for the rendering.
-                         * @param  {...any} args - The postprocessing functions to apply to the result.
-                         * @returns {string|string[]} The rendered template.
-                         * @description
-                         *      If 'd' is a string, it's a command. The available commands are:
-                         *      - 'raw' - returns the original template with placeholders
-                         *      - 'demo' - renders the template with the handshake data
-                         *      - 'handshake' - returns a copy of the handshake data
-                         *      - 'placeholders' - returns the placeholders as a comma separated string
-                         *      If 'd' is an object, it's the data to render with. If it's an array, it's an array of objects to render with.
-                         *      The function returns the rendered template.
-                         *      If 'args' are provided, they are applied to the result in order.
+                         * @param {Command} [command='render'] - The command to execute. Supported commands: 'render', 'debug', 'snippets', or 'snippets:<names>'.
+                         * @param {Object|string} [d={}] - The data object to render, or a string instruction ('raw', 'demo', 'handshake', 'placeholders').
+                         * @param {Object} [dependencies={}] - Additional dependencies to be merged with internal dependencies.
+                         * @param {...any} args - Optional post-processing functions to apply to the rendered output.
+                         * @returns {string|Array[]} The rendered template, snippets, or data depending on the command and input.
+                         *
+                         * @throws {Error} If an unsupported command or instruction is provided.
+                         *
+                         * @example
+                         * // Render a template with data
+                         * success('render', { name: 'Alice' }, { helperFn });
+                         *
+                         * @example
+                         * // Get raw template
+                         * success('debug', 'raw');
+                         *
+                         * @example
+                         * // Render only specific snippets
+                         * success('snippets:header,footer', { ... });
                          */
                         function success ( command='render', d={}, dependencies={}, ...args ) {
                                         let onlySnippets = false;
