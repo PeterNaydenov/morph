@@ -5,25 +5,26 @@
 Version 3 introduces the ability to render only specific placeholders, rather than rerendering the entire template. This means that if your template represents a full page, you can rerender only the placeholders affected by changed data.
 
 
-The `render` function now takes a command as its first argument. Available commands are: `'render'`, `'debug'`, and `'snippets'`. Other arguments have no changes. Just shifted right. The second argument becomes the data, the third is dependencies, and the fourth is a list of post-processing functions.
+The `render` function now takes a command as its first argument. Available commands are: `render`, `debug`, and `snippets`. Other arguments have no changes. Just shifted right. The second argument becomes the data, the third is dependencies, and the fourth is a list of post-processing functions.
 
-In version 3.x.x, the data is always the second argument. It can be a string, as in version 2.x.x. The term "command" is no longer used for this argument; instead, it is called "instructions". Available instructions include: `'raw'`, `'demo'`, `'handshake'`, and `'placeholders'`.
+In version 3.x.x, the data is always the second argument. It can be a string, as in version 2.x.x. The term "command" is no longer used for this argument; instead, it is called "instructions". Available instructions include: `raw`, `demo`, `handshake`, and `placeholders`.
 
 ```js
+// To render the template with internal 'handshake' data
 // Before
 myTemplate ( 'demo' )
 // After 3.x.x
 myTemplate ( 'render', 'demo' )
 
 
-
+// To show list of placeholders
 // Before
 myTemplate ( 'placeholders' )
 // After 3.x.x
 myTemplate ( 'debug', 'placeholders' )
 
 
-
+// To see the handshake data
 // Before
 myTemplate ( 'handshake' )
 // After 3.x.x

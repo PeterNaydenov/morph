@@ -12,9 +12,9 @@
 Version 3 introduces the ability to render only specific placeholders, rather than rerendering the entire template. This means that if your template represents a full page, you can rerender only the placeholders affected by changed data.
 
 
-The `render` function now takes a command as its first argument. Available commands are: `'render'`, `'debug'`, and `'snippets'`. Other arguments have no changes. Just shifted right. The second argument becomes the data, the third is dependencies, and the fourth is a list of post-processing functions.
+The `render` function now takes a command as its first argument. Available commands are: `render`, `debug`, and `snippets`. Other arguments have no changes. Just shifted right. The second argument becomes the data, the third is dependencies, and the fourth is a list of post-processing functions.
 
-In version 3.x.x, the data is always the second argument. It can be a string, as in version 2.x.x. The term "command" is no longer used for this argument; instead, it is called "instructions". Available instructions include: `'raw'`, `'demo'`, `'handshake'`, and `'placeholders'`.
+In version 3.x.x, the data is always the second argument. It can be a string, as in version 2.x.x. The term "command" is no longer used for this argument; instead, it is called "instructions". Available instructions include: `raw`, `demo`, `handshake`, and `placeholders`.
 
 To migrate to version 3.x.x, please read:
 - [Migration guide](./Migration.guide.md)
@@ -303,7 +303,7 @@ let res3 = fn ( 'snippets:theName,tagList', 'demo' )
 // will return a string with the render results of 'name' and 'tags' placeholders separated by '<~>' string
 // `Ivan Petrov<~><span>tag1</span>,<span>tag2</span>,<span>tag3</span>`
 
-// snippets can be accessed also with index - starting from 0. Index mean the order of placeholders in the template.
+// snippets can be accessed also with index - starting from 0. Index mean the order of appearance of placeholders in the template.
 let res4 = fn ( 'snippets:2,3', 'demo' )
 // it's the same as res3. Use names or indexes according to your preferences. With indexes placeholder will not need to have a name.
 ```
