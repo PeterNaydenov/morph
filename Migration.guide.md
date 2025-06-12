@@ -1,6 +1,45 @@
 # Migration Guides
 
 
+## 2.x.x -> 3.x.x
+The `render` function now takes a command as its first argument. Available commands are: `render`, `debug`, and `snippets`. Other arguments have no changes. Just shifted right. The second argument becomes the data, the third is dependencies, and the fourth is a list of post-processing functions.
+
+In version 3.x.x(second argument), the data can be a string, as in version 2.x.x(first argument). The term "command" is no longer used for this argument; instead, it is called "instructions". Available instructions include: `raw`, `demo`, `handshake`, and `placeholders`.
+
+```js
+// To render the template with internal 'handshake' data
+// Before
+myTemplate ( 'demo' )
+// After 3.x.x
+myTemplate ( 'render', 'demo' )
+
+
+// To show list of placeholders
+// Before
+myTemplate ( 'placeholders' )
+// After 3.x.x
+myTemplate ( 'debug', 'placeholders' )
+
+
+// To see the handshake data
+// Before
+myTemplate ( 'handshake' )
+// After 3.x.x
+myTemplate ( 'debug', 'handshake' )
+
+
+// Functions that don't relay on external data and are called without arguments have no changes
+// Before
+myTemplate ()
+// After 3.x.x
+myTemplate ()
+// command 'render' is by default
+```
+
+That's it!
+
+
+
 ## 1.x.x -> 2.x.x
 Modification of data is available only for current placeholder. If you need to remember changes in data, use the new memory action - '^something' where '^' is for memory and 'something' is the name. Memory will make a snapshot of the current data and will be available in helper functions. If you need to provide changes to all placeholders, use overwrite action. It's a snapshot that will be remember as a main data and will be available for all placeholders.
 

@@ -21,7 +21,7 @@ it ( 'Get a non existing component', () => {
             morph.clear ()
             const template = { template: `My name is {{ name }}.` };
             morph.add ( ['myName', 'ale'], template );
-            const result = morph.get ( ['myName'] )({ name: 'Peter' }) 
+            const result = morph.get ( ['myName'] )('render', { name: 'Peter' }) 
             expect ( result ).to.be.equal ( 'Error: Template "myName" does not exist in storage "default".' )
     }) // it get a non existing component
 
@@ -36,7 +36,7 @@ it ( 'Add component - null', () => {
             const template = null;
             morph.add ( ['myName'], template );
             expect ( triggered ).to.be.equal ( true )
-            const result = morph.get ( ['myName'] )({ name: 'Peter' }) 
+            const result = morph.get ( ['myName'] )('render', { name: 'Peter' }) 
             expect ( result ).to.be.equal ( 'Error: Template "myName" does not exist in storage "default".' )
     }) // it add component - null
 

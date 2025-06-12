@@ -18,7 +18,9 @@ describe ( 'morph: Data', () => {
                                     }
                         };
                 const templateFn = morph.build ( myTpl );
-                const result = templateFn({
+                const result = templateFn (
+                                      'render'
+                                      , {
                                             person: {
                                                           name: 'Robert'
                                                         , age: 30
@@ -38,7 +40,9 @@ describe ( 'morph: Data', () => {
                                 }
                     };
                 const templateFn = morph.build ( myTpl );
-                const result = templateFn({
+                const result = templateFn(
+                                    'render'
+                                    , {
                                         person: {
                                                       name: 'Robert'
                                                     , age: 30
@@ -74,7 +78,9 @@ describe ( 'morph: Data', () => {
                                 }
                     };
                 const templateFn = morph.build ( myTpl );
-                const result = templateFn({
+                const result = templateFn(
+                                      'render'
+                                      , {
                                         persons: [
                                                       { name: 'Robert' , age: 30, href: 'http://robert.com' }
                                                     , { name: 'John' , age: 64 }
@@ -98,7 +104,7 @@ describe ( 'morph: Data', () => {
                     ;
                 const templateFn = morph.build ( myTpl );
                 // TemplateFn arguments are: data, dependencies, ...postProcessFunctions
-                const result = templateFn ( {}, {}, post1, post2, post3 );
+                const result = templateFn ( 'render', {}, {}, post1, post2, post3 );
                 expect ( result ).to.be.equal ( `The template: >post1 >post2 >post3` )
         }) // it post process functions
 
@@ -135,7 +141,9 @@ describe ( 'morph: Data', () => {
                             template : `Hello from {{ name }}. I'm {{ age }} years old {{ job }}`
                           }
                 const templateFn = morph.build ( myTpl );
-                const result = templateFn({
+                const result = templateFn(
+                                  'render'
+                                  , {
                                         name: () => state.name
                                       , age: () => state.age
                                       , job: () => state.job
@@ -158,7 +166,10 @@ describe ( 'morph: Data', () => {
                                         }
                             }
                 const templateFn = morph.build ( myTpl );
-                const result = templateFn ({
+                const result = templateFn(
+                                  'render'
+                                  , {
+
                                         name: () => state.name
                                       , age: () => state.age
                                       , job: () => state.job
