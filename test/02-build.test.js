@@ -80,7 +80,7 @@ describe ( 'transformer: build', () => {
                                         }
                         }
                 const templateFn = morph.build ( myTpl );
-                const result = templateFn({ job: 'programmer' });
+                const result = templateFn ( 'render' , { job: 'programmer' });
                 expect ( result ).to.be.equal ( 'My job is programmer.' );
           }) // it primitive data with helper function
 
@@ -549,7 +549,7 @@ describe ( 'transformer: build', () => {
                       }
           }
         const templateFn = morph.build ( myTemplateDescription );
-        const result = templateFn ( 'demo' );
+        const result = templateFn ( 'render', 'demo' );
         expect ( result.trim() ).to.be.equal ( `<h1>My title</h1> <ul><li><a href="item1.com">0.Item 1</a></li><li><a href="item2.com">1.Item 2</a></li><li><a href="item3.com">2.Item 3</a></li></ul>`)
     }) // it modify root data
 
@@ -599,7 +599,7 @@ describe ( 'transformer: build', () => {
                                     }
                         };
                 const templateFn = morph.build ( myTpl );
-                const result = templateFn ( data );
+                const result = templateFn ( 'render', data );
                 expect ( result ).to.be.equal ( 'Profile: (180cm,66kg).' )
         }) // it object - data deep object
 
@@ -621,7 +621,7 @@ describe ( 'transformer: build', () => {
                                     }
                         };
                 const templateFn = morph.build ( myTpl );
-                const result = templateFn ( data );
+                const result = templateFn ( 'render', data );
                 expect ( result ).to.be.equal ( 'Age: 50.' )
         }) // it Access a deep property
 
