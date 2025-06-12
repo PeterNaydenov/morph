@@ -69,6 +69,24 @@ describe ( 'transformer: build', () => {
 
 
 
+      it ( 'Primitive data with helper function', () => {
+                const myTpl = {
+                                  template : `My job is {{ job : jobPossible }}.`
+                                , helpers  : {
+                                                jobPossible: ({data}) => {
+                                                                if ( data === 'Software Engineer' ) return null  // null means: Do not render this field
+                                                                else return data
+                                                        }
+                                        }
+                        }
+                const templateFn = morph.build ( myTpl );
+                const result = templateFn({ job: 'programmer' });
+                expect ( result ).to.be.equal ( 'My job is programmer.' );
+          }) // it primitive data with helper function
+
+
+
+
      it ( 'Keep a placeholder', () => {
                 const myTpl = {
                                   // placeholder will be fullfiled with data[job], but data function 'jobPossible' will filter the result
@@ -504,6 +522,39 @@ describe ( 'transformer: build', () => {
 
 
 
+    it ( 'Modify root data', () => {
+        const myTemplateDescription = {
+                template: `
+                          {{  : blank, ^^ , >myModification }}
+                          <h1>{{title}}</h1>
+                          {{list: ul,[],li,a}}
+                      `
+              , helpers: {
+                          myModification : ({data}) => {
+                                          data.list.forEach ( (item,i) =>  item.count = i )
+                                          return data
+                                }
+                          , blank : () => ``
+                          , a: `<a href="{{href}}">{{ count }}.{{text}}</a>`
+                          , li: `<li>{{text}}</li>`
+                          , ul: `<ul>{{text}}</ul>`
+                      }
+              , handshake: {
+                          title: 'My title'
+                        , list: [
+                                    { text: 'Item 1', href: 'item1.com' }
+                                  , { text: 'Item 2', href: 'item2.com' }
+                                  , { text: 'Item 3', href: 'item3.com' }
+                              ]
+                      }
+          }
+        const templateFn = morph.build ( myTemplateDescription );
+        const result = templateFn ( 'demo' );
+        expect ( result.trim() ).to.be.equal ( `<h1>My title</h1> <ul><li><a href="item1.com">0.Item 1</a></li><li><a href="item2.com">1.Item 2</a></li><li><a href="item3.com">2.Item 3</a></li></ul>`)
+    }) // it modify root data
+
+
+
     it ( 'Object - Data deep object', () => {
                 const myTpl = {
                                   template : `Profile: {{ me: ul , li, #, line }}.`
@@ -527,6 +578,52 @@ describe ( 'transformer: build', () => {
                 const result = templateFn ( 'render', data );
                 expect ( result ).to.be.equal ( 'Profile: <ul><li>Peter - (180cm,66kg)</li></ul>.' )
         }) // it object - data deep object
+
+
+
+    it ( 'Access a deep object', () => {
+                const myTpl = {
+                                  template : `Profile: {{ me/stats : line }}.`
+                                , helpers: {
+                                                line: `({{ height}}cm,{{ weight}}kg)`
+                                        }
+                        };
+                const data = {
+                                me : {
+                                          name: 'Peter'
+                                        , stats : {
+                                                          age: 50
+                                                        , height: 180
+                                                        , weight: 66
+                                                }
+                                    }
+                        };
+                const templateFn = morph.build ( myTpl );
+                const result = templateFn ( data );
+                expect ( result ).to.be.equal ( 'Profile: (180cm,66kg).' )
+        }) // it object - data deep object
+
+
+
+    it ( 'Access a deep property', () => {
+                const myTpl = {
+                                  template : `Age: {{ me/stats/age }}.`
+                                , helpers: {}
+                        };
+                const data = {
+                                me : {
+                                          name: 'Peter'
+                                        , stats : {
+                                                        age: 50
+                                                        , height: 180
+                                                        , weight: 66
+                                                }
+                                    }
+                        };
+                const templateFn = morph.build ( myTpl );
+                const result = templateFn ( data );
+                expect ( result ).to.be.equal ( 'Age: 50.' )
+        }) // it Access a deep property
 
 
 

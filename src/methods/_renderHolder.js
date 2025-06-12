@@ -6,7 +6,7 @@ import settings from './settings.js'
 function _renderHolder ( template, data ) {
     // Data should be an object. No array, no string.
     if ( data == null )   return null  
- 
+
     const
           chop = _chopTemplate (settings)( template )
         , set  = settings
@@ -15,7 +15,7 @@ function _renderHolder ( template, data ) {
                             const isPlaceholder = item.includes ( set.TG_PRX )
                             if ( isPlaceholder ) {
                                             const field = item.replace ( set.TG_PRX, '' ).replace ( set.TG_SFX, '' ).trim();
-                                            if ( data[field] )  chop[i] = data[field]
+                                            if ( data.hasOwnProperty (field) && data[field] != null )  chop[i] = data[field]
                                     } // if isPlaceholder
                     }) // forEach chop
     return chop.join ( '' )

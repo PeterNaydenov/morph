@@ -8,6 +8,7 @@
 
 
 
+
 ## What's new in version 3.x.x
 
 In version 3, you can choose to render only certain placeholders or groups of placeholders from a template. This lets you use templates as collections of reusable templates, so you can extract and use just the parts you need without having to render the whole template. This makes it easier to create and manage reusable template libraries for your project.
@@ -105,14 +106,14 @@ Let's see a more complex example before we go into details:
 const myTemplateDescription = {
               template: `Hello, {{ person : a, >getReady }}! Your age is {{ person : >getAge}}.` 
             , helpers: {
-                            getReady: (person) => {
+                            getReady: ({data:person}) => {
                                             return {
                                                       text: person.name
                                                     , href: person.web
                                                 }
                                         }
                           , a: `<a href="{{href}}">{{text}}</a>`
-                          , getAge: (person) => person.age
+                          , getAge: ({data}) => data.age
                     }
              , handshake: {
                         // ... demo data here           
@@ -215,6 +216,33 @@ Template placeholders can contain data-source and actions separated by ':'. Data
 
 
 
+### Deep data-sources ( after version 2.1.0 )
+
+Setup a deep data-source by using breadcrumbs.
+```js
+const myTpl = {
+                  template : `Profile: {{ me/stats : line }}.`  // data-source will be data.me.stats
+                , helpers: {
+                                line: `({{ height}}cm,{{ weight}}kg)`
+                        }
+        };
+const data = {
+                me : {
+                          name: 'Peter'
+                        , stats : {
+                                          age: 50
+                                        , height: 180
+                                        , weight: 66
+                                }
+                    }
+        };
+const templateFn = morph.build ( myTpl );
+const result = templateFn ( data );
+// ---> Profile: (180cm,66kg).
+```
+
+
+
 ## Actions
 
 Actions are concise representations of a sequence of function calls. Some functions pertain to `data` manipulation, others to `rendering`, and some to `mixing`. We use a prefix system for enhanced readability and maintainability.
@@ -256,6 +284,7 @@ Helpers are templates and functions that are used by actions to decorate the dat
 - `Mixing functions` should merge data in a single data result that will be used by other actions.  
 - `Extended render functions` will return a string like regular render functions, but will receive a deep branch of requested data;
 - `Conditional render functions` could return null, that means: ignore this action. The result could be also a string: the name of other helper function that will render the data.
+
 
 
 
