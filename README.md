@@ -8,13 +8,15 @@
 
 
 
-## What's new in version 2.x.x
-- Data helper functions modifies the data per placeholder;
-- Arguments for helper functions are named arguments;
-- Memory action introduced - memory is available in helper functions as a named argument;
-- Overwrite action introduced - when change in data should be available for all placeholders;
-- Deep data-sources ( after version 2.1.0 );
+## What's new in version 3.x.x
 
+In version 3, you can choose to render only certain placeholders or groups of placeholders from a template. This lets you use templates as collections of reusable templates, so you can extract and use just the parts you need without having to render the whole template. This makes it easier to create and manage reusable template libraries for your project.
+
+The `render` function now takes a command as its first argument. Available commands are: `render`, `debug`, and `snippets`. Other arguments have no changes. Just shifted right. The second argument becomes the data, the third is dependencies, and the fourth is a list of post-processing functions.
+
+In version 3.x.x, the data is always the second argument. It can be a string, as in version 2.x.x. The term "command" is no longer used for this argument; instead, it is called "instructions". Available instructions include: `raw`, `demo`, `handshake`, and `placeholders`.
+
+How to migrate to version 3.x.x, please read the [Migration guide](./Migration.guide.md). Read more about snippets down below.
 
 
 
@@ -73,10 +75,10 @@ const myTemplateDescription = {
                            name : 'Ivan'
                         }
             }
-const myTemplate = morph.build ( myTemplateDescription );  // myTemplate is a render function
-const htmlBlock = myTemplate ( { name: 'Peter' } )           // Provide data to the render function and get the result
+const myTemplate = morph.build ( myTemplateDescription );      // myTemplate is a render function
+const htmlBlock = myTemplate ( 'render', { name: 'Peter' } )   // Provide data to the render function and get the result
 // htmlBlock === 'Hello, Peter!'
-const demo = myTemplate ( 'demo' )
+const demo = myTemplate ( 'render', 'demo' )
 // demo === 'Hello, Ivan!'
 ```
 
@@ -90,11 +92,11 @@ morph.add ( ['myTemplate'], myTemplateDescription )
 const htmlBlock = morph.get ( ['myTemplate'] )({ name: 'Peter' }) 
 // it's same as text above
 morph.add ( ['myTemplate', 'default'], myTemplateDescription )
-const htmlBlock = morph.get ( ['myTemplate', 'default'] )({ name: 'Peter' })
+const htmlBlock = morph.get ( ['myTemplate', 'default'] )( 'render', { name: 'Peter' })
 // if we use custom storage:
 morph.add ( ['myTemplate', 'hidden'], myTemplateDescription ) // write template in storage 'hidden'
-const htmlBlock = morph.get ( ['myTemplate', 'hidden'] )({ name: 'Peter' }) // render template from 'hidden' storage
-morph.get ( ['myTemplate'] )({ name: 'Peter' }) // call template 'myTemplate' from default storage
+const htmlBlock = morph.get ( ['myTemplate', 'hidden'] )( 'render', { name: 'Peter' }) // render template from 'hidden' storage
+morph.get ( ['myTemplate'] )('render', { name: 'Peter' }) // call template 'myTemplate' from default storage
 // will return error, because default storage does not have template "myTemplate"
 ```
 
@@ -103,21 +105,21 @@ Let's see a more complex example before we go into details:
 const myTemplateDescription = {
               template: `Hello, {{ person : a, >getReady }}! Your age is {{ person : >getAge}}.` 
             , helpers: {
-                            getReady: ({data:person}) => {
+                            getReady: (person) => {
                                             return {
                                                       text: person.name
                                                     , href: person.web
                                                 }
                                         }
                           , a: `<a href="{{href}}">{{text}}</a>`
-                          , getAge: ({data}) => data.age
+                          , getAge: (person) => person.age
                     }
              , handshake: {
                         // ... demo data here           
                 }
             }
 const myTemplate = morph.build ( myTemplateDescription );
-const htmlBlock = myTemplate ( { person: {
+const htmlBlock = myTemplate ( 'render', { person: {
                                               name: 'Peter'
                                             , age : 40
                                             , web : 'example.com'
@@ -198,39 +200,17 @@ Template placeholders can contain data-source and actions separated by ':'. Data
 // placeholder should take data from field 'name', execute 'act1' and 'act2' over it
 // actions are separated by ',' and are executed from right to left
 
+// placeholder could have a name. It's optional and is in the end of the placeholder definition separated by ':'
+`{{ name : act2, act1 : placeholderName }}`
+// Placeholder names are useful when we want to render only few of them and we preffer to call them by name
+
 `{{ list : li, a }}`
 // take data from 'list' and render each element first with 'a' then with 'li' actions
 
 `{{ name }}` // render data from 'name'. Only data is provided to this placeholder
 `{{ :someAction}}` // no data, but the result of the action will fill the placeholder
 `{{ @all : someAction }}` // provide all the data to the action 'someAction'
-```
-
-
-
-### Deep data-sources ( after version 2.1.0 )
-
-Setup a deep data-source by using breadcrumbs.
-```js
-const myTpl = {
-                  template : `Profile: {{ me/stats : line }}.`  // data-source will be data.me.stats
-                , helpers: {
-                                line: `({{ height}}cm,{{ weight}}kg)`
-                        }
-        };
-const data = {
-                me : {
-                          name: 'Peter'
-                        , stats : {
-                                          age: 50
-                                        , height: 180
-                                        , weight: 66
-                                }
-                    }
-        };
-const templateFn = morph.build ( myTpl );
-const result = templateFn ( data );
-// ---> Profile: (180cm,66kg).
+`{{:someAction : placeName }}` // action 'someAction' will fullfill content of placeholder and placeholder name will be 'placeName'
 ```
 
 
@@ -279,81 +259,52 @@ Helpers are templates and functions that are used by actions to decorate the dat
 
 
 
-## Good Practices and Examples
+## Commands
+The first argument of the render function is the command. Available commands are: `render`, `debug`, and `snippets`. Default command is `render` so if template doesn't need external information we can call the function without arguments. 
 
 
+## Snippets
+Snippets are a way to render only specific placeholders instead of always rerendering the entire template. Render function arguments were changed in version 3.x.x to serve this purpose. 
 
-### Setup a development environment
-Setting up your development environment for working with the Morph components will help you to get the most out of it. First, what you need to do is to start showing HTML markup inside JavaScript. For editor 'Video Studio Code', you can use an extension [es6-string-html](https://marketplace.visualstudio.com/items?itemName=Tobermory.es6-string-html). Now simple comment will turn your HTML string into colored HTML markup.
-
-Second - make sure that `emmet` works for your javascript files. For editor 'Video Studio Code', go to settings, write 'emmet' in search box. Find a section 'Emmet: Include Languages' and press 'Add item'. Set item 'javascript' and value 'html'. Save settings. Now you can write emmet snippets to speed up your markup writing. 
-
-
-### VS Code Snippet for Morph Components
-To speed up the creation of Morph components in Visual Studio Code, you can use the following snippet. Add it to your VS Code snippets configuration:
-
-```json
-"morph":{
-		"prefix": "mc",
-		"body": [
-			"const ${1:componentName} = {",
-			"     template: /*template*/`",
-			"           $2",
-			"       `",
-			", helpers: {}",
-			", handshake: {}",
-			"}",
-		],
-		"description": "Morphs component snippet"
-	}
-```
-
-
-
-### Use the handshake property
-Handshake is a non-required property inside Morph components but is a good practice to have it. Handshake shows how the component looks as the data object. Programmersn who work with Morph components don't have to understand the template rules, they just can look at the handshake object. It's their data-model.
-
-The Handshake property acts as a placeholder for dummy data, allowing you to visualize the appearance of the component. It is particularly useful during the design phase of a project.
+How to access snippets:
 ```js
- const codeSnippet = morph.get(['templateThatHaveHandshake'])('demo')
- 
-```
+ const template = {
+                template:`
+                            <h1>{{title}}</h1>
+                            <p>{{description}}</p>
+                            <div class="contact">
+                                    {{ name : setupName : theName }}
+                            </div>
+                            <p>{{ tags : +comma : tagList }}</p>
+                    `,
+                helpers: {
+                            setupName : ( {data} ) => `${data.name} ${data.surname}`,
+                            comma : ({data}) =>  data.map ( tag => `<span>${tag}</span>` ).join ( ',' )
+                        },
+                handshake: {
+                            title : 'Contacts',
+                            description : 'Contact description text',
+                            name : { name: 'Ivan', surname: 'Petrov' },
+                            tags : ['tag1', 'tag2', 'tag3'],
+                        }
+          } // template
+  
+const fn = morph.build ( template );
 
+let res1 = fn ( 'snippets', 'demo' )
+// will return a string with the render results of all placeholders separated by '<~>' string
+// `Contacts<~>Contact description text<~>Ivan Petrov<~><span>tag1</span>,<span>tag2</span>,<span>tag3</span><~>`
+let res2 = fn ( 'snippets:theName', 'demo' )
+// will return a string with the render result of 'name' placeholder. No delimiter because is only one placeholder
+// `Ivan Petrov`
 
+let res3 = fn ( 'snippets:theName,tagList', 'demo' )
+// will return a string with the render results of 'name' and 'tags' placeholders separated by '<~>' string
+// `Ivan Petrov<~><span>tag1</span>,<span>tag2</span>,<span>tag3</span>`
 
-
-### Modify root data before start rendering
-Sometimes we need to modify data and modification should be valid for all placeholders. Add in the begining of the template a placeholder like `{{ : blank, ^^, >myModification }}`, where myModification is a helper function that will modify the data, `^^` is overwrite action and `blank` is a render helper function that will return an empty string (placeholder disapears ). Look at the example here:
-
-```js
-const myTemplateDescription = {
-                template: `
-                          {{  : blank, ^^ , >myModification }}  
-                          <h1>{{title}}</h1>
-                          {{list: ul,[],li,a}}
-                      `
-              , helpers: {
-                          myModification : ({data}) => {   // Modify original input data 
-                                          data.list.forEach ( (item,i) =>  item.count = i )
-                                          return data
-                                }
-                          , blank : () => `` // use this helper function to remove the placeholder
-                          , a: `<a href="{{href}}">{{ count }}.{{text}}</a>`
-                          , li: `<li>{{text}}</li>`
-                          , ul: `<ul>{{text}}</ul>`
-                      }
-              , handshake: {
-                          title: 'My title'
-                        , list: [
-                                    { text: 'Item 1', href: 'item1.com' }
-                                  , { text: 'Item 2', href: 'item2.com' }
-                                  , { text: 'Item 3', href: 'item3.com' }
-                              ]
-                      }
-          }
-        const templateFn = morph.build ( myTemplateDescription );
-        const result = templateFn ( 'demo' );
-        // result ---> '<h1>My title</h1><ul><li><a href="item1.com">0.Item 1</a></li><li><a href="item2.com">1.Item 2</a></li><li><a href="item3.com">2.Item 3</a></li></ul>'
+// snippets can be accessed also with index - starting from 0. Index mean the order of appearance of placeholders in the template.
+let res4 = fn ( 'snippets:2,3', 'demo' )
+// it's the same as res3. Use names or indexes according to your preferences. With indexes placeholder will not need to have a name.
 ```
 
 
