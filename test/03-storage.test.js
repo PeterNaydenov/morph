@@ -11,7 +11,7 @@ describe ( 'morph: storage', () => {
                             template : `My name is {{ name }}.`
                     };
             morph.add ( ['myTpl'], morph.build ( myTpl ) );
-            const result = morph.get (['myTpl'])({ name: 'Peter' })
+            const result = morph.get (['myTpl'])('render', { name: 'Peter' })
             expect ( result ).to.be.equal ( 'My name is Peter.' )
         })
 
@@ -24,7 +24,7 @@ describe ( 'morph: storage', () => {
                     };
                     // Can we check if the template is already in the storage?
             morph.add ( ['myName'], myTpl );
-            const result = morph.get (['myName'])({ name: 'Peter' })
+            const result = morph.get (['myName'])( 'render', { name: 'Peter' })
             expect ( result ).to.be.equal ( 'My name is Peter.' )
         })
 
@@ -47,7 +47,7 @@ describe ( 'morph: storage', () => {
             const myTpl = { template: `My name is {{ name }}.` };
             const myTplFn = morph.build ( myTpl );
             morph.add ( ['myTpl'], myTplFn );
-            const result = morph.get ( ['myTpl'] )({ name: 'Peter' })
+            const result = morph.get ( ['myTpl'] )('render',  { name: 'Peter' })
             expect ( result ).to.be.equal ( 'My name is Peter.' )
        }) // it add component to default storage
 
@@ -60,13 +60,13 @@ describe ( 'morph: storage', () => {
             morph.add ( ['myName', 'hidden'], myTpl ); // Provide a custom storage name as 3rd argument
 
             let result = ( typeof morph.get (['myName']) === 'function' ) 
-                                        ? morph.get (['myName'])({ name: 'Peter' }) 
+                                        ? morph.get (['myName'])( 'render', { name: 'Peter' }) 
                                         : morph.get (['myName'])
             // result of morph.get() is a function that returns a error.
             // Error will popup as a rendering result
             
             expect ( result ).to.be.equal ( 'Error: Template "myName" does not exist in storage "default".' )
-            result = morph.get (['myName', 'hidden'])({ name: 'Peter' })
+            result = morph.get (['myName', 'hidden'])( 'render', { name: 'Peter' })
             
             expect ( result ).to.be.equal ( 'My name is Peter.' )
 

@@ -28,12 +28,13 @@ import walk from '@peter.naydenov/walk'
 /**
  * 
  * @param {Template} tpl - template definition;
- * @param {boolean} [extra] - Optional. How to receive the answer - false:as a string(answer) or tuple[success, answer];
+ * @param {boolean} [extra] - Optional. How to receive the answer - false:as a string(answer) or true: as tuple[success, answer];
  * @param {object} [buildDependencies] - Optional. External dependencies injected;
  * @returns {function|tupleResult} - rendering function
  */
 function build  ( tpl, extra=false, buildDependencies={} ) {
-        const { hasError, placeholders, chop, helpers, handshake } = _readTemplate ( tpl );
+        let { hasError, placeholders, chop, helpers, handshake, snippets } = _readTemplate ( tpl );
+        
         if ( hasError ) {
                         function fail () { return hasError }
                         return extra ? [ false, fail ] : fail
@@ -41,51 +42,73 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
         else {  // If NO Error:
                         let cuts = structuredClone ( chop );
                         // *** Template recognition complete. Start building the rendering function -->
-
                         /**
-                         * Function to render a template with data. 
-                         * @param {Object} [d={}] - The data to render with. If string, it's a command. 
-                         * @param {Object} [dependencies={}] - The dependencies to use for the rendering.
-                         * @param  {...any} args - The postprocessing functions to apply to the result.
-                         * @returns {string|string[]} The rendered template.
-                         * @description
-                         *      If 'd' is a string, it's a command. The available commands are:
-                         *      - 'raw' - returns the original template with placeholders
-                         *      - 'demo' - renders the template with the handshake data
-                         *      - 'handshake' - returns a copy of the handshake data
-                         *      - 'placeholders' - returns the placeholders as a comma separated string
-                         *      If 'd' is an object, it's the data to render with. If it's an array, it's an array of objects to render with.
-                         *      The function returns the rendered template.
-                         *      If 'args' are provided, they are applied to the result in order.
+                         * Processes template rendering commands with provided data, dependencies, and optional post-processing functions.
+                         *
+                         * @function success
+                         * @typedef { 'render' | 'debug' | 'snippets' } Command
+                         * @param {Command} [command='render'] - The command to execute. Supported commands: 'render', 'debug', 'snippets', or 'snippets:<names>'.
+                         * @param {Object|string} [d={}] - The data object to render, or a string instruction ('raw', 'demo', 'handshake', 'placeholders').
+                         * @param {Object} [dependencies={}] - Additional dependencies to be merged with internal dependencies.
+                         * @param {...any} args - Optional post-processing functions to apply to the rendered output.
+                         * @returns {string|Array[]} The rendered template, snippets, or data depending on the command and input.
+                         *
+                         * @throws {Error} If an unsupported command or instruction is provided.
+                         *
+                         * @example
+                         * // Render a template with data
+                         * success('render', { name: 'Alice' }, { helperFn });
+                         *
+                         * @example
+                         * // Get raw template
+                         * success('debug', 'raw');
+                         *
+                         * @example
+                         * // Render only specific snippets
+                         * success('snippets:header,footer', { ... });
                          */
-                        function success ( d={}, dependencies={}, ...args ) {
+                        function success ( command='render', d={}, dependencies={}, ...args ) {
+                                        let onlySnippets = false;
+                                        if ( ![ 'render', 'debug', 'snippets'].includes ( command )  && !command.startsWith('snippets') )   return `Error: Wrong command "${command}". Available commands: render, debug, snippets.`
+
+                                        if ( command.startsWith ( 'snippets') && command.includes ( ':' ) ) {
+                                                        onlySnippets = true
+                                                        let snippetNames = command.split ( ':' )
+                                                                                  .slice ( 1 )[0]
+                                                                                  .trim()
+                                                                                  .split ( ',' )
+                                                                                  .map ( t => t.trim() )
+                                                        placeholders = snippetNames.map ( item => snippets [ item ])
+                                                }
+                                        else if ( command === 'snippets' ) {
+                                                        onlySnippets = true
+                                                }
+
+                                        if ( typeof d === 'string' ) {
+                                                        switch ( d ) {
+                                                                case 'raw':
+                                                                        return cuts.join ( '' )   // Original template with placeholders
+                                                                case 'demo':
+                                                                        if ( !handshake ) return `Error: No handshake data.`
+                                                                        d = handshake   // Render with handshake object
+                                                                        break
+                                                                case 'handshake':
+                                                                        if ( !handshake ) return `Error: No handshake data.`
+                                                                        return structuredClone (handshake)   // return a copy of handshake object
+                                                                case 'placeholders':
+                                                                        return placeholders.map ( h => cuts[h.index] ).join ( ', ')
+                                                                default:
+                                                                        return `Error: Wrong instruction "${d}". Available instructions: raw, demo, handshake, placeholders.`
+                                                        }
+                                                } // if d is string
+                                        
                                         const endData = [];
                                         const memory = {};
+
                                         let topLevelType = _defineDataType ( d );
                                         let deps = { ...buildDependencies, ...dependencies }
                                         d = walk ({data:d})  // Creates copy of data to avoid mutation of the original
-                       
                                         if ( topLevelType === 'null' )   return cuts.join ( '' )
-                                        // Commands : raw, demo, handshake, placeholders
-                                        if ( typeof d === 'string' ) {   // 'd' is a string when we want to debug the template
-                                                   switch ( d ) {
-                                                        case 'raw':
-                                                                return cuts.join ( '' )   // Original template with placeholders
-                                                        case 'demo':
-                                                                if ( !handshake ) return `Error: No handshake data.`
-                                                                d = handshake   // Render with handshake object
-                                                                topLevelType = _defineDataType ( d )
-                                                                break
-                                                        case 'handshake':
-                                                                if ( !handshake ) return `Error: No handshake data.`
-                                                                return structuredClone (handshake)   // return a copy of handshake object
-                                                        case 'placeholders':
-                                                                return placeholders.map ( h => cuts[h.index] ).join ( ', ')
-                                                        default:
-                                                                return `Error: Wrong command "${d}". Available commands: raw, demo, handshake, placeholders.`
-                                                        }
-                                                } // if 'd' is string
-                                        
                                         if ( topLevelType !== 'array' )   d = [ d ]
                                         
                                         // Handle null data case - just return the template without placeholders
@@ -330,8 +353,10 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                                                                         break
                                                                                         } // switch accType
                                                                 } // else other                
-                                                }) // forEach placeholders                                        
-                                        endData.push ( cuts.join ( '' ))
+                                                }) // forEach placeholders
+                                                
+                                                if ( onlySnippets )  endData.push ( placeholders.map ( x => cuts[x.index] ).join ( '<~>' ) )
+                                                else                 endData.push ( cuts.join ( '' ))
                                         }) // forEach d
 
                                         if ( topLevelType === 'array' )  return endData
