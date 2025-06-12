@@ -28,7 +28,7 @@ import walk from '@peter.naydenov/walk'
 /**
  * 
  * @param {Template} tpl - template definition;
- * @param {boolean} [extra] - Optional. How to receive the answer - false:as a string(answer) or tuple[success, answer];
+ * @param {boolean} [extra] - Optional. How to receive the answer - false:as a string(answer) or true: as tuple[success, answer];
  * @param {object} [buildDependencies] - Optional. External dependencies injected;
  * @returns {function|tupleResult} - rendering function
  */
@@ -70,6 +70,7 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                         function success ( command='render', d={}, dependencies={}, ...args ) {
                                         let onlySnippets = false;
                                         if ( ![ 'render', 'debug', 'snippets'].includes ( command )  && !command.startsWith('snippets') )   return `Error: Wrong command "${command}". Available commands: render, debug, snippets.`
+
                                         if ( command.startsWith ( 'snippets') && command.includes ( ':' ) ) {
                                                         onlySnippets = true
                                                         let snippetNames = command.split ( ':' )
@@ -82,6 +83,7 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                         else if ( command === 'snippets' ) {
                                                         onlySnippets = true
                                                 }
+
                                         if ( typeof d === 'string' ) {
                                                         switch ( d ) {
                                                                 case 'raw':
