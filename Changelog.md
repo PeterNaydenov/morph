@@ -2,6 +2,18 @@
 
 
 
+### 3.0.1 ( 2025-06-14)
+- [x] Fix: Bad full render after call of snippets;
+
+
+
+### 3.0.0 ( 2025-06-12)
+- [x] Render selected snippets;
+- [x] Commands and instructions terms;
+- [x] Bug: Bad full render after call of snippets;
+
+
+
 ### 2.2.0 ( 2025-06-06)
 - [x] New: Source property can contains a symbol '/';
 
