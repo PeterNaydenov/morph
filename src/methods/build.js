@@ -34,13 +34,15 @@ import walk from '@peter.naydenov/walk'
  */
 function build  ( tpl, extra=false, buildDependencies={} ) {
         let { hasError, placeholders, chop, helpers, handshake, snippets } = _readTemplate ( tpl );
+
+        
         
         if ( hasError ) {
                         function fail () { return hasError }
                         return extra ? [ false, fail ] : fail
                 }
         else {  // If NO Error:
-                        let cuts = structuredClone ( chop );
+                        const originalPlaceholders = structuredClone ( placeholders );
                         // *** Template recognition complete. Start building the rendering function -->
                         /**
                          * Processes template rendering commands with provided data, dependencies, and optional post-processing functions.
@@ -68,7 +70,9 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                          * success('snippets:header,footer', { ... });
                          */
                         function success ( command='render', d={}, dependencies={}, ...args ) {
+                                        const cuts = structuredClone ( chop )
                                         let onlySnippets = false;
+                                        
                                         if ( ![ 'render', 'debug', 'snippets'].includes ( command )  && !command.startsWith('snippets') )   return `Error: Wrong command "${command}". Available commands: render, debug, snippets.`
 
                                         if ( command.startsWith ( 'snippets') && command.includes ( ':' ) ) {
@@ -83,6 +87,7 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                         else if ( command === 'snippets' ) {
                                                         onlySnippets = true
                                                 }
+                                        else  placeholders = structuredClone ( originalPlaceholders )   // Reset placeholders if not snippets
 
                                         if ( typeof d === 'string' ) {
                                                         switch ( d ) {
@@ -116,8 +121,6 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                       
                                         d.forEach ( dElement => {
                                         placeholders.forEach ( holder => {   // Placeholders
-
-                                                        
                                                         const 
                                                              { index, data, action } = holder   // index - placeholder index, data - key of data, action - list of operations
                                                            , dataOnly = !action && data
@@ -358,7 +361,7 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                 if ( onlySnippets )  endData.push ( placeholders.map ( x => cuts[x.index] ).join ( '<~>' ) )
                                                 else                 endData.push ( cuts.join ( '' ))
                                         }) // forEach d
-
+                                        
                                         if ( topLevelType === 'array' )  return endData
                                         // Execute postprocess functions
                                         if (args)   return args.reduce ( (acc, fn) => {
@@ -366,10 +369,9 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                                                 return fn ( acc, deps )
                                                                         }, endData.join ( '' )  )
                                         else        return endData.join ( '' )
-
                                 } // success func.
                         return extra ? [ true, success ] : success
-                }
+                } // if no error
 } // build func.
 
 
