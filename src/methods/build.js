@@ -112,7 +112,8 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
 
                                         let topLevelType = _defineDataType ( d );
                                         let deps = { ...buildDependencies, ...dependencies }
-                                        d = walk ({data:d})  // Creates copy of data to avoid mutation of the original
+                                            d = walk ({data:d})  // Creates copy of data to avoid mutation of the original
+                                        let original = walk ({data:d})  // Creates copy of data to avoid mutation of the original
                                         if ( topLevelType === 'null' )   return cuts.join ( '' )
                                         if ( topLevelType !== 'array' )   d = [ d ]
                                         
@@ -127,8 +128,7 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                            , mem = structuredClone ( memory )
                                                            , extendArguments = { dependencies: deps, memory:mem }
                                                            ;   
-                                                        let info = dElement;
-                                                           
+                                                        let info = dElement;                                                        
 
                                                         if ( data && data.includes('/') ) {
                                                                         if ( info.hasOwnProperty ( data )) {  
@@ -188,12 +188,12 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                                                                                                                 const dType = _defineDataType ( d )
                                                                                                                                                 const routeName = helpers[name]( {data:d, ...extendArguments, full: d });
                                                                                                                                                 if ( routeName == null )  return
-                                                                                                                                                if ( dType === 'object' ) theData[i]['text'] = render ( d, routeName, helpers, deps )
-                                                                                                                                                else                      theData[i]         = render ( d, routeName, helpers, deps )
+                                                                                                                                                if ( dType === 'object' ) theData[i]['text'] = render ( d, routeName, helpers, original, deps )
+                                                                                                                                                else                      theData[i]         = render ( d, routeName, helpers, original, deps )
                                                                                                                                         })
                                                                                                                                 break
                                                                                                                         case 'object':
-                                                                                                                                theData['text'] = render ( theData, name, helpers, deps )
+                                                                                                                                theData['text'] = render ( theData, name, helpers, original, deps )
                                                                                                                                 break
                                                                                                                 }
                                                                                                         break      
@@ -227,7 +227,7 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                                                                                         if ( isRenderFunction  )  theData.forEach ( (d,i) => {
                                                                                                                                                                 if ( d == null ) return
                                                                                                                                                                 const dType = _defineDataType ( d );
-                                                                                                                                                                const text = helpers[name]( {data:d, ...extendArguments, full: d });
+                                                                                                                                                                const text = helpers[name]( {data:d, ...extendArguments, full: original });
                                                                                                                                                              
                                                                                                                                                                 if ( text == null ) theData[i] = null
                                                                                                                                                                 if ( dType === 'object' )  d['text'] = text
@@ -237,9 +237,9 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                                                                                                                                 if ( d == null ) return
                                                                                                                                                                 const 
                                                                                                                                                                           dType = _defineDataType ( d )
-                                                                                                                                                                        , text = render ( d, name, helpers, deps )
+                                                                                                                                                                        , text = render ( d, name, helpers, original, deps )
                                                                                                                                                                         ;
-                                                                                                                                                                if ( text == null       )   theData[i] = null
+                                                                                                                                                                if ( text == null            )   theData[i] = null
                                                                                                                                                                 else if ( dType === 'object' )   d['text']  = text
                                                                                                                                                                 else                             theData[i] = text
                                                                                                                                                         })
@@ -249,12 +249,12 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                                                                                         break                                                                                                   
                                                                                                                 case 'primitive':
                                                                                                                         if ( isRenderFunction ) nestedData[level] = helpers[name]({ data:theData, ...extendArguments, full: d} )
-                                                                                                                        else                    nestedData[level] = render ( theData, name, helpers, deps )
+                                                                                                                        else                    nestedData[level] = render ( theData, name, helpers, original, deps )
                                                                                                                         break
                                                                                                                 case 'object':
                                                                                                                         if ( isRenderFunction ) nestedData[level][iData]['text'] = helpers[name]({ data:theData, ...extendArguments, full: d })
                                                                                                                         else {
-                                                                                                                             theData [ 'text' ] = render ( theData, name, helpers, deps )
+                                                                                                                             theData [ 'text' ] = render ( theData, name, helpers, original, deps )
                                                                                                                            }
                                                                                                                         break
                                                                                                                 } // switch renderDataType 

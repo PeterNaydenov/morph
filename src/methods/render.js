@@ -13,7 +13,7 @@ import _renderHolder from "./_renderHolder.js"
  * 
  * @returns {string} - Rendered string.
  */
-function render ( theData, name, helpers, ...args ) {
+function render ( theData, name, helpers, original, dependencies, ...args ) {
 // *** Executes rendering and return the results
                 if ( theData instanceof Object ) {   // Make sure all properties are not objects
                         Object.entries ( theData ).forEach ( ([key, value]) => {
@@ -27,7 +27,8 @@ function render ( theData, name, helpers, ...args ) {
                         } // setRenderData func.
                 const isRenderFunction = typeof helpers[name] === 'function';   // Render could be a function or template.
                 theData = setRenderData ( theData )
-                if ( isRenderFunction )  return helpers[name]( theData, ...args )
+                
+                if ( isRenderFunction )  return helpers[name]( { theData, dependencies, full:original},  ...args )
                 else                     return _renderHolder ( helpers[name], theData   )
         }  // render func.
 
