@@ -2,6 +2,11 @@
 
 
 
+### 3.1.0 (2025-08-19)
+- [x] Helper named argument 'full'. Gives access to full template data. Use it create mixed conditions among many different parameters, not only the iteration data;
+
+
+
 ### 3.0.1 ( 2025-06-14)
 - [x] Fix: Bad full render after call of snippets;
 
