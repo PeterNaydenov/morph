@@ -1,6 +1,12 @@
 ## Release History
 
 
+
+### 3.1.3 (2025-08-19)
+- [x] Some minor fixes and cleanups;
+
+
+
 ### 3.1.2 (2025-08-19)
 - [x] Fix: Argument 'full' contains wrong data;
 
