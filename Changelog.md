@@ -2,9 +2,14 @@
 
 
 
+### 3.1.1 (2025-08-19)
+- [x] Fix: Build was not updated;
+
+
+
 ### 3.1.0 (2025-08-19)
 - [x] Helper named argument 'full'. Gives access to full template data. Use it create mixed conditions among many different parameters, not only the iteration data;
-
+- [ ] Bug: Build was not updated;
 
 
 ### 3.0.1 ( 2025-06-14)
