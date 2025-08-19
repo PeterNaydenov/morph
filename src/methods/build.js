@@ -186,7 +186,7 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                                                                                                 theData.forEach ( (d,i) => {
                                                                                                                                                 if ( d == null ) return
                                                                                                                                                 const dType = _defineDataType ( d )
-                                                                                                                                                const routeName = helpers[name]( {data:d, ...extendArguments, full: theData });
+                                                                                                                                                const routeName = helpers[name]( {data:d, ...extendArguments, full: d });
                                                                                                                                                 if ( routeName == null )  return
                                                                                                                                                 if ( dType === 'object' ) theData[i]['text'] = render ( d, routeName, helpers, deps )
                                                                                                                                                 else                      theData[i]         = render ( d, routeName, helpers, deps )
@@ -206,16 +206,16 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                                                                 case 'data': 
                                                                                                         switch ( dataType ) {
                                                                                                                 case 'array':
-                                                                                                                        theData.forEach ( (d,i) => theData[i] = ( d instanceof Function ) ? helpers[name]({ data:d(), ...extendArguments, full: theData }) : helpers[name]( {data:d, ...extendArguments, full: theData})   )
+                                                                                                                        theData.forEach ( (d,i) => theData[i] = ( d instanceof Function ) ? helpers[name]({ data:d(), ...extendArguments, full: d }) : helpers[name]( {data:d, ...extendArguments, full: d})   )
                                                                                                                         break
                                                                                                                 case 'object':
-                                                                                                                        nestedData[level] = [helpers[name]( {data:theData,...extendArguments, full: theData } )]
+                                                                                                                        nestedData[level] = [helpers[name]( {data:theData,...extendArguments, full: d } )]
                                                                                                                         break
                                                                                                                 case 'function':
-                                                                                                                        nestedData[level] = [helpers[name]( {data:theData(),...extendArguments, full: theData } )]
+                                                                                                                        nestedData[level] = [helpers[name]( {data:theData(),...extendArguments, full: d } )]
                                                                                                                         break
                                                                                                                 case 'primitive':
-                                                                                                                        nestedData[level] = helpers[name]( {data:theData,...extendArguments, full: theData } )
+                                                                                                                        nestedData[level] = helpers[name]( {data:theData,...extendArguments, full: d } )
                                                                                                                         break
                                                                                                                 } // switch dataType
                                                                                                         
@@ -227,7 +227,7 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                                                                                         if ( isRenderFunction  )  theData.forEach ( (d,i) => {
                                                                                                                                                                 if ( d == null ) return
                                                                                                                                                                 const dType = _defineDataType ( d );
-                                                                                                                                                                const text = helpers[name]( {data:d, ...extendArguments, full: theData });
+                                                                                                                                                                const text = helpers[name]( {data:d, ...extendArguments, full: d });
                                                                                                                                                              
                                                                                                                                                                 if ( text == null ) theData[i] = null
                                                                                                                                                                 if ( dType === 'object' )  d['text'] = text
@@ -245,14 +245,14 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                                                                                                                         })
                                                                                                                         break     
                                                                                                                 case 'function':
-                                                                                                                        nestedData[level] = helpers[name]( {data:theData(), ...extendArguments, full: theData} ) 
+                                                                                                                        nestedData[level] = helpers[name]( {data:theData(), ...extendArguments, full: d} ) 
                                                                                                                         break                                                                                                   
                                                                                                                 case 'primitive':
-                                                                                                                        if ( isRenderFunction ) nestedData[level] = helpers[name]({ data:theData, ...extendArguments, full: theData} )
+                                                                                                                        if ( isRenderFunction ) nestedData[level] = helpers[name]({ data:theData, ...extendArguments, full: d} )
                                                                                                                         else                    nestedData[level] = render ( theData, name, helpers, deps )
                                                                                                                         break
                                                                                                                 case 'object':
-                                                                                                                        if ( isRenderFunction ) nestedData[level][iData]['text'] = helpers[name]({ data:theData, ...extendArguments, full: theData })
+                                                                                                                        if ( isRenderFunction ) nestedData[level][iData]['text'] = helpers[name]({ data:theData, ...extendArguments, full: d })
                                                                                                                         else {
                                                                                                                              theData [ 'text' ] = render ( theData, name, helpers, deps )
                                                                                                                            }
@@ -263,7 +263,7 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                                                                         // TODO: Test extendedRender
                                                                                                         const isValid = typeof helpers[name] === 'function';   // Render could be a function and template.
                                                                                                         if ( isValid ) {
-                                                                                                                        nestedData[0].forEach ( (d,i) =>  nestedData[0][i] = helpers[name]({ data:d, ...extendArguments, full: theData })   ) 
+                                                                                                                        nestedData[0].forEach ( (d,i) =>  nestedData[0][i] = helpers[name]({ data:d, ...extendArguments, full: d })   ) 
                                                                                                                 }
                                                                                                         else {
                                                                                                                         // TODO: Error...
@@ -307,7 +307,7 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                                                                             } // if name === ''
                                                                                                         else {              
                                                                                                                 let 
-                                                                                                                     val = helpers[name]({ data:theData, ...extendArguments })
+                                                                                                                     val = helpers[name]({ data:theData, ...extendArguments, full: d })
                                                                                                                    , valType = _defineDataType ( val )
                                                                                                                    ;
                                                                                                                 
