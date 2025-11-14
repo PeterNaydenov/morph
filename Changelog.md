@@ -2,6 +2,11 @@
 
 
 
+### 3.1.5 (2025-11-14)
+- [x] Types improvements;
+
+
+
 ### 3.1.4 (2025-10-13)
 - [x] Dependencies update. Dev deps update. @peter.naydenov/walk - v.5.0.2;
 
