@@ -1,3 +1,18 @@
+/**
+ * Creates a template chopping function that splits text into parts and placeholders.
+ * 
+ * @param {object} settings - Configuration object containing template delimiters
+ * @param {string} settings.TG_PRX - Opening delimiter (e.g., '{{')
+ * @param {string} settings.TG_SFX - Closing delimiter (e.g., '}}')
+ * @param {number} settings.TG_SIZE_P - Length of opening delimiter
+ * @param {number} settings.TG_SIZE_S - Length of closing delimiter
+ * 
+ * @returns {Function} Function that chops template text into array parts
+ * 
+ * @example
+ * const chop = _chopTemplate(settings);
+ * const result = chop('Hello {{name}}!');
+ */
 function _chopTemplate ( settings ) {
     return function _chopTemplate ( text ) {
         const { TG_PRX, TG_SFX, TG_SIZE_P, TG_SIZE_S } = settings;
@@ -38,7 +53,13 @@ function _chopTemplate ( settings ) {
     
     
     
-    function showError (type) {
+    /**
+ * Returns error messages for template parsing failures.
+ * 
+ * @param {string} type - Error type identifier
+ * @returns {string} Human-readable error message
+ */
+function showError (type) {
             switch (type) {
                   case 'notAString': 
                             return `Error: Template is not a string.`

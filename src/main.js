@@ -24,15 +24,22 @@ const storage = ( () => ({default: {}}) ) ();
 
 
 /**
- *   Get a template from a storage.
+ * Retrieves a template from storage.
  * 
- *   @param {string[]} location - The location of the template. Array of two elements.
- *                             The first element is the name of the template. The second element
- *                             is optional and is the name of the storage. Defaults to 'default'.
+ * @param {string[]} location - The location of the template. Array of two elements:
+ *   - First element: The name of the template
+ *   - Second element (optional): The name of the storage. Defaults to 'default'
  * 
- *   @returns {function } The template (a render function) if it exists in the storage.
- *                             An function that returns an error message if 
- *                             either the storage or template does not exist.
+ * @returns {Function} The template (render function) if found, or an error function that returns
+ *   an error message if the storage or template doesn't exist.
+ * 
+ * @example
+ * // Get template from default storage
+ * const template = get(['myTemplate']);
+ * 
+ * @example
+ * // Get template from custom storage
+ * const template = get(['myTemplate', 'customStorage']);
  */
 function get ( location ) {
     if ( !(location instanceof Array) ) {  
@@ -61,20 +68,28 @@ function get ( location ) {
 
 
 /**
- *   Add a template to a storage.
+ * Adds a template to storage.
  * 
- *   If the template is already a function, it is added to the storage.
- *   If the template is a template description (an object), it is built and
- *   added to the storage.
- *   If the template is broken, an error message is printed in the console
- *   and the template is not added to the storage.
+ * If the template is already a function, it's added directly to storage.
+ * If it's a template description object, it's built first and then added.
+ * If the template is null or broken, a warning/error is logged and it's not added.
  * 
- *   @param {string[]} location - The location to add the template to. Array of two elements.
- *                             The first element is the name of the template. The second element
- *                             is optional and is the name of the storage. Defaults to 'default'.
- *   @param {object|function|null} tplfn - The template description or the already built template function.
- *   @param {...any} args - Additional arguments to be passed to the build function.
- *                           Only used if the first argument is a template description.
+ * @param {string[]} location - The location to add the template to. Array of two elements:
+ *   - First element: The name of the template
+ *   - Second element (optional): The name of the storage. Defaults to 'default'
+ * @param {object|function|null} tplfn - The template description object, pre-built template function, or null
+ * @param {...any} args - Additional arguments passed to the build function (only used when tplfn is a template description)
+ * 
+ * @example
+ * // Add a pre-built template function
+ * add(['myTemplate'], templateFunction);
+ * 
+ * @example
+ * // Add and build a template description
+ * add(['myTemplate'], {
+ *   template: 'Hello {{name}}!',
+ *   helpers: { name: (data) => data.data.name }
+ * });
  */
 function add ( location, tplfn, ...args ) {
     const [ name, strName='default'] = location
@@ -98,11 +113,20 @@ function add ( location, tplfn, ...args ) {
 
 
 /**
- *   Returns an array of all the names of the templates in the given storages.
- *   No arguments - will return the list of templates in the 'default' storage.
+ * Returns an array of template names from specified storages.
  * 
- *   @param {string[]} [storageNames=['default']] - The names of the storages to retrieve template names from;
- *   @returns {string[]} An array of all the template names in the given storages;
+ * @param {string[]} [storageNames=['default']] - Array of storage names to retrieve template names from.
+ *   Defaults to ['default'] if not provided.
+ * 
+ * @returns {string[]} Array of all template names from the specified storages.
+ * 
+ * @example
+ * // List templates from default storage
+ * const templates = list();
+ * 
+ * @example
+ * // List templates from multiple storages
+ * const templates = list(['default', 'customStorage']);
  */
 function list ( storageNames=['default'] ) {
     let r = storageNames.map ( strName => {
@@ -115,8 +139,13 @@ function list ( storageNames=['default'] ) {
 
 
 /**
- * Clears all templates from the storages.
- * This function deletes all storages. Storage 'default' will be reset to an empty object.
+ * Clears all templates from all storages.
+ * 
+ * Deletes all custom storages and resets the 'default' storage to an empty object.
+ * 
+ * @example
+ * // Clear all templates
+ * clear();
  */
 function clear ( ) {
     const keys = Object.keys ( storage )
@@ -130,13 +159,22 @@ function clear ( ) {
 
 
 /**
- *   Removes a template from the storage.
+ * Removes a template from storage.
  * 
- *   @param {string[]} location - The location to remove the template from. Array of two elements.
- *                             The first element is the name of the template. The second element
- *                             is optional and is the name of the storage. Defaults to 'default'.
+ * @param {string[]} location - The location of the template to remove. Array of two elements:
+ *   - First element: The name of the template
+ *   - Second element (optional): The name of the storage. Defaults to 'default'
  * 
- *   @returns {void|string} An error message if the storage or template does not exist.
+ * @returns {void|string} Returns an error message if the storage or template doesn't exist,
+ *   otherwise returns undefined.
+ * 
+ * @example
+ * // Remove template from default storage
+ * remove(['myTemplate']);
+ * 
+ * @example
+ * // Remove template from custom storage
+ * remove(['myTemplate', 'customStorage']);
  */
 function remove ( location ) {
     const [name, strName='default'] = location;

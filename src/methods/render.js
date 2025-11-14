@@ -3,15 +3,27 @@ import _renderHolder from "./_renderHolder.js"
 
 
 /**
+ * Executes rendering and returns the rendered result.
  * 
- *  Execute rendering and return the results
+ * Handles both function-based and template-based rendering. Normalizes data objects
+ * by converting nested objects to their 'text' properties and arrays to their first elements.
  * 
- * @param {object|string} theData - Data to be rendered. If it's a string, it's the value of 'text' property.
- * @param {string} name - Name of the render to be executed.
- * @param {object} helpers - Object with helper functions or templates.
- * @param {...any} args - Extra arguments to be passed to the render function.
+ * @param {object|string} theData - Data to be rendered. If string, becomes the 'text' property value.
+ * @param {string} name - Name of the render helper/template to execute
+ * @param {object} helpers - Object containing helper functions and templates
+ * @param {object} original - Original data context for full data access
+ * @param {object} dependencies - External dependencies available to helpers
+ * @param {...any} args - Additional arguments passed to the render function
  * 
- * @returns {string} - Rendered string.
+ * @returns {string} Rendered string result
+ * 
+ * @example
+ * // Render with function helper
+ * const result = render(data, 'myHelper', helpers, originalData, deps);
+ * 
+ * @example
+ * // Render with template
+ * const result = render(data, 'myTemplate', helpers, originalData, deps);
  */
 function render ( theData, name, helpers, original, dependencies, ...args ) {
 // *** Executes rendering and return the results
@@ -21,7 +33,13 @@ function render ( theData, name, helpers, original, dependencies, ...args ) {
                                         if ( value instanceof Array    ) theData[key] = value[0]
                                 })
                     }
-                function setRenderData ( d={} ) {
+                /**
+ * Normalizes render data by wrapping strings in text objects.
+ * 
+ * @param {any} d - Data to normalize
+ * @returns {object} Returns { text: d } if d is string, otherwise returns d unchanged
+ */
+function setRenderData ( d={} ) {
                                 if ( typeof d === 'string' )  return { text: d }
                                 else return d
                         } // setRenderData func.

@@ -1,35 +1,18 @@
-import stack from "@peter.naydenov/stack"
-
-
-
+export default _actionSupply;
 /**
  * Generator function that supplies actions in a controlled sequence using a stack.
- * 
+ *
  * Manages the flow of actions through different processing levels, allowing for
  * dynamic action insertion during processing.
- * 
+ *
  * @param {Object} act - Object containing action arrays organized by level
  * @param {number} level - Maximum processing level
  * @returns {Generator} Generator that yields action objects in sequence
- * 
+ *
  * @example
  * const generator = _actionSupply(actionSetup, 2);
  * for (const action of generator) {
  *   // Process each action
  * }
  */
-function* _actionSupply ( act, level ) {
-    let action = stack ({ type:'LIFO' });
-    for ( let i=0; i<=level; i++ ) {
-                    action.push ( act[i] )          
-            }
-    while ( action && !action.isEmpty () ) {
-                    let newAct = yield action.pull ()
-                    if ( newAct )  action.push ( newAct )
-            }                        
-} // _actionSupply func.
-
-
-export default _actionSupply
-
-
+declare function _actionSupply(act: any, level: number): Generator;

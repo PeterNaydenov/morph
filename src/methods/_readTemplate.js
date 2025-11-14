@@ -3,12 +3,36 @@ import _chopTemplate from "./_chopTemplates.js"
 
 
 
+/**
+ * Normalizes field data by returning null for falsy values.
+ * 
+ * @param {any} field - Field value to normalize
+ * @returns {any|null} Returns the field if truthy, null otherwise
+ */
 function readData ( field ) {
     return   field ? field : null
 } // readData func.
 
 
 
+/**
+ * Parses and validates a template description object.
+ * 
+ * Extracts placeholders, validates helpers, and prepares template for building.
+ * 
+ * @param {object} tpl - Template description object
+ * @param {string} tpl.template - Template string with placeholders
+ * @param {object} [tpl.helpers={}] - Optional helper functions
+ * @param {object} [tpl.handshake] - Optional example data
+ * 
+ * @returns {object} Template parsing result containing:
+ *   - hasError: Error message or null
+ *   - placeholders: Array of placeholder objects
+ *   - chop: Array of template parts
+ *   - helpers: Helper functions object
+ *   - handshake: Example data object
+ *   - snippets: Object mapping snippet names to placeholders
+ */
 function _readTemplate ( tpl ) {
     const 
              { template, helpers={}, handshake } = tpl
