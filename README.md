@@ -1,3 +1,5 @@
+<img src="morph.png" alt="morph header image">
+
 # Morph (@peter.naydenov/morph)
 
 ![version](https://img.shields.io/github/package-json/v/peterNaydenov/morph)
