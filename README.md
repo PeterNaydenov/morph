@@ -310,9 +310,100 @@ let res4 = fn ( 'snippets:2,3', 'demo' )
 ```
 
 
+## Experimentals
+
+### `.morph` File Extension
+
+Describe Morph templates within `.morph` file extensions. Available after version 3.5.x. This allows you to create the template files with HTML-like syntax, CSS modules, and JavaScript helpers. During the build process, vite plugin will extract the template, helpers, and handshake data from the file, will compile it to function and will save as ES module, ready to import from other files. CSS support comes as extension of what Morph can do. Writing a Morph file that contains only CSS will be converted to CSS file. In morph files that contain mix of HTML, CSS, and JavaScript, the CSS will be converted to CSS modules.
+
+A `.morph` file contains four separate sections.
+
+The four sections are:
+- **Template (HTML)** - The main template with Morph syntax
+- **Script (JavaScript)** - Helper functions and logic
+- **Style (CSS)** - CSS with automatic module scoping
+- **Handshake (JSON)** - Demo data for testing
+
+Example `.morph` file structure:
+```html
+<!-- Template (HTML) -->
+<div class="card">
+  <h2>{{ title : formatTitle }}</h2>
+  <p>{{ description : truncate }}</p>
+  <h3>Items</h3>
+  {{ items : ul, [], renderItem }}
+  <button data-click="save">Save</button>
+</div>
+
+
+
+<script>
+// Place for helpers
+// Function definition
+function formatTitle ({ data }) {
+            return data.toUpperCase();
+    }
+
+function truncate ({data}) {
+            const length = 100;
+            return data.length > length ? data.substring(0, length) + '...' : data;
+    }
+
+// Template definition
+let renderItem = `<li>{{name}}</li>`;
+let ul = `<ul>{{text}}</ul>`
+</script>
+
+<style>
+.card {
+        background: var(--card-bg, #fff);
+        padding: 1rem;
+        border-radius: 8px;
+    }
+</style>
+
+<script type="application/json">
+// Script with type: application/json
+// Handshake - Place for demo data
+{
+  "title": "Card Title",
+  "description": "Card description",
+  "items": [
+            { "name": "Item 1" },
+            { "name": "Item 2" },
+            { "name": "Item 3" }
+        ]
+}
+</script>
+```
+
+Get started with the official Vite plugin:
+**GitHub Repository:** [vite-plugin-morph](https://github.com/PeterNaydenov/vite-plugin-morph)
+
+Once configured, you can directly import `.morph` files in your code:
+```js
+import myTemplate from './templates/my-template.morph'
+
+// The imported template is ready to use
+const result = myTemplate ( 'render', { name: 'Peter' })
+```
+
+
+
+### VSCode Extension
+
+For better development experience with `.morph` files, you can install the official VSCode extension that provides syntax highlighting:
+
+**Extension Name:** [Morph Template Syntax Highlighting](https://marketplace.visualstudio.com/items?itemName=PeterNaydenov.morph-template-syntax-highlighting)
+
+Install directly from the VSCode Marketplace or search for "Morph Template Syntax Highlighting" in your VSCode extensions panel.
+
+
 ## Links
 - [Release history](Changelog.md)
 - [ Migration guide ](https://github.com/PeterNaydenov/morph/blob/master/Migration.guide.md)
+- [ Vite Plugin ](https://github.com/PeterNaydenov/vite-plugin-morph)
+- [ VSCode Extension ](https://marketplace.visualstudio.com/items?itemName=PeterNaydenov.morph-template-syntax-highlighting)
 
 
 
