@@ -1,0 +1,5 @@
+- Empty placeholders - {{}}
+- Extend templates: Change of placeholder definitions, add/overwrite helpers, provide alternative handshake data. template ('set',{ plachholders:{nameOrPosition: newPlaceholderDefinition}, helpers: { helpers}, handshake:{ new Handshake}}). Result is a new function(template), ready to receive data;
+- Building templates - will not have 'fail' response, because we could build templates without having all helpers available. They can come latter.
+- What if we trying to render a template that don't have a helper? - it will return error as a render result. Will explain that renderFunction isn't available;
+- Routing actions will be removed. Too unconsistant with other actions. It's can be solved with normal render functions by providing a list of possible templates. It's something that is possible even now;

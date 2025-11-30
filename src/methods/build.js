@@ -270,7 +270,7 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                                                                                 }
                                                                                                         break
                                                                                                 case 'mix': 
-                                                                                                        if ( name === '' ) {   // when is anonymous mixing helper
+                                                                                                        if ( name === '' ) {   // when is anonymous mixing action
                                                                                                                 switch ( dataType ) {
                                                                                                                                 case 'object':
                                                                                                                                         let kTest = Object.keys ( theData ).find ( k => k.includes ( '/' )   );   // Check if keys are breadcrumbs
