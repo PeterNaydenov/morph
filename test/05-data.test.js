@@ -59,22 +59,18 @@ describe ( 'morph: Data', () => {
       // if data coresponds to some condition.
       // Returning null means: do not render this data
                 const myTpl = {
-                          template : "Hello, I'm {{ persons: []coma, ?web, hello }}"
+                          template : "Hello, I'm {{ persons: []coma, web }}"
                         , helpers  : {
-                                      hello: ({ data }) => {
-                                                    const { name, age } = data;
-                                                    if ( age < 28 )   return null
-                                                    else              return `${name} - ${age} years old`
+                                      web: ({ data:d }) => {
+                                                    if ( d.age < 28 )   return null
+                                                    const text = `${d.name} - ${d.age} years old`
+                                                    if ( d.href )  return `<a href="${d.href}">${text}</a>`
+                                                    else           return text
                                                 }
                                       , coma: ({ data:res}) => res                          // Coma is a mixing helper
                                                         .filter ( x => x != null)   // filter is required to remove cancelled renders
                                                         .map ( x => x.text )
                                                         .join ( ', ' )
-                                    , a : `<a href="{{href}}">{{text}}</a>`
-                                    , web: ({ data:d }) => {
-                                                    if ( d.href )  return 'a'  // response 'a' means: render this data with helper 'a'
-                                                    else           return null // response 'null' in conditional render means: do not render
-                                            }
                                 }
                     };
                 const templateFn = morph.build ( myTpl );
