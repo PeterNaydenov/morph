@@ -10,18 +10,6 @@
 
 
 
-## What's new in version 3.x.x
-
-In version 3 introduced `snippets`, you can choose to render only certain placeholders or groups of placeholders from the template. This lets you use templates as collections of reusable templates, so you can extract and use just the parts you need without having to render the whole template. This makes it easier to create and manage reusable template libraries for your project or rerender only the parts that need to be updated.
-
-The `render` function now takes a command as its first argument. Available commands are: `render`, `debug`, `snippets`, `curry`, and `set`. Other arguments have no changes. Just shifted right. The second argument becomes the data, the third is dependencies, and the fourth is a list of post-processing functions.
-
-In version 3.x.x, the data is always the second argument. It can be a string, as in version 2.x.x. The term "command" is no longer used for this argument; instead, it is called "instructions". Available instructions include: `raw`, `demo`, `handshake`, `placeholders`, and `count`.
-
-How to migrate to version 3.x.x, please read the [Migration guide](./Migration.guide.md). Read more about `snippets` down below.
-
-
-
 ## General Information
 
 `Morph` has a logic-less template syntax. Placeholders are places surrounded by double curly braces `{{ }}` and they represents the pleces where the data will be inserted.
