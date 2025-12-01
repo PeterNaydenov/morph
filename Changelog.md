@@ -2,6 +2,18 @@
 
 
 
+### 3.2.0 (2025-12-01)
+- [x] Conditional actions are depricated. ( starting with `?` ). Too unconsistant with other actions. It's can be solved with normal helper functions by providing a list of possible templates. It's something that is possible even now;
+- [x] Templates can have empty placeholders - just {{ }};
+- [x] Extend templates. Generate new templates from the template function by add/change helpers, provide alternative handshake data. Command 'set' will do this for you. Result is a new function(template), ready to receive data; 
+- [x] Building templates - will not have 'fail' response, with reason templates has missing helpers. Now command 'set' can provide helpers latter, so will create the template function without warning. On rendering with missing helper - will return an error as a render result;
+- [x] New debug instruction: 'helpers' to return a string of helper names separated by commas;
+- [x] New debug instruction: 'count' to return number of unresolved placeholders;
+- [x] New command: 'curry' for partial rendering, returning a new render function with rendered output as template;
+- [x] Updated JSDoc and TypeScript declarations for new commands.
+
+
+
 ### 3.1.5 (2025-11-14)
 - [x] Types improvements;
 

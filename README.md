@@ -14,9 +14,9 @@
 
 In version 3 introduced `snippets`, you can choose to render only certain placeholders or groups of placeholders from the template. This lets you use templates as collections of reusable templates, so you can extract and use just the parts you need without having to render the whole template. This makes it easier to create and manage reusable template libraries for your project or rerender only the parts that need to be updated.
 
-The `render` function now takes a command as its first argument. Available commands are: `render`, `debug`, and `snippets`. Other arguments have no changes. Just shifted right. The second argument becomes the data, the third is dependencies, and the fourth is a list of post-processing functions.
+The `render` function now takes a command as its first argument. Available commands are: `render`, `debug`, `snippets`, `curry`, and `set`. Other arguments have no changes. Just shifted right. The second argument becomes the data, the third is dependencies, and the fourth is a list of post-processing functions.
 
-In version 3.x.x, the data is always the second argument. It can be a string, as in version 2.x.x. The term "command" is no longer used for this argument; instead, it is called "instructions". Available instructions include: `raw`, `demo`, `handshake`, and `placeholders`.
+In version 3.x.x, the data is always the second argument. It can be a string, as in version 2.x.x. The term "command" is no longer used for this argument; instead, it is called "instructions". Available instructions include: `raw`, `demo`, `handshake`, `placeholders`, and `count`.
 
 How to migrate to version 3.x.x, please read the [Migration guide](./Migration.guide.md). Read more about `snippets` down below.
 
@@ -262,7 +262,24 @@ Helpers are templates and functions that are used by actions to decorate the dat
 
 
 ## Commands
-The first argument of the render function is the command. Available commands are: `render`, `debug`, and `snippets`. Default command is `render` so if template doesn't need external information we can call the function without arguments. 
+The first argument of the render function is the command. Available commands are: `render`, `debug`, `snippets`, `curry`, and `set`. Default command is `render` so if template doesn't need external information we can call the function without arguments.
+
+
+## Debug
+The `debug` command provides information about the template. The second argument is an instruction. Available instructions: `raw`, `demo`, `handshake`, `placeholders`, `count`.
+
+- `raw`: Returns the original template string.
+- `demo`: Renders the template with handshake data.
+- `handshake`: Returns the handshake object.
+- `placeholders`: Returns a string of placeholder names separated by commas.
+- `count`: Returns the number of unresolved placeholders in the current template state.
+
+```js
+const fn = morph.build(template);
+
+let raw = fn('debug', 'raw'); // Original template
+let count = fn('debug', 'count'); // Number of unresolved placeholders
+```
 
 
 ## Snippets
@@ -307,6 +324,47 @@ let res3 = fn ( 'snippets:theName,tagList', 'demo' )
 // snippets can be accessed also with index - starting from 0. Index mean the order of appearance of placeholders in the template.
 let res4 = fn ( 'snippets:2,3', 'demo' )
 // it's the same as res3. Use names or indexes according to your preferences. With indexes placeholder will not need to have a name.
+```
+
+
+## Curry
+The `curry` command performs partial rendering with the provided data and returns a new render function. The new function uses the rendered output as the new template, while preserving the original helpers and handshake.
+
+```js
+const template = morph.build({
+    template: 'Hello {{name}}! Welcome to {{place}}.',
+    helpers: { format: ({data}) => data.toUpperCase() },
+    handshake: { name: 'World', place: 'Earth' }
+});
+
+const curried = template('curry', { name: 'Alice' });
+// curried is a new function with template 'Hello Alice! Welcome to {{place}}.'
+
+const result = curried('render', { place: 'Mars' });
+// result: 'Hello Alice! Welcome to Mars.'
+```
+
+This allows chaining partial renders or completing with defaults using `('render', 'demo')`.
+
+
+## Set
+The `set` command modifies the template by merging new helpers, handshake, or replacing placeholders, then returns a new render function with the changes applied.
+
+```js
+const template = morph.build({
+    template: 'Hello {{name}}!',
+    helpers: { format: ({data}) => data.toLowerCase() },
+    handshake: { name: 'World' }
+});
+
+const modified = template('set', {
+    helpers: { format: ({data}) => data.toUpperCase() },
+    placeholders: { 0: '{{greeting}}' } // Replace first placeholder
+});
+// modified has updated helpers and template 'Hello {{greeting}}!'
+
+const result = modified('render', { greeting: 'Hi' });
+// result: 'HELLO HI!' (note: format applied to 'Hi')
 ```
 
 

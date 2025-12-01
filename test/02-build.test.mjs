@@ -1,5 +1,5 @@
-import   morph    from '../src/main.js'
-import { expect } from 'chai'
+import morph from '../src/main.js';
+import { expect } from 'chai';
 
 
 
@@ -7,36 +7,36 @@ describe ( 'transformer: build', () => {
 
 
     it ( 'Simple mustache like placeholders, no actions', () => {
-                // spaces inside placeholders are ignored
-                const myTpl = {
-                                template: `Your name is {{ name }}. Your age is {{age}}.`
+                 const myTpl = {
+                                template: 'Your name is {{ name }}. Your age is {{age}}.'
                         }
-                const templateFn = morph.build ( myTpl )
-                const result = templateFn( 'render', {
-                                                       name: 'Peter'
-                                                     , age: 50
-                                                })
-                expect ( result ).to.be.equal ( 'Your name is Peter. Your age is 50.' )
-        }) // it simple mustache like placeholders, no actions
+                 const templateFn = morph.build ( myTpl )
+                 const result = templateFn ( 'render', {
+                                                        name: 'Peter'
+                                                      , age: 50
+                                                 })
+                 expect ( result ).to.be.equal ( 'Your name is Peter. Your age is 50.' )
+         }) // it simple mustache like placeholders, no actions
+
 
 
     it ( 'Mixing actions', () => {
-                // Mix action starts with '[]'. If no name after '[]' it will be like arr.join(''). 
-                // If name, it is the helper function used. In our case it is 'coma'.
+                 // Mix action starts with '[]'. If no name after '[]' it will be like arr.join(''). 
+                 // If name, it is the helper function used. In our case it is 'coma'.
                 const myTpl = {
                                   template : `My friends are {{ names : []coma }}.`
                                 , helpers  : {
-                                                  coma: ({ data:res }) => res.join(', ')
+                                                  coma: ({ data:res }) => res.join ( ', ' )
                                         }
                         };
                 const templateFn = morph.build ( myTpl );
-                const result = templateFn('render', { names: ['Peter', 'Ivan'] });
+                const result = templateFn ( 'render', { names: ['Peter', 'Ivan'] });
                 expect ( result ).to.be.equal ( 'My friends are Peter, Ivan.' );
         }) // it mixing actions
 
 
 
-    it ( 'No placeholders', () => {
+    it ( 'Template with no placeholders', () => {
                 const myTpl = {
                                   template : `My name is Peter.`
                         }
@@ -52,7 +52,7 @@ describe ( 'transformer: build', () => {
                                   // placeholder will be fullfiled with data[job], but data function 'jobPossible' will filter the result
                                   template : `My job is {{ job : >jobPossible }}.`
                                 , helpers  : {
-                                        jobPossible: ( {data:text} ) => {
+                                        jobPossible: ({ data:text }) => {
                                                                 if ( text === 'Software Engineer' )   return 'hidden'
                                                                 else return text
                                                         }
@@ -69,7 +69,7 @@ describe ( 'transformer: build', () => {
 
 
 
-      it ( 'Primitive data with helper function', () => {
+      it ( 'Primitive data with action', () => {
                 const myTpl = {
                                   template : `My job is {{ job : jobPossible }}.`
                                 , helpers  : {
@@ -82,33 +82,26 @@ describe ( 'transformer: build', () => {
                 const templateFn = morph.build ( myTpl );
                 const result = templateFn ( 'render' , { job: 'programmer' });
                 expect ( result ).to.be.equal ( 'My job is programmer.' );
+
+                const result2 = templateFn ( 'render' , { job: 'Software Engineer' });
+                // Skip rendering a placeholder:
+                expect ( result2 ).to.be.equal ( `My job is {{ job : jobPossible }}.` );
           }) // it primitive data with helper function
 
 
 
-
-     it ( 'Keep a placeholder', () => {
-                const myTpl = {
-                                  // placeholder will be fullfiled with data[job], but data function 'jobPossible' will filter the result
-                                  template : `My job is {{ job : >jobPossible }}.`
-                                , helpers  : {
-                                                jobPossible: ({data:text}) => {
-                                                                if ( text === 'Software Engineer' ) return null  // null means: Do not render this field
-                                                                else return text
-                                                        }
-                                        }
-                        }
-                const templateFn = morph.build ( myTpl );
-                const result = templateFn ( 'render', { job: 'Software Engineer' });
-                expect ( result ).to.be.equal ( 'My job is {{ job : >jobPossible }}.' );
-        }) // it Keep placeholder
+     it ( 'Missing command', () => {
+                const myTpl = { template : `My name is {{ name : notExistingHelper }}.`}
+                const fn = morph.build ( myTpl );
+                expect ( fn({name: 'Peter'}) ).to.be.equal ( `Error: Wrong command "[object Object]". Available commands: render, debug, snippets, set, curry.` )
+          })
 
 
 
     it ( 'Missing helper function', () => {
                 const myTpl = { template : `My name is {{ name : notExistingHelper }}.`}
                 const fn = morph.build ( myTpl );
-                expect ( fn() ).to.be.equal ( 'Error: Missing helper: notExistingHelper' )
+                expect ( fn('render', {name:'Peter'}) ).to.be.equal ( `My name is {{ Error: Helper 'notExistingHelper' is not available}}.` )
         }) // it Missing helper function
 
 
@@ -352,7 +345,7 @@ describe ( 'transformer: build', () => {
                                 template : `My name is {{ name }}.{{ extraData}}`
                         }
                 const templateFn = morph.build ( myTpl );
-                const result = templateFn( 'render', null );
+                const result = templateFn ( 'render', null );
                 expect ( result ).to.be.equal ( myTpl.template )
         }) // it data as null or undefined
 
@@ -391,7 +384,7 @@ describe ( 'transformer: build', () => {
                                         }
                         };
                 const templateFn = morph.build ( myTpl );
-                const result = templateFn();
+                const result = templateFn ();
                 expect ( result ).to.be.equal ( 'Profile active.' )
         }) // it action only
 
@@ -413,7 +406,7 @@ describe ( 'transformer: build', () => {
 
 
     it ( 'Broken template', () => {
-        // If template is broken, the result should be a string, representation of the error.
+                // If template is broken, the result should be a string, representation of the error.
                 const myTpl = {
                                 template : `My {{ {{ welcome }}`
                         };
@@ -425,7 +418,7 @@ describe ( 'transformer: build', () => {
 
 
      it ( 'Data only - object. Default field is "text"', () => {
-        // If provided data is object - default field is 'text'
+                // If provided data is object - default field is 'text'
                 const myTpl = {
                                 template : `My name is {{ person }}.`
                         };
@@ -437,7 +430,7 @@ describe ( 'transformer: build', () => {
 
 
      it ( 'Data only - array. Should render first element', () => {
-        // If provided data is array - default field is the first element of the array
+                // If provided data is array - default field is the first element of the array
                 const myTpl = {
                                 template : `My name is {{ person }}.`
                         };
@@ -449,7 +442,7 @@ describe ( 'transformer: build', () => {
 
 
      it ( 'Auto mixing array results', () => {
-        // Auto mix if in the end of the action-list the result is still an array
+                // Auto mix if in the end of the action-list the result is still an array
                 const myTpl = {
                                   template: `My friends are {{ friendsList: li }}.`
                                 , helpers : {
@@ -459,13 +452,12 @@ describe ( 'transformer: build', () => {
                 const templateFn = morph.build ( myTpl );
                 const result = templateFn('render', { friendsList: [ 'John', 'Milen', 'Vladislav' ]});
                 expect ( result ).to.be.equal ( 'My friends are <li>John</li><li>Milen</li><li>Vladislav</li>.' )        
-        })
+        }) // it auto mixing
 
 
 
     it ( 'Nested templates', () => {
-        // Use helper functions to render other templates
-                
+                // Use helper functions to render other templates
                 const secondaryTpl = { // Template for nesting  
                                   template : `My friends are {{ names }}.`
                         }        
@@ -523,35 +515,35 @@ describe ( 'transformer: build', () => {
 
 
     it ( 'Modify root data', () => {
-        const myTemplateDescription = {
-                template: `
-                          {{  : blank, ^^ , >myModification }}
-                          <h1>{{title}}</h1>
-                          {{list: ul,[],li,a}}
-                      `
-              , helpers: {
-                          myModification : ({data}) => {
-                                          data.list.forEach ( (item,i) =>  item.count = i )
-                                          return data
-                                }
-                          , blank : () => ``
-                          , a: `<a href="{{href}}">{{ count }}.{{text}}</a>`
-                          , li: `<li>{{text}}</li>`
-                          , ul: `<ul>{{text}}</ul>`
-                      }
-              , handshake: {
-                          title: 'My title'
-                        , list: [
-                                    { text: 'Item 1', href: 'item1.com' }
-                                  , { text: 'Item 2', href: 'item2.com' }
-                                  , { text: 'Item 3', href: 'item3.com' }
-                              ]
-                      }
-          }
-        const templateFn = morph.build ( myTemplateDescription );
-        const result = templateFn ( 'render', 'demo' );
-        expect ( result.trim() ).to.be.equal ( `<h1>My title</h1> <ul><li><a href="item1.com">0.Item 1</a></li><li><a href="item2.com">1.Item 2</a></li><li><a href="item3.com">2.Item 3</a></li></ul>`)
-    }) // it modify root data
+                const myTemplateDescription = {
+                        template: `
+                                {{  : blank, ^^ , >myModification }}
+                                <h1>{{title}}</h1>
+                                {{list: ul,[],li,a}}
+                        `
+                , helpers: {
+                                myModification : ({data}) => {
+                                                data.list.forEach ( (item,i) =>  item.count = i )
+                                                return data
+                                        }
+                                , blank : () => ``
+                                , a: `<a href="{{href}}">{{ count }}.{{text}}</a>`
+                                , li: `<li>{{text}}</li>`
+                                , ul: `<ul>{{text}}</ul>`
+                        }
+                , handshake: {
+                                title: 'My title'
+                                , list: [
+                                        { text: 'Item 1', href: 'item1.com' }
+                                        , { text: 'Item 2', href: 'item2.com' }
+                                        , { text: 'Item 3', href: 'item3.com' }
+                                ]
+                        }
+                }
+                const templateFn = morph.build ( myTemplateDescription );
+                const result = templateFn ( 'render', 'demo' );
+                expect ( result.trim() ).to.be.equal ( `<h1>My title</h1> <ul><li><a href="item1.com">0.Item 1</a></li><li><a href="item2.com">1.Item 2</a></li><li><a href="item3.com">2.Item 3</a></li></ul>`)
+        }) // it modify root data
 
 
 
@@ -709,7 +701,7 @@ describe ( 'transformer: build', () => {
                                         </p>
                                 </div>
                                 `.replace ( /\s+/g, '' ) )
-     }) // it use deep array
+        }) // it use deep array
 
 
 
@@ -741,7 +733,7 @@ describe ( 'transformer: build', () => {
                 const result = templateFn ( 'render', data );
                 expect ( result ).to.be.equal ( 'Profile: Peter - (180cm,66kg).' )
                 expect ( touch ).to.be.true
-         }) // it use extra renders "+"
+        }) // it use extra renders "+"
 
 
 
@@ -760,6 +752,7 @@ describe ( 'transformer: build', () => {
                 const result = templateFn( 'render', { name: 'Peter' });
                 expect ( result ).to.be.equal ( 'My name is Peter.' )
 
-         }) // it ignore comments from template
+        }) // it ignore comments from template
     
-}) // Describe
+
+}) // describe

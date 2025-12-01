@@ -40,14 +40,7 @@ function _setupActions ( actions, dataDeepLevel=10 ) {
                                     if ( actLevel > dataDeepLevel )  return false
                                     return true
                             }
-                    if ( act.startsWith ( '?' ) ) {   // it's a condition render action
-                                    actSetup[actLevel].push ({
-                                                      type: 'route'
-                                                    , name: act.replace ( '?', '' )
-                                                    , level: actLevel
-                                                    })
-                                    return true
-                            }
+
                     if ( act.startsWith ('^')  && act !== '^^'  ) {
                                    actSetup[actLevel].push ({
                                                           type: 'save'

@@ -33,21 +33,24 @@ function render ( theData, name, helpers, original, dependencies, ...args ) {
                                         if ( value instanceof Array    ) theData[key] = value[0]
                                 })
                     }
+
                 /**
- * Normalizes render data by wrapping strings in text objects.
- * 
- * @param {any} d - Data to normalize
- * @returns {object} Returns { text: d } if d is string, otherwise returns d unchanged
- */
-function setRenderData ( d={} ) {
+                 * Normalizes render data by wrapping strings in text objects.
+                 * 
+                 * @param {any} d - Data to normalize
+                 * @returns {object} Returns { text: d } if d is string, otherwise returns d unchanged
+                 */
+                function setRenderData ( d={} ) {
                                 if ( typeof d === 'string' )  return { text: d }
                                 else return d
                         } // setRenderData func.
-                const isRenderFunction = typeof helpers[name] === 'function';   // Render could be a function or template.
-                theData = setRenderData ( theData )
-                
-                if ( isRenderFunction )  return helpers[name]( { theData, dependencies, full:original},  ...args )
-                else                     return _renderHolder ( helpers[name], theData   )
+
+                 if (!helpers[name])      return `{{ Error: Helper '${name}' is not available}}`
+                 const isRenderFunction = typeof helpers[name] === 'function';   // Render could be a function or template.
+                 theData = setRenderData ( theData )
+
+                 if ( isRenderFunction )  return helpers[name]( { theData, dependencies, full:original},  ...args )
+                 else                     return _renderHolder ( helpers[name], theData   )
         }  // render func.
 
 

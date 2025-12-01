@@ -34,8 +34,6 @@ import walk from '@peter.naydenov/walk'
  */
 function build  ( tpl, extra=false, buildDependencies={} ) {
         let { hasError, placeholders, chop, helpers, handshake, snippets } = _readTemplate ( tpl );
-
-        
         
         if ( hasError ) {
                         function fail () { return hasError }
@@ -44,36 +42,49 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
         else {  // If NO Error:
                         const originalPlaceholders = structuredClone ( placeholders );
                         // *** Template recognition complete. Start building the rendering function -->
-                        /**
-                         * Processes template rendering commands with provided data, dependencies, and optional post-processing functions.
-                         *
-                         * @function success
-                         * @typedef { 'render' | 'debug' | 'snippets' } Command
-                         * @param {Command} [command='render'] - The command to execute. Supported commands: 'render', 'debug', 'snippets', or 'snippets:<names>'.
-                         * @param {Object|string} [d={}] - The data object to render, or a string instruction ('raw', 'demo', 'handshake', 'placeholders').
-                         * @param {Object} [dependencies={}] - Additional dependencies to be merged with internal dependencies.
-                         * @param {...any} args - Optional post-processing functions to apply to the rendered output.
-                         * @returns {string|Array[]} The rendered template, snippets, or data depending on the command and input.
-                         *
-                         * @throws {Error} If an unsupported command or instruction is provided.
-                         *
-                         * @example
-                         * // Render a template with data
-                         * success('render', { name: 'Alice' }, { helperFn });
-                         *
-                         * @example
-                         * // Get raw template
-                         * success('debug', 'raw');
-                         *
-                         * @example
-                         * // Render only specific snippets
-                         * success('snippets:header,footer', { ... });
-                         */
-                        function success ( command='render', d={}, dependencies={}, ...args ) {
-                                        const cuts = structuredClone ( chop )
-                                        let onlySnippets = false;
-                                        
-                                        if ( ![ 'render', 'debug', 'snippets'].includes ( command )  && !command.startsWith('snippets') )   return `Error: Wrong command "${command}". Available commands: render, debug, snippets.`
+                         /**
+                          * Processes template rendering commands with provided data, dependencies, and optional post-processing functions.
+                          *
+                          * @function success
+                          * @typedef { 'render' | 'debug' | 'snippets' | 'curry' | 'set' } Command
+                          * @param {Command} [command='render'] - The command to execute. Supported commands: 'render', 'debug', 'snippets', 'curry', 'set', or 'snippets:<names>'.
+                          * @param {Object|string} [d={}] - The data object to render, or a string instruction ('raw', 'demo', 'handshake', 'placeholders', 'count').
+                          * @param {Object} [dependencies={}] - Additional dependencies to be merged with internal dependencies.
+                          * @param {...any} args - Optional post-processing functions to apply to the rendered output.
+                          * @returns {string|Array[]|function} The rendered template, snippets, data, or new function depending on the command and input.
+                          *
+                          * @throws {Error} If an unsupported command or instruction is provided.
+                          *
+                          * @example
+                          * // Render a template with data
+                          * success('render', { name: 'Alice' }, { helperFn });
+                          *
+                          * @example
+                          * // Get raw template
+                          * success('debug', 'raw');
+                          *
+                          * @example
+                          * // Get count of remaining placeholders
+                          * success('debug', 'count');
+                          *
+                          * @example
+                          * // Render only specific snippets
+                          * success('snippets:header,footer', { ... });
+                          *
+                          * @example
+                          * // Curry partial data and get new render function
+                          * const curried = success('curry', { partial: 'data' });
+                          * curried('render', { more: 'data' });
+                          *
+                          * @example
+                          * // Set placeholders and get modified template
+                          * const modified = success('set', { placeholders: { key: 'value' } });
+                          */
+                         function success ( command='render', d={}, dependencies={}, ...args ) {
+                                         const cuts = structuredClone ( chop )
+                                         let onlySnippets = false;
+                                          if ( typeof command !== 'string' )   return `Error: Wrong command "${command}". Available commands: render, debug, snippets, set, curry.`
+                                          if ( ![ 'render', 'debug', 'snippets', 'set', 'curry'].includes ( command )  && !command.startsWith('snippets') )   return `Error: Wrong command "${command}". Available commands: render, debug, snippets, set, curry.`
 
                                         if ( command.startsWith ( 'snippets') && command.includes ( ':' ) ) {
                                                         onlySnippets = true
@@ -87,9 +98,49 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                         else if ( command === 'snippets' ) {
                                                         onlySnippets = true
                                                 }
-                                        else  placeholders = structuredClone ( originalPlaceholders )   // Reset placeholders if not snippets
+                                         else if ( command === 'set' ) {
+                                                         if ( typeof d !== 'object' || !d ) return `Error: 'set' command requires an object with placeholders, helpers, handshake.`
+                                                         // Merge helpers
+                                                         const newHelpers = { ...helpers, ...(d.helpers || {}) }
+                                                         
+                                                         // Merge handshake
+                                                         const newHandshake = handshake ? { ...handshake, ...(d.handshake || {}) } : d.handshake || {}
+                                                         // Modify chop for placeholders
+                                                         const newChop = [...chop]
+                                                         if ( d.placeholders ) {
+                                                                 Object.entries ( d.placeholders ).forEach ( ([k,v]) => {
+                                                                                if ( !isNaN(k) ) { // If k is a number
+                                                                                        let index = placeholders[k].index;
+                                                                                        newChop[index] = v
+                                                                                  } // if k is a number
+                                                                                else { // If k is a string
+                                                                                        let plx = placeholders.find ( p => p.name === k )
+                                                                                        newChop[ plx.index ] = v
+                                                                                  }
+                                                                        }) // placeholders
+                                                         } // if d.placeholders
+                                                         const newTemplateStr = newChop.join ( '' );
+                                                         const newTpl = {
+                                                                        template: newTemplateStr,
+                                                                        helpers: newHelpers,
+                                                                        handshake: newHandshake
+                                                                }
+                                                          const result = build ( newTpl, false, buildDependencies )
+                                                          return typeof result === 'function' ? result : () => result
+                                                  } else if ( command === 'curry' ) {
+                                                          // Render the template with current data
+                                                          const rendered = success('render', d, dependencies, ...args)
+                                                          // Create new template with rendered as template, keep helpers and handshake
+                                                          const newTpl = {
+                                                              template: rendered,
+                                                              helpers,
+                                                              handshake
+                                                          }
+                                                          const newFn = build(newTpl, false, buildDependencies)
+                                                          return newFn
+                                                  } else  placeholders = structuredClone ( originalPlaceholders )   // Reset placeholders if not snippets
 
-                                        if ( typeof d === 'string' ) {
+                                         if ( typeof d === 'string' ) {
                                                         switch ( d ) {
                                                                 case 'raw':
                                                                         return cuts.join ( '' )   // Original template with placeholders
@@ -100,13 +151,17 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                                 case 'handshake':
                                                                         if ( !handshake ) return `Error: No handshake data.`
                                                                         return structuredClone (handshake)   // return a copy of handshake object
-                                                                case 'placeholders':
-                                                                        return placeholders.map ( h => cuts[h.index] ).join ( ', ')
-                                                                default:
-                                                                        return `Error: Wrong instruction "${d}". Available instructions: raw, demo, handshake, placeholders.`
+                                                                case 'helpers' : 
+                                                                        return Object.keys ( helpers ).join ( ', ' )
+                                                                 case 'placeholders':
+                                                                         return placeholders.map ( h => cuts[h.index] ).join ( ', ')
+                                                                 case 'count':
+                                                                         return placeholders.length
+                                                                 default:
+                                                                         return `Error: Wrong instruction "${d}". Available instructions: raw, demo, handshake, helpers, placeholders, count.`
                                                         }
                                                 } // if d is string
-                                        
+    
                                         const endData = [];
                                         const memory = {};
 
@@ -177,10 +232,10 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
 
                                                                                         levelData.forEach ( (theData, iData ) => {
                                                                                         
-                                                                                        let dataType = _defineDataType ( theData )                                                                                        
-                                                                                        
+                                                                                        let dataType = _defineDataType ( theData )
+                                                                                                                                                                                
                                                                                         switch ( type ) {   // Action type 'route','data', 'render', or mix -> different operations
-                                                                                                case 'route':
+                                                                                                case 'route':   // DEPRICATED in version 3.2.0. This functionality can be replaced with normal render functions
                                                                                                         switch ( dataType ) {
                                                                                                                         case 'array': 
                                                                                                                                 theData.forEach ( (d,i) => {
