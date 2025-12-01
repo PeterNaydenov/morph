@@ -80,11 +80,11 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                           * // Set placeholders and get modified template
                           * const modified = success('set', { placeholders: { key: 'value' } });
                           */
-                        function success ( command='render', d={}, dependencies={}, ...args ) {
-                                        const cuts = structuredClone ( chop )
-                                        let onlySnippets = false;
-                                         if ( typeof command !== 'string' )   return `Error: Wrong command "${command}". Available commands: render, debug, snippets, set.`
-                                         if ( ![ 'render', 'debug', 'snippets', 'set'].includes ( command )  && !command.startsWith('snippets') )   return `Error: Wrong command "${command}". Available commands: render, debug, snippets, set.`
+                         function success ( command='render', d={}, dependencies={}, ...args ) {
+                                         const cuts = structuredClone ( chop )
+                                         let onlySnippets = false;
+                                          if ( typeof command !== 'string' )   return `Error: Wrong command "${command}". Available commands: render, debug, snippets, set, curry.`
+                                          if ( ![ 'render', 'debug', 'snippets', 'set', 'curry'].includes ( command )  && !command.startsWith('snippets') )   return `Error: Wrong command "${command}". Available commands: render, debug, snippets, set, curry.`
 
                                         if ( command.startsWith ( 'snippets') && command.includes ( ':' ) ) {
                                                         onlySnippets = true
@@ -127,7 +127,18 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                                 }
                                                           const result = build ( newTpl, false, buildDependencies )
                                                           return typeof result === 'function' ? result : () => result
-                                                 } else  placeholders = structuredClone ( originalPlaceholders )   // Reset placeholders if not snippets
+                                                  } else if ( command === 'curry' ) {
+                                                          // Render the template with current data
+                                                          const rendered = success('render', d, dependencies, ...args)
+                                                          // Create new template with rendered as template, keep helpers and handshake
+                                                          const newTpl = {
+                                                              template: rendered,
+                                                              helpers,
+                                                              handshake
+                                                          }
+                                                          const newFn = build(newTpl, false, buildDependencies)
+                                                          return newFn
+                                                  } else  placeholders = structuredClone ( originalPlaceholders )   // Reset placeholders if not snippets
 
                                          if ( typeof d === 'string' ) {
                                                         switch ( d ) {
@@ -142,10 +153,12 @@ function build  ( tpl, extra=false, buildDependencies={} ) {
                                                                         return structuredClone (handshake)   // return a copy of handshake object
                                                                 case 'helpers' : 
                                                                         return Object.keys ( helpers ).join ( ', ' )
-                                                                case 'placeholders':
-                                                                        return placeholders.map ( h => cuts[h.index] ).join ( ', ')
-                                                                default:
-                                                                        return `Error: Wrong instruction "${d}". Available instructions: raw, demo, handshake, helpers, placeholders.`
+                                                                 case 'placeholders':
+                                                                         return placeholders.map ( h => cuts[h.index] ).join ( ', ')
+                                                                 case 'count':
+                                                                         return placeholders.length
+                                                                 default:
+                                                                         return `Error: Wrong instruction "${d}". Available instructions: raw, demo, handshake, helpers, placeholders, count.`
                                                         }
                                                 } // if d is string
     

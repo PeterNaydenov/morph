@@ -67,5 +67,23 @@ describe ( 'Morph - debug a template function', () => {
                     const result = template ( 'debug', 'placeholders' );
                     expect ( result ).to.be.equal ( '{{name : uppercase}}, {{ congrats: list: congrats }}' )
         }) // it check for placeholders
+
+
+
+    it ( 'Check for placeholders', () => {
+                    let template = morph.build ({
+                                        template: 'Hello {{name}}! {{ congrats: list: congrats }}',
+                                        helpers: {},
+                                        handshake: { name: 'World', congrats: 'Welcome a board.' }
+                                });
+                    
+                    let result = template ( 'debug', 'count' );
+                    expect ( result ).to.be.equal ( 2 )
+                    // Let's render the name
+                    let tpl = template ( 'curry', { name: 'World'})
+                    // Now we have just one placeholder
+                    result = tpl ( 'debug', 'count' );
+                    expect ( result ).to.be.equal ( 1 )
+        }) // it check for placeholders
  
 }) // describe

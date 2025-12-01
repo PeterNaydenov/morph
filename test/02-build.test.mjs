@@ -93,7 +93,7 @@ describe ( 'transformer: build', () => {
      it ( 'Missing command', () => {
                 const myTpl = { template : `My name is {{ name : notExistingHelper }}.`}
                 const fn = morph.build ( myTpl );
-                expect ( fn({name: 'Peter'}) ).to.be.equal ( `Error: Wrong command "[object Object]". Available commands: render, debug, snippets, set.` )
+                expect ( fn({name: 'Peter'}) ).to.be.equal ( `Error: Wrong command "[object Object]". Available commands: render, debug, snippets, set, curry.` )
           })
 
 
