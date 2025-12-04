@@ -157,7 +157,39 @@ it ( 'As a data 2', () => {
         // If data property is a function, it is called, and the result is used
         let result = morph.get (['name'])('render', { h : external })
         expect ( result ).to.be.equal ( 'My name is Peter.' )
-}) // it As a data 2
+   }) // it As a data 2
+
+
+
+it ( 'Extra argument during building', () => {
+        function external () {
+                return 'Peter'
+            }
+        const myTpl = {
+                      template: `My name is {{ : action }}.`
+                    , helpers: {
+                            action : ({ dependencies }) => dependencies.action ()
+                        }
+                }
+        let result = morph.build ( myTpl, false, { action : external} )('render', {})
+        expect ( result ).to.be.equal ( 'My name is Peter.' )
+   }) // it Extra argument
+
+
+
+it ( 'Extra argument during rendering', () => {
+        function external () {
+                return 'Peter'
+            }
+        const myTpl = {
+                      template: `My name is {{ : action }}.`
+                    , helpers: {
+                            action : ({ dependencies }) => dependencies.action ()
+                        }
+                }
+        let result = morph.build ( myTpl )('render', {}, { action : external})
+        expect ( result ).to.be.equal ( 'My name is Peter.' )
+   }) // it Extra argument
 
 
 
