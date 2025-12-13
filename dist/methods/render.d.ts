@@ -1,25 +1,14 @@
 export default render;
 /**
- * Executes rendering and returns the rendered result.
+ * Renders a helper or template with the provided data and context.
  *
- * Handles both function-based and template-based rendering. Normalizes data objects
- * by converting nested objects to their 'text' properties and arrays to their first elements.
+ * @param {any} theData - The data to process.
+ * @param {string} name - The name of the helper or template to render.
+ * @param {object} helpers - Dictionary of available helpers.
+ * @param {any} original - The full original data context.
+ * @param {object} dependencies - injected dependencies.
+ * @param {...any} args - Additional arguments.
  *
- * @param {object|string} theData - Data to be rendered. If string, becomes the 'text' property value.
- * @param {string} name - Name of the render helper/template to execute
- * @param {object} helpers - Object containing helper functions and templates
- * @param {object} original - Original data context for full data access
- * @param {object} dependencies - External dependencies available to helpers
- * @param {...any} args - Additional arguments passed to the render function
- *
- * @returns {string} Rendered string result
- *
- * @example
- * // Render with function helper
- * const result = render(data, 'myHelper', helpers, originalData, deps);
- *
- * @example
- * // Render with template
- * const result = render(data, 'myTemplate', helpers, originalData, deps);
+ * @returns {any} The result of the rendering process.
  */
-declare function render(theData: object | string, name: string, helpers: object, original: object, dependencies: object, ...args: any[]): string;
+declare function render(theData: any, name: string, helpers: object, original: any, dependencies: object, ...args: any[]): any;

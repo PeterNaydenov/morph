@@ -1,4 +1,12 @@
 export default build;
+export type UseHelperFn = (name: string, data?: any) => any;
+export type HelperFn = (args: {
+    data: any;
+    dependencies: object;
+    full?: any;
+    useHelper?: UseHelperFn;
+    memory?: object;
+}) => any;
 export type Template = {
     /**
      * - Data to be rendered;
@@ -7,7 +15,9 @@ export type Template = {
     /**
      * - Optional. Object with helper functions or simple templates for this template;
      */
-    helpers?: object;
+    helpers?: {
+        [x: string]: string | HelperFn;
+    };
     /**
      * - Optional. Example for data to be rendered with;
      */
@@ -15,9 +25,25 @@ export type Template = {
 };
 export type tupleResult = any[];
 /**
+ * @callback UseHelperFn
+ * @param {string} name - Name of the helper to call.
+ * @param {any} [data] - Optional data override.
+ * @returns {any} Result of the helper call.
+ */
+/**
+ * @callback HelperFn
+ * @param {object} args
+ * @param {any} args.data - The data context.
+ * @param {object} args.dependencies - Injected dependencies.
+ * @param {any} [args.full] - Full data context.
+ * @param {UseHelperFn} [args.useHelper] - Function to call other helpers.
+ * @param {object} [args.memory] - internal memory state.
+ * @returns {any} Rendered output.
+ */
+/**
  * @typedef {Object} Template
  * @property {string} template - Data to be rendered;
- * @property {object} [helpers] - Optional. Object with helper functions or simple templates for this template;
+ * @property {Object.<string, HelperFn|string>} [helpers] - Optional. Object with helper functions or simple templates for this template;
  * @property {object} [handshake] - Optional. Example for data to be rendered with;
  */
 /**
