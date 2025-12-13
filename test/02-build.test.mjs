@@ -101,7 +101,7 @@ describe ( 'transformer: build', () => {
     it ( 'Missing helper function', () => {
                 const myTpl = { template : `My name is {{ name : notExistingHelper }}.`}
                 const fn = morph.build ( myTpl );
-                expect ( fn('render', {name:'Peter'}) ).to.be.equal ( `My name is {{ Error: Helper 'notExistingHelper' is not available}}.` )
+                expect ( fn('render', {name:'Peter'}) ).to.be.equal ( `My name is ( Error: Helper 'notExistingHelper' is not available ).` )
         }) // it Missing helper function
 
 

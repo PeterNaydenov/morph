@@ -150,7 +150,7 @@ describe ( 'Morph - modify template function with command "set"', () => {
                                         handshake: { name: 'World' }
                                     })
                 const result = template ( 'render', { name: 'test' })
-                expect ( result ).to.equal ( `Hello {{ Error: Helper 'format' is not available}}!` )
+                expect ( result ).to.equal ( `Hello ( Error: Helper 'format' is not available )!` )
         }) // it Create a template with no helpers
 
 
