@@ -247,6 +247,38 @@ Helpers are templates and functions that are used by actions to decorate the dat
 - `Extended render functions` will return a string like regular render functions, but will receive a deep branch of requested data;
 - `Conditional render functions` could return null, that means: ignore this action. The result could be also a string: the name of other helper function that will render the data.
 
+### Calling Helpers within Helpers
+
+Starting from version 3.3.0, helper functions receive a `useHelper` function in their arguments object. This allows helpers to call other helpers programmatically.
+
+```js
+const helpers = {
+    // Basic helper
+    format: ({ data }) => `[${data}]`,
+
+    // Helper using another helper
+    process: ({ data, useHelper }) => {
+        return useHelper('format') // Uses current data
+    },
+
+    // Helper overriding data
+    customProcess: ({ data, useHelper }) => {
+        return useHelper('format', 'Override') // Uses provided data
+    },
+
+    // Helper calling a template string helper
+    linkToCheck: ({ data, useHelper }) => {
+        // 'link' is a string template helper defined elsewhere
+        if (data.url) return useHelper('link', { text: data.name, href: data.url })
+        return data.name
+    }
+}
+```
+
+`useHelper` signature: `useHelper(helperName, [dataOverride])`
+- `helperName`: String name of the helper to call.
+- `dataOverride`: Optional. Data to pass to the helper. If omitted, the current data context of the caller is used.
+
 
 
 ## Commands
