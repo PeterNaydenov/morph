@@ -26,15 +26,21 @@ function _renderHolder ( template, data ) {
           chop = _chopTemplate (settings)( template )
         , set  = settings
         ;
-    chop.forEach ( (item,i) => {
-                            const isPlaceholder = item.includes ( set.TG_PRX )
-                            if ( isPlaceholder ) {
-                                            const field = item.replace ( set.TG_PRX, '' ).replace ( set.TG_SFX, '' ).trim();
-                                            if ( data.hasOwnProperty (field) && data[field] != null )  chop[i] = data[field]
-                                    } // if isPlaceholder
-                    }) // forEach chop
+    if ( typeof chop === 'string' )   return chop
+    chop.forEach ( ( item, i ) => {
+            const isPlaceholder = item.includes ( set.TG_PRX )
+            if ( isPlaceholder ) {
+                        const field = item.replace(set.TG_PRX, '').replace(set.TG_SFX, '').trim();
+                        if (data.hasOwnProperty(field) && data[field] != null) {
+                                let val = data [ field ]
+                                if ( typeof val === 'object' && val.text )   val = val.text
+                                chop[i] = val
+                            }
+                } // if isPlaceholder
+        }) // forEach chop
     return chop.join ( '' )
 } // _renderHolder func.
+
 
 
 export default _renderHolder
