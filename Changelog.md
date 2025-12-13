@@ -2,6 +2,11 @@
 
 
 
+### 3.3.0 (2025-12-13)
+- [x] Use other helper from inside of helper functionsHelper functions attribute - useHelper;
+
+
+
 ### 3.2.0 (2025-12-01)
 - [x] Conditional actions are depricated. ( starting with `?` ). Too unconsistant with other actions. It's can be solved with normal helper functions by providing a list of possible templates. It's something that is possible even now;
 - [x] Templates can have empty placeholders - just {{ }};
