@@ -9,6 +9,6 @@ export default render;
  * @param {object} dependencies - injected dependencies.
  * @param {...any} args - Additional arguments.
  *
- * @returns {any} The result of the rendering process.
+ * @returns {any} The result of the rendering process, or an error string if the helper is not available.
  */
 declare function render(theData: any, name: string, helpers: object, original: any, dependencies: object, ...args: any[]): any;

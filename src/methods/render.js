@@ -13,7 +13,7 @@ import _renderHolder from './_renderHolder.js'
  * @param {object} dependencies - injected dependencies.
  * @param {...any} args - Additional arguments.
  * 
- * @returns {any} The result of the rendering process.
+ * @returns {any} The result of the rendering process, or an error string if the helper is not available.
  */
 function render ( theData, name, helpers, original, dependencies, ...args) {
                 const useHelper = ( targetName, targetData ) => render ( targetData || theData, targetName, helpers, original, dependencies, ...args )

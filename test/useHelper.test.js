@@ -96,7 +96,7 @@ describe('Helper Function argument: useHelper', () => {
         const template = '{{value : caller}}'
         const app = morph.build({ template, helpers })
         const result = app('render', { value: 'test' })
-        expect(result).to.equal("{{ Error: Helper 'missingHelper' is not available}}")
+        expect(result).to.equal("( Error: Helper 'missingHelper' is not available )")
     }) // it Should return error when helper does not exist
 
 }) // describe
