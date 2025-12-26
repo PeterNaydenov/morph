@@ -121,7 +121,7 @@ function build ( tpl, extra = false, buildDependencies = {}) {
 
 
                         const endData = processPlaceholders({
-                                                        d
+                                                          d
                                                         , chop
                                                         , placeholders
                                                         , original
