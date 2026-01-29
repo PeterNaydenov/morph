@@ -35,7 +35,7 @@
         "chai": "6.2.2",
         "esm": "^3.2.25",
         "mocha": "11.7.5",
-        "rollup": "^4.55.1",
+        "rollup": "^4.55.2",
         "typescript": "^5.9.3"
     },
     "repository": {
