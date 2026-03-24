@@ -2,6 +2,12 @@
 
 
 
+### 3.3.1 (2026-03-24)
+- [x] Dev deps update. TypeScript - v.6.0.2;
+- [x] Update types according typescript v.6.0.2;
+
+
+
 ### 3.3.0 (2025-12-13)
 - [x] Use other helper from inside of helper functionsHelper functions attribute - useHelper;
 
