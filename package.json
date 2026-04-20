@@ -36,7 +36,7 @@
         "esm": "^3.2.25",
         "mocha": "11.7.5",
         "rollup": "^4.60.1",
-        "typescript": "^6.0.2"
+        "typescript": "^6.0.3"
     },
     "overrides": {
         "diff": "^8.0.2",
