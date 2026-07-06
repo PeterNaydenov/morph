@@ -405,6 +405,18 @@ describe ( 'transformer: build', () => {
 
 
 
+    it ( 'Mixing an array with null elements', () => {
+                // Null elements should be ignored, wherever they are in the array
+                const myTpl = {
+                                template: `List: {{ items : [] }}`
+                        };
+                const templateFn = morph.build ( myTpl );
+                expect ( templateFn ( 'render', { items: [ null, 'a', 'b' ]})).to.be.equal ( 'List: ab' )
+                expect ( templateFn ( 'render', { items: [ 'a', null, 'b' ]})).to.be.equal ( 'List: ab' )
+       }) // it mixing an array with null elements
+
+
+
     it ( 'Broken template', () => {
                 // If template is broken, the result should be a string, representation of the error.
                 const myTpl = {
@@ -414,6 +426,18 @@ describe ( 'transformer: build', () => {
                 const result = templateFn ();
                 expect ( result ).to.be.equal ( 'Error: Nested placeholders. Close placeholder before open new one.' )
         }) // it broken template
+
+
+
+    it ( 'Broken template after a valid placeholder', () => {
+                // The error should be reported even when the broken placeholder is not the first one.
+                const myTpl = {
+                                template : `Hi {{ name }} and bye {{ name`
+                        };
+                const templateFn = morph.build ( myTpl );
+                const result = templateFn ( 'render', { name: 'Stoyan' });
+                expect ( result ).to.be.equal ( 'Error: Placeholder with missing closing tag.' )
+        }) // it broken template after a valid placeholder
 
 
 

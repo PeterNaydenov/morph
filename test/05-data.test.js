@@ -173,5 +173,29 @@ describe ( 'morph: Data', () => {
                 expect ( result ).to.be.equal ( `Hello from Robert. I'm 33 years old software developer` )
         }) // it function arguments with actions
 
-        
+
+
+    it ( 'Null in the middle of a breadcrumb path', () => {
+                // A null step should act like a missing one - placeholder stays untouched, no crash
+                const myTpl = {
+                                template : `Value: {{ a/b/c }}`
+                        };
+                const templateFn = morph.build ( myTpl );
+                const result = templateFn ( 'render', { a: { b: null } });
+                expect ( result ).to.be.equal ( 'Value: {{ a/b/c }}' )
+        }) // it null in the middle of a breadcrumb path
+
+
+
+    it ( 'Null as a data element', () => {
+                // Null elements should render like elements with missing keys - no crash
+                const myTpl = {
+                                template : `-{{ name }}-`
+                        };
+                const templateFn = morph.build ( myTpl );
+                const result = templateFn ( 'render', [ null, { name: 'Ana' } ]);
+                expect ( result ).to.be.deep.equal ([ '-{{ name }}-', '-Ana-' ])
+        }) // it null as a data element
+
+
 }) // describe

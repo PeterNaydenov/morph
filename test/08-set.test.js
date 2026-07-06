@@ -143,6 +143,20 @@ describe ( 'Morph - modify template function with command "set"', () => {
 
 
 
+    it ( 'Set a placeholder that does not exist', () => {
+                const template = morph.build ({
+                                        template: 'Hi {{ name : : who }}',
+                                        helpers: {},
+                                        handshake: { name: 'World' }
+                                    })
+                const byName  = template ( 'set', { placeholders: { typo: 'value' }})
+                const byIndex = template ( 'set', { placeholders: { 9: 'value' }})
+                expect ( byName  ).to.equal ( `Error: Placeholder "typo" does not exist in the template.` )
+                expect ( byIndex ).to.equal ( `Error: Placeholder "9" does not exist in the template.` )
+        }) // it set a placeholder that does not exist
+
+
+
     it ( 'Render a template with missing helper', () => {
                 const template = morph.build ({
                                         template: 'Hello {{ name : format }}!',
