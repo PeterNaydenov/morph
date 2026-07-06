@@ -17,139 +17,121 @@ import render          from "./render.js"
  * @param {object} params.dependencies - Injected dependencies
  * @param {object} params.memory - Internal memory state
  * @param {array} params.args - Additional arguments
- * @param {boolean} params.onlySnippets - Whether to process only snippets
- * @returns {array} Processed template parts
+ * @param {boolean} params.onlySnippets - Whether to render only the selected placeholders
+ * @returns {array} Rendered result - one string per data element
  */
 function processPlaceholders ({ d, chop, placeholders, original, helpers, dependencies, memory, args, onlySnippets }) {
     const endData = []
-    // We need a factory for useHelper.
-    // It depends on 'currentData'. But here we are iterating 'd'.
 
-    // Helper factory to share with executeActions
-    const createUseHelperFactory = (currentData) => (targetName, targetData) => {
-        let
-            targetFn = helpers[targetName]
-            , isCompiledTemplate = targetFn && typeof targetFn === 'function' && targetFn.length >= 2
-            ;
-        if (!targetFn) return `( Error: Helper '${targetName}' is not available )`
-
-        if (isCompiledTemplate) {
-            try {
-                return targetFn('render', targetData || currentData, dependencies)
-            }
-            catch (e) {
-                return render(targetData || currentData, targetName, helpers, original, dependencies, ...args)
-            }
-        }
-        return render(targetData || currentData, targetName, helpers, original, dependencies, ...args)
-    }
-
-
-    d.forEach(dElement => {
-        let
-            cuts = structuredClone(chop)
-            , currentDElement = dElement // Can be updated by overwrite
-            ;
-
-        placeholders.forEach(holder => {
+    // useHelper factory, shared with executeActions. 'currentData' is the fallback
+    // when the helper calls useHelper without its own data.
+    const createUseHelperFactory = ( currentData ) => ( targetName, targetData ) => {
             const
-                { index, data, action } = holder
-                , dataOnly = !action
-                , mem = structuredClone(memory)
+                  targetFn = helpers[targetName]
+                , isCompiledTemplate = targetFn  &&  typeof targetFn === 'function'  &&  targetFn.length >= 2
                 ;
-            let info = currentDElement;
+            if ( !targetFn )   return `( Error: Helper '${targetName}' is not available )`
 
-            // Data Resolution
-            if (data && data.includes('/')) {
-                if (info.hasOwnProperty(data)) {
-                    info = info[data]
+            if ( isCompiledTemplate ) {
+                    try   { return targetFn ( 'render', targetData || currentData, dependencies ) }
+                    catch ( e ) { return render ( targetData || currentData, targetName, helpers, original, dependencies, ...args ) }
                 }
-                else {
-                    data.split('/').forEach(d => {
-                        if (info.hasOwnProperty(d)) info = info[d]
-                        else info = [] // Bug in original? info = [] then info['next'] crashes? 
-                        // Original: else info = []. 256. 
-                        // If info is [], next iteration info['key'] is undefined.
-                        // So safe.
-                    })
-                }
-            }
-            else if (data === '@all' || data === null || data === '@root') info = currentDElement
-            else if (data) info = info[data]
+            return render ( targetData || currentData, targetName, helpers, original, dependencies, ...args )
+        } // createUseHelperFactory func.
 
 
-            if (dataOnly) {
-                const type = _defineDataType(info);
-                switch (type) {
-                    case 'function':
-                        cuts[index] = info()
-                        break
-                    case 'primitive':
-                        cuts[index] = info
-                        break
-                    case 'array':
-                        if (_defineDataType(info[0]) === 'primitive') cuts[index] = info[0]
-                        break
-                    case 'object':
-                        if (info.text) cuts[index] = info.text
-                        break
-                }
-            }
-            else {
-                // Logic for data processing via actions
-                let
-                    { dataDeepLevel, nestedData } = _defineData(info, action)
-                    , actSetup = _actionSupply(_setupActions(action, dataDeepLevel), dataDeepLevel)
-                    ;
+    d.forEach ( dElement => {
+            let
+                  cuts = structuredClone ( chop )
+                , currentDElement = dElement   // 'overwrite' action can replace it
+                ;
 
-                const createUseHelper = createUseHelperFactory(info); // use info as context? 
-                // In build.js it was `d` (the item from levelData).
-                // `executeActions` passes `theData` to `createUseHelper`.
+            placeholders.forEach ( holder => {
+                    const
+                          { index, data, action } = holder
+                        , dataOnly = !action
+                        ;
+                    let info = currentDElement;
 
-                currentDElement = executeActions({
-                    nestedData
-                    , actSetup
-                    , helpers
-                    , original
-                    , dependencies
-                    , memory
-                    , dElement: currentDElement
-                    , createUseHelper: createUseHelperFactory
-                })
+                    // Data resolution. A name with '/' is a breadcrumb path into the data,
+                    // unless the data has it as a literal key. Missing or null steps resolve to [].
+                    if ( data && data.includes ( '/' )) {
+                            if ( info != null  &&  info.hasOwnProperty ( data ))   info = info[data]
+                            else {
+                                    data.split ( '/' ).forEach ( step => {
+                                            if ( info != null  &&  info.hasOwnProperty ( step ))   info = info[step]
+                                            else                                                   info = []
+                                        })
+                                }
+                        }
+                    else if ( data === '@all' || data === null || data === '@root' )   info = currentDElement
+                    else if ( data )   info = ( info != null )  ?  info[data]  :  null
 
-                // Flatten Step
-                if (nestedData instanceof Array && nestedData.length === 1 && nestedData[0] instanceof Array) nestedData = nestedData[0]
-                if (nestedData[0] == null) return
 
-                let
-                    accType = _defineDataType(nestedData[0])
-                    , fineData = nestedData[0]
-                    ;
+                    if ( dataOnly ) {   // No actions - place the data directly
+                            switch ( _defineDataType ( info )) {
+                                case 'function':
+                                        cuts[index] = info ()
+                                        break
+                                case 'primitive':
+                                        cuts[index] = info
+                                        break
+                                case 'array':
+                                        if ( _defineDataType ( info[0] ) === 'primitive' )   cuts[index] = info[0]
+                                        break
+                                case 'object':
+                                        if ( info.text )   cuts[index] = info.text
+                                        break
+                            }
+                        }
+                    else {   // Run the action chain over the data
+                            let { dataDeepLevel, nestedData } = _defineData ( info, action )
+                            const actSetup = _actionSupply ( _setupActions ( action, dataDeepLevel ), dataDeepLevel )
 
-                switch (accType) {
-                    case 'primitive':
-                        if (fineData == null) return
-                        cuts[index] = fineData
-                        break
-                    case 'object':
-                        if (fineData['text'] == null) return
-                        cuts[index] = fineData['text']
-                        break
-                    case 'array':
-                        const aType = _defineDataType(fineData[0])
-                        if (aType === 'object') cuts[index] = fineData.map(x => x.text).join('')
-                        else cuts[index] = fineData.join('')
-                        break
-                }
-            }
-        }) // placeholders loop
+                            currentDElement = executeActions ({
+                                                          nestedData
+                                                        , actSetup
+                                                        , helpers
+                                                        , original
+                                                        , dependencies
+                                                        , memory
+                                                        , dElement : currentDElement
+                                                        , createUseHelper : createUseHelperFactory
+                                                })
 
-        if (onlySnippets) endData.push(placeholders.map(x => cuts[x.index]).join('<~>'))
-        else endData.push(cuts.join(''))
+                            // The action chain leaves the result at the root level. Unwrap it.
+                            if ( nestedData instanceof Array  &&  nestedData.length === 1  &&  nestedData[0] instanceof Array )   nestedData = nestedData[0]
+                            if ( nestedData[0] == null )   return
 
-    }) // d.forEach
+                            const fineData = nestedData[0]
+                            switch ( _defineDataType ( fineData )) {
+                                case 'primitive':
+                                        cuts[index] = fineData
+                                        break
+                                case 'object':
+                                        if ( fineData['text'] == null )   return
+                                        cuts[index] = fineData['text']
+                                        break
+                                case 'array': {
+                                        const itemType = _defineDataType ( fineData[0] )
+                                        if ( itemType === 'object' )   cuts[index] = fineData.map ( x => x.text ).join ( '' )
+                                        else                           cuts[index] = fineData.join ( '' )
+                                        break
+                                    }
+                            }
+                        }
+                }) // forEach placeholders
+
+            if ( onlySnippets )   endData.push ( placeholders.map ( x => cuts[x.index] ).join ( '<~>' ))
+            else                  endData.push ( cuts.join ( '' ))
+
+        }) // forEach d
 
     return endData
-}
+} // processPlaceholders func.
+
+
 
 export default processPlaceholders
+
+

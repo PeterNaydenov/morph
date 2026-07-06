@@ -16,7 +16,7 @@ import build from "./methods/build.js"
 
 
 
-const storage = ( () => ({default: {}}) ) ();
+const storage = { default: {} };
 
 
 
@@ -129,12 +129,8 @@ function add ( location, tplfn, ...args ) {
  * const templates = list(['default', 'customStorage']);
  */
 function list ( storageNames=['default'] ) {
-    let r = storageNames.map ( strName => {
-                        if ( !storage[strName] ) return []
-                        else                     return Object.keys ( storage[strName])
-                }) 
-    return r.flat ()
-} // list func. 
+    return storageNames.flatMap ( strName => storage[strName]  ?  Object.keys ( storage[strName] )  :  [] )
+} // list func.
 
 
 

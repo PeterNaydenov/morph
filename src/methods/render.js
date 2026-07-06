@@ -15,19 +15,17 @@ import _renderHolder from './_renderHolder.js'
  * 
  * @returns {any} The result of the rendering process, or an error string if the helper is not available.
  */
-function render ( theData, name, helpers, original, dependencies, ...args) {
-                const useHelper = ( targetName, targetData ) => render ( targetData || theData, targetName, helpers, original, dependencies, ...args )
-                if (!helpers[name]) return `( Error: Helper '${name}' is not available )`
+function render ( theData, name, helpers, original, dependencies, ...args ) {
+        const useHelper = ( targetName, targetData ) => render ( targetData || theData, targetName, helpers, original, dependencies, ...args )
+        if ( !helpers[name] )   return `( Error: Helper '${name}' is not available )`
 
-                const isRenderFunction = typeof helpers[name] === 'function';
+        const isRenderFunction = typeof helpers[name] === 'function';
+        if ( isRenderFunction )   return helpers[name] ({ data: theData, dependencies, full: original, useHelper }, ...args )
 
-                if ( isRenderFunction )   return helpers[name]({ data: theData, dependencies, full: original, useHelper }, ...args)
-                else {
-                        let dataForHolder = theData
-                        if ( typeof theData !== 'object' || theData === null )   dataForHolder = { text: theData }
-                        return _renderHolder ( helpers[name], dataForHolder )
-                }
-        }  // render func.
+        // String helpers are mini templates. Wrap primitives, so the template can address them as {{ text }}.
+        const dataForHolder = ( typeof theData === 'object'  &&  theData !== null )  ?  theData  :  { text: theData }
+        return _renderHolder ( helpers[name], dataForHolder )
+} // render func.
 
 
 

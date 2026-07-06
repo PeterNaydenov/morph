@@ -52,16 +52,12 @@ function handleSet(d, { helpers, handshake, placeholders, chop, build, buildDepe
     const newChop = [...chop]
 
     if (d.placeholders) {
-        Object.entries(d.placeholders).forEach(([k, v]) => {
-            if (!isNaN(k)) {
-                let index = placeholders[k].index;
-                newChop[index] = v
-            }
-            else {
-                let plx = placeholders.find(p => p.name === k)
-                newChop[plx.index] = v
-            }
-        })
+        for (const [k, v] of Object.entries(d.placeholders)) {
+            // Placeholders are addressed by position ('0', '1', ...) or by name
+            const holder = !isNaN(k) ? placeholders[k] : placeholders.find(p => p.name === k)
+            if (!holder) return `Error: Placeholder "${k}" does not exist in the template.`
+            newChop[holder.index] = v
+        }
     }
 
     const newTemplateStr = newChop.join('');

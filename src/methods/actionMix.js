@@ -1,61 +1,59 @@
 import _defineDataType from "./_defineType.js"
 import walk from '@peter.naydenov/walk'
 
-function actionMix({ name }, levelData, { helpers, extendArguments, nestedData, level, useHelper }) {
-    const theData = levelData
-    let dataType = _defineDataType(theData)
 
-    if (name === '') {   // when is anonymous mixing action
-        switch (dataType) {
-                    case 'object':
-                        let kTest = Object.keys(theData).find(k => k.includes('/'));   // Check if keys are breadcrumbs
-                        if (kTest) Object.entries(theData).forEach(([k, v]) => nestedData[level][k] = v['text'])
-                        else nestedData[level] = theData['text']
-                        for (let i = level - 1; i >= 0; i--) {
-                                nestedData[i] = walk({ data: nestedData[i], objectCallback: check })
+
+/**
+ * Action 'mix' ('[]'). Merges the level data into a single value.
+ *
+ * Anonymous mix ('[]', no helper name):
+ *   - array  : joins all items (or their 'text' property) into one string;
+ *   - object : publishes the 'text' results to the upper data levels,
+ *              matching values by their breadcrumb keys.
+ *
+ * Named mix ('[]helperName'): the helper receives the data and produces
+ * the merged value itself.
+ *
+ * @param {object} step - Action step: { name } is the helper name ('' for anonymous mix)
+ * @param {any} theData - Current data item from the level slice
+ * @param {object} context - Execution context (see executeActions.js)
+ */
+function actionMix ({ name }, theData, { helpers, extendArguments, nestedData, level, useHelper }) {
+
+    if ( name === '' ) {   // Anonymous mixing action
+            switch ( _defineDataType ( theData )) {
+                case 'object': {
+                        const hasBreadcrumbKeys = Object.keys ( theData ).some ( k => k.includes ( '/' ))
+                        if ( hasBreadcrumbKeys )   Object.entries ( theData ).forEach ( ([ k, v ]) => nestedData[level][k] = v['text'] )
+                        else                       nestedData[level] = theData['text']
+
+                        // Publish up: replace matching breadcrumb values on every level above
+                        const check = ({ value, breadcrumbs }) => nestedData[level][breadcrumbs]  ?  nestedData[level][breadcrumbs]  :  value
+                        for ( let i = level - 1; i >= 0; i-- ) {
+                                nestedData[i] = walk ({ data: nestedData[i], objectCallback: check })
                             }
-                        function check({ value, breadcrumbs }) {
-                                if (nestedData[level][breadcrumbs]) return nestedData[level][breadcrumbs]
-                                return value
-                            } // check func.
                         break
-                    case 'array':
-                        theData.forEach((x, i) => {
-                                if (i > 0) {
-                                        let xType = _defineDataType(x);
-                                        if (x == null) return
-                                        if (xType === 'object') theData[0] += `${x.text}`
-                                        else theData[0] += `${x}`
-                                        theData.toSpliced(i, 1)
-                                    }
-                                else {
-                                        let xxType = _defineDataType(x);
-                                        theData[0] = ''
-                                        if (xxType === null) return
-                                        else if (xxType === 'object') theData[0] = `${x.text}`
-                                        else theData[0] = `${x}`
-                                    }
-                            }) // forEach theData
+                    }
+                case 'array': {
+                        const asText = ( x ) => ( _defineDataType ( x ) === 'object' )  ?  `${x.text}`  :  `${x}`
+                        theData[0] = theData.map ( x => ( x == null ) ? '' : asText ( x )).join ( '' )
                         theData.length = 1
                         break
-            } // switch dataType
-        } // if name === ''
-    else {
-                const dType = _defineDataType ( theData ); // 'd' in build.js was 'd' from loop, here 'theData'
-                const localUseHelper = useHelper ( theData );
-                let val = helpers[name]({ data: theData, ...extendArguments, full: theData, useHelper: localUseHelper }); // 'full: d' in build.js, here 'theData'
-                let valType = _defineDataType(val);
+                    }
+                } // switch dataType
+        }
+    else {   // Named mixing action - the helper produces the merged value
+            const val = helpers[name] ({ data: theData, ...extendArguments, full: theData, useHelper: useHelper ( theData ) })
 
-                theData.forEach((x, i) => theData.splice(i, 1))
-                theData.length = 0
-                switch (valType) {
-                            case 'primitive':
-                                theData[0] = val
-                                break
-                            case 'array':
-                                theData.push(...val)
-                                break
-                    } // switch valType
+            theData.length = 0
+            switch ( _defineDataType ( val )) {
+                case 'primitive':
+                        theData[0] = val
+                        break
+                case 'array':
+                        theData.push ( ...val )
+                        break
+                } // switch valType
         }
 } // actionMix func.
 

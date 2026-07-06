@@ -1,28 +1,27 @@
-import _defineDataType from "./_defineType.js"
+/**
+ * Action 'extendedRender' ('+'). Runs the named helper over every item of the
+ * root level data (nestedData[0]) and replaces the items with the results.
+ *
+ * Useful when a placeholder needs to post-process the whole data list after
+ * the deeper levels are already rendered. Missing helpers are silently ignored.
+ *
+ * @param {object} step - Action step: { name } is the helper name
+ * @param {any} theData - Current data item (unused - this action works on the root level)
+ * @param {object} context - Execution context (see executeActions.js)
+ */
+function actionExtendedRender ({ name }, theData, { helpers, extendArguments, useHelper, nestedData }) {
+    const helper = helpers[name]
 
-function actionExtendedRender({ name }, levelData, { helpers, extendArguments, nestedData, level, useHelper }) {
-    // levelData is unused?
-    // build.js used `nestedData[0]`.
-    // "nestedData[0].forEach((d, i) => {"
-    // "const uh = createUseHelper(d);"
-    // "nestedData[0][i] = helpers[name]({ data: d, ...extendArguments, full: d, useHelper: uh })"
+    if ( typeof helper !== 'function' )      return
+    if ( !Array.isArray ( nestedData[0] ))   return
 
-    // This seems to assume extendedRender operates on ROOT data (nestedData[0])?
-    // Yes, `nestedData[0]` is typically the initial data list.
+    nestedData[0].forEach ( ( d, i ) => {
+            nestedData[0][i] = helper ({ data: d, ...extendArguments, full: d, useHelper: useHelper ( d ) })
+        })
+} // actionExtendedRender func.
 
-    const isValid = typeof helpers[name] === 'function';
 
-    if (isValid) {
-        if (nestedData[0] && Array.isArray(nestedData[0])) {
-            nestedData[0].forEach((d, i) => {
-                const uh = useHelper(d);
-                nestedData[0][i] = helpers[name]({ data: d, ...extendArguments, full: d, useHelper: uh })
-            })
-        }
-    }
-    else {
-        // TODO: Error...
-    }
-}
 
 export default actionExtendedRender
+
+

@@ -16,25 +16,18 @@
  * //            2: [] }
  */
 function _setupActions ( actions, dataDeepLevel=10 ) {
-    let 
+    let
       actSetup = {}
-    , actionList = [...actions]
     , actLevel = 0
-    , i = 0
-    , countHashes = 0
     ;
-    
-    actionList.forEach ( action => {   if ( action === '#' )  countHashes++   })
+
+    const countHashes = actions.filter ( action => action === '#' ).length
     if ( countHashes < dataDeepLevel )   console.error ( `Error: Not enough level markers (#) for data with depth level ${dataDeepLevel}. Found ${countHashes} level markers in actions: ${actions.join(', ')}` )
 
-    do {
-            actSetup[i] = []
-            i++
-    } while ( i <= dataDeepLevel )
+    for ( let i = 0; i <= dataDeepLevel; i++ )   actSetup[i] = []
 
-
-
-    actionList.every ( act => {
+    // 'every' works as forEach with a break: returning false stops on too many '#'
+    actions.every ( act => {
                     if ( act === '#' ) {   // it's a change level action
                                     actLevel++
                                     if ( actLevel > dataDeepLevel )  return false
@@ -91,7 +84,7 @@ function _setupActions ( actions, dataDeepLevel=10 ) {
                                             , level: actLevel
                                             })
             return true
-            }) // actionList every
+            }) // actions every
     return actSetup
 } // _setupActions func.
 

@@ -1,9 +1,8 @@
-import _chopTemplate       from "./_chopTemplates.js"
 import _readTemplate       from "./_readTemplate.js"
 import _defineDataType     from "./_defineType.js"
 import walk                from '@peter.naydenov/walk'
 import processPlaceholders from './processPlaceholders.js'
-import {   
+import {
            handleDebug
          , handleSet
          , handleSnippets } from './processCommands.js'
@@ -30,7 +29,7 @@ import {
 /**
  * @typedef {Object} Template
  * @property {string} template - Data to be rendered;
- * @property {Object.<string, HelperFn|string>} [helpers] - Optional. Object with helper functions or simple templates for this template; 
+ * @property {Object.<string, HelperFn|string>} [helpers] - Optional. Object with helper functions or simple templates for this template;
  * @property {object} [handshake] - Optional. Example for data to be rendered with;
  */
 
@@ -42,110 +41,89 @@ import {
 
 
 
+const COMMANDS = [ 'render', 'debug', 'snippets', 'set', 'curry' ]
+
+
+
 /**
- * 
+ *
  * @param {Template} tpl - template definition;
  * @param {boolean} [extra] - Optional. How to receive the answer - false:as a string(answer) or true: as tuple[success, answer];
  * @param {object} [buildDependencies] - Optional. External dependencies injected;
  * @returns {function|tupleResult} - rendering function
  */
 function build ( tpl, extra = false, buildDependencies = {}) {
-        let { hasError, placeholders, chop, helpers, handshake, snippets } = _readTemplate(tpl);
+        const { hasError, placeholders, chop, helpers, handshake, snippets } = _readTemplate ( tpl );
 
         if ( hasError ) {
-                function fail() { return hasError }
-                return extra ? [false, fail] : fail
+                const fail = () => hasError
+                return extra ? [ false, fail ] : fail
             }
-        else {
-                const originalPlaceholders = structuredClone(placeholders);
 
-                function success ( command = 'render', d = {}, dependencies = {}, ...args ) {
-                        const cuts = structuredClone(chop)
-                        let onlySnippets = false;
+        /**
+         * Rendering function. First argument selects a command,
+         * the rest of the arguments depend on the command:
+         *   - 'render'      : ( 'render', data, dependencies, ...postprocessFn ) -> string
+         *   - 'debug'       : ( 'debug', instruction ) -> template internals
+         *   - 'snippets'    : ( 'snippets[: names]', data ) -> selected placeholders joined with '<~>'
+         *   - 'set'         : ( 'set', { placeholders, helpers, handshake }) -> new rendering function
+         *   - 'curry'       : ( 'curry', partialData ) -> new rendering function
+         */
+        function success ( command = 'render', d = {}, dependencies = {}, ...args ) {
 
-                        // Command Validation
-                        if (typeof command !== 'string') return `Error: Wrong command "${command}". Available commands: render, debug, snippets, set, curry.`
-                        if (!['render', 'debug', 'snippets', 'set', 'curry'].includes(command) && !command.startsWith('snippets')) return `Error: Wrong command "${command}". Available commands: render, debug, snippets, set, curry.`
+                const knownCommand = ( typeof command === 'string' )  &&  ( COMMANDS.includes ( command ) || command.startsWith ( 'snippets' ))
+                if ( !knownCommand )   return `Error: Wrong command "${command}". Available commands: ${COMMANDS.join ( ', ' )}.`
 
+                // Commands 'set' and 'curry' do not render. They produce a new rendering function.
+                if ( command === 'set' )   return handleSet ( d, { helpers, handshake, placeholders, chop, build, buildDependencies })
+                if ( command === 'curry' ) {
+                        const rendered = success ( 'render', d, dependencies, ...args )
+                        return build ({ template: rendered, helpers, handshake }, false, buildDependencies )
+                    }
 
-                        // Handle Commands
-                        if (command.startsWith('snippets')) {
-                                onlySnippets = true
-                                const subset = handleSnippets(command, snippets)
-                                if (subset) placeholders = subset
-                            }
-                        else if (command === 'snippets') {
-                                onlySnippets = true
-                            }
-                        else if (command === 'set') {
-                                return handleSet(d, { helpers, handshake, placeholders, chop, build, buildDependencies })
-                            }
-                        else if (command === 'curry') {
-                                // Curry logic
-                                const rendered = success ( 'render', d, dependencies, ...args );
-                                const newTpl = {
-                                        template: rendered,
-                                        helpers,
-                                        handshake
-                                        };
-                                return build ( newTpl, false, buildDependencies )
-                            }
-                        else {
-                                placeholders = structuredClone ( originalPlaceholders )
-                            }
+                // Command 'snippets' renders only the selected placeholders. 'snippets: a, b' selects, plain 'snippets' takes all.
+                const
+                      onlySnippets = command.startsWith ( 'snippets' )
+                    , activePlaceholders = onlySnippets  ?  ( handleSnippets ( command, snippets ) || placeholders )  :  placeholders
+                    ;
 
+                // A string instead of data is a debug instruction. Instruction 'demo' continues by rendering the handshake data.
+                if ( typeof d === 'string' ) {
+                        const result = handleDebug ( d, { handshake, helpers, placeholders : activePlaceholders, cuts : chop })
+                        const renderTheDemo = ( d === 'demo' )  &&  ( typeof result === 'object' )
+                        if ( !renderTheDemo )   return result
+                        d = result
+                    }
 
-                        // Handle 'DEBUG' (if d is string and command render/debug?)
-                        // Original logic: if (typeof d === 'string').
-                        // Wait, success('debug', 'raw') -> command='debug', d='raw'.
-                        // success('render', 'demo') -> command='render', d='demo'.
-                        // So any string d is treated as instruction ??
-                        if (typeof d === 'string') {
-                                const res = handleDebug(d, { handshake, helpers, placeholders, cuts })
-                                // If handleDebug returns string/number/object, return it.
-                                // Unless d='demo' which returns handshake object, then we proceed to render?
-                                if (d === 'demo' && typeof res === 'object') d = res
-                                else return res
-                        }
-                        // Proceed to Rendering
-                        const memory = {};
-                        let topLevelType = _defineDataType(d);
-                        let deps = { ...buildDependencies, ...dependencies }
+                // Rendering
+                const dataType = _defineDataType ( d )
+                if ( dataType === 'null' )   return chop.join ( '' )
 
-                        d = walk({ data: d })
-                        let original = walk({ data: d })
+                const
+                      deps = { ...buildDependencies, ...dependencies }
+                    , data = walk ({ data: d })   // Deep copy. Rendering should never touch caller's data.
+                    , original = walk ({ data })
+                    , levelData = ( dataType === 'array' )  ?  data  :  [ data ]
+                    ;
 
-                        if (topLevelType === 'null') return cuts.join('')
-                        if (topLevelType !== 'array') d = [d]
-                        if (topLevelType === 'null') return cuts.join('') // Redundant check?
+                const endData = processPlaceholders ({
+                                                  d : levelData
+                                                , chop
+                                                , placeholders : activePlaceholders
+                                                , original
+                                                , helpers
+                                                , dependencies : deps
+                                                , memory : {}
+                                                , args
+                                                , onlySnippets
+                                        });
 
+                if ( dataType === 'array' )   return endData
+                // Extra arguments are post-processing functions: ( result, dependencies ) -> result
+                return args.reduce (( acc, fn ) => ( typeof fn === 'function' )  ?  fn ( acc, deps )  :  acc, endData.join ( '' ))
+        } // success func.
 
-                        const endData = processPlaceholders({
-                                                          d
-                                                        , chop
-                                                        , placeholders
-                                                        , original
-                                                        , helpers
-                                                        , dependencies: deps
-                                                        , memory
-                                                        , args
-                                                        , onlySnippets
-                                                });
-
-
-                        if ( topLevelType === 'array' )   return endData
-
-                        // Post-process
-                        if (args) {
-                                return args.reduce ( ( acc, fn ) => {
-                                                        if (typeof fn !== 'function') return acc
-                                                        return fn ( acc, deps )
-                                                }, endData.join(''))
-                        }
-                        else return endData.join ( '' )
-                } // success func.
-                return extra ? [true, success] : success
-        }
+        return extra ? [ true, success ] : success
 } // build func.
 
 
