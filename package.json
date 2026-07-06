@@ -40,7 +40,8 @@
     },
     "overrides": {
         "diff": "^8.0.2",
-        "serialize-javascript": "^7.0.5"
+        "serialize-javascript": "^7.0.5",
+        "yargs": "^17.7.3"
     },
     "repository": {
         "type": "git",
