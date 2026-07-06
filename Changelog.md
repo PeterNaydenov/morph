@@ -2,6 +2,16 @@
 
 
 
+### 3.3.3 (2026-07-06)
+- [x] Fix: Parse error was not reported when the broken placeholder comes after a valid one. The error text was leaking into the render result and the text between the placeholders was lost;
+- [x] Fix: Crash when a breadcrumb path meets 'null' in the middle. The placeholder stays untouched now, like with a missing key;
+- [x] Fix: Crash when a data element is 'null';
+- [x] Fix: Crash on command 'set' with a placeholder name or index that does not exist. Returns an error message now;
+- [x] Fix: Anonymous mix action was rendering 'null' as text when the first element of the array is null;
+- [x] Refactoring: Dead code removed and readability improved across all methods. No API changes;
+
+
+
 ### 3.3.2 (2026-03-24)
 - [x] Dev deps update. TypeScript - v.6.0.2;
 - [x] Update types according typescript v.6.0.2;
