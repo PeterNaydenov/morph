@@ -7,3 +7,6 @@ coverage
 .specify
 specs
 graphify-out
+.graphify_*
+AGENTS.md
+opencode.json
