@@ -1,5 +1,33 @@
-test
+# Source layout that ships: src/main.js (ESM entry) + src/methods/*.js (its imports).
+# Everything else in src/ is build-only and dist/ is the published build.
+
+# Build & dev tooling
+tsconfig.json
 rollup.config.js
-node_modules
-.DS_Store
+.mocharc.json
+dist/src/
+
+# Tests
+test
 coverage
+.nyc_output
+
+# Personal / agent scratch - never ship
+.claude
+.opencode
+.specify
+specs
+graphify-out
+.graphify_*
+AGENTS.md
+opencode.json
+.github
+
+# Repo-only scratch files
+simple.js
+build.architecture.png
+
+# OS / editor
+.DS_Store
+*.d.ts.map
+node_modules
