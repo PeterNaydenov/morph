@@ -1,4 +1,3 @@
-export default _defineDataType;
 /**
  * Determines the data type of a value for template processing.
  *
@@ -13,3 +12,4 @@ export default _defineDataType;
  * _defineDataType(() => {}); // 'function'
  */
 declare function _defineDataType(data: any): string | undefined;
+export default _defineDataType;

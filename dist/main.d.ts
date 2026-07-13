@@ -1,12 +1,15 @@
-export default morphAPI;
-declare namespace morphAPI {
-    export { build };
-    export { get };
-    export { add };
-    export { list };
-    export { clear };
-    export { remove };
-}
+/***
+ *   Morph (@peter.naydenov/morph)
+ *
+ *   Text based template engine
+ *
+ *
+ *   History notes:
+ *   - Idea was born on October 28th, 2024.
+ *   - Published on GitHub for first time: November 30th, 2024
+ *   - Version 1.0.0: December 28st, 2024
+ *
+ */
 import build from "./methods/build.js";
 /**
  * Retrieves a template from storage.
@@ -98,3 +101,12 @@ declare function clear(): void;
  * remove(['myTemplate', 'customStorage']);
  */
 declare function remove(location: string[]): void | string;
+declare const morphAPI: {
+    build: typeof build;
+    get: typeof get;
+    add: typeof add;
+    list: typeof list;
+    clear: typeof clear;
+    remove: typeof remove;
+};
+export default morphAPI;

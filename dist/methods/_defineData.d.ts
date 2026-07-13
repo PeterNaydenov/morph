@@ -1,4 +1,3 @@
-export default _defineData;
 /**
  * Processes data source based on action requirements and creates nested data structure.
  *
@@ -23,3 +22,4 @@ export default _defineData;
  * // Returns: { dataDeepLevel: 1, nestedData: [[{ name: 'John' }]] }
  */
 declare function _defineData(dSource: any, action: string): object;
+export default _defineData;

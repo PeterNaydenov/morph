@@ -1,4 +1,3 @@
-export default _chopTemplate;
 /**
  * Creates a template chopping function that splits text into parts and placeholders.
  *
@@ -13,6 +12,7 @@ export default _chopTemplate;
  * @example
  * const chop = _chopTemplate(settings);
  * const result = chop('Hello {{name}}!');
+ * // Returns: ['Hello ', '{{name}}', '!']
  */
 declare function _chopTemplate(settings: {
     TG_PRX: string;
@@ -20,3 +20,4 @@ declare function _chopTemplate(settings: {
     TG_SIZE_P: number;
     TG_SIZE_S: number;
 }): Function;
+export default _chopTemplate;

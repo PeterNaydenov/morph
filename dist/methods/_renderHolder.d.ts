@@ -1,4 +1,3 @@
-export default _renderHolder;
 /**
  * Renders a simple template by replacing placeholders with data values.
  *
@@ -15,3 +14,4 @@ export default _renderHolder;
  * // Returns: 'Hello World!'
  */
 declare function _renderHolder(template: string, data: object): string | null;
+export default _renderHolder;

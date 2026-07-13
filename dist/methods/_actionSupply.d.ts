@@ -1,4 +1,3 @@
-export default _actionSupply;
 /**
  * Generator function that supplies actions in a controlled sequence using a stack.
  *
@@ -16,3 +15,4 @@ export default _actionSupply;
  * }
  */
 declare function _actionSupply(act: any, level: number): Generator;
+export default _actionSupply;

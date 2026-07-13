@@ -1,4 +1,3 @@
-export default _setupActions;
 /**
  * Parses and organizes template actions into a structured setup by processing level.
  *
@@ -17,3 +16,4 @@ export default _setupActions;
  * //            2: [] }
  */
 declare function _setupActions(actions: string[], dataDeepLevel?: number): any;
+export default _setupActions;
