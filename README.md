@@ -148,6 +148,7 @@ const myTemplateDescription = {
     , handshake: {
                 // (optional) Example data used to render the template.
         }
+    , escape: false // (optional) HTML-escape the output of data-only placeholders. See section 'HTML Escaping'
 }
 ```
 `Template` is a string with placeholders where we render our external data. It's a skeleton of the template. Placeholders are the dynamic parts of the template.
@@ -278,6 +279,43 @@ const helpers = {
 `useHelper` signature: `useHelper(helperName, [dataOverride])`
 - `helperName`: String name of the helper to call.
 - `dataOverride`: Optional. Data to pass to the helper. If omitted, the current data context of the caller is used.
+
+
+
+## HTML Escaping
+
+Templates that render user-provided data into HTML should escape it. Morph gives you three levels of control.
+
+**Built-in helper `escape`.** Available in every template without declaring it. Escapes `& < > " '`:
+```js
+const fn = morph.build ({ template: `<p>{{ comment : escape }}</p>` })
+fn ( 'render', { comment: '<script>steal()</script>' })
+// -> '<p>&lt;script&gt;steal()&lt;/script&gt;</p>'
+```
+It works in action chains (`{{ items : escape, li }}` - escape each item, then render it with 'li') and inside your helper functions via `useHelper('escape', value)`. Defining your own helper named `escape` overrides the built-in.
+
+**Template option `escape: true`.** Escapes the output of all data-only placeholders - placeholders without actions, where external data lands in the output directly:
+```js
+const fn = morph.build ({
+      template: `<p>{{ comment }}</p>`
+    , escape: true
+    })
+fn ( 'render', { comment: '<img src=x onerror=alert(1)>' })
+// -> '<p>&lt;img src=x onerror=alert(1)&gt;</p>'
+```
+Placeholders with actions are not auto-escaped - helpers are your code and often produce markup on purpose. Escape inside them when they interpolate user data. To opt a single data-only placeholder out, mark it with the action `raw`:
+```js
+`{{ trustedHtml : raw }}` // rendered without escaping, even with escape: true
+```
+The option survives the commands `set` and `curry` - derived templates keep the same protection.
+
+**Command `curry` is injection-safe.** Rendered data can not introduce new placeholders in the curried template. Placeholder tags inside data values render as literal text:
+```js
+const fn = morph.build ({ template: `Hello {{ name }}, role: {{ role }}` })
+const curried = fn ( 'curry', { name: '{{ role }}' })   // user-controlled value
+curried ( 'render', { role: 'admin' })
+// -> 'Hello {{ role }}, role: admin'  - the injected tags stay text
+```
 
 
 
