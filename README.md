@@ -213,7 +213,6 @@ Actions are concise representations of a sequence of function calls. Some functi
 - `Render` functions are most used so they don't have any prefix;
 - `Data` functions start with '>';
 - `Mixing` functions start with '[]';
-- `Conditional render` actions start with '?';
 - `Extended render` start with '+';
 - `Memory` actions start with '^'. Memory action will take a data snapshot and will be available in helper functions as a named argument 'memory'. The name after the prefix is the name of the snapshot. Request saved data from helper functions by calling 'memory[name]';
 - `Overwrite` action is marked with '^^'. Means that the current data will be available for all placeholders, not only for the current placeholder;
@@ -245,8 +244,7 @@ Helpers are templates and functions that are used by actions to decorate the dat
 - `Render functions` should return a string - the data that will replace the placeholder. 
 - `Data functions` are created to manipulate the data. Expectation is to return data, that will continue to be used by other actions. 
 - `Mixing functions` should merge data in a single data result that will be used by other actions.  
-- `Extended render functions` will return a string like regular render functions, but will receive a deep branch of requested data;
-- `Conditional render functions` could return null, that means: ignore this action. The result could be also a string: the name of other helper function that will render the data.
+- `Extended render functions` will return a string like regular render functions, but will receive a deep branch of requested data.
 
 ### Calling Helpers within Helpers
 
@@ -426,93 +424,12 @@ const result = modified('render', { greeting: 'Hi' });
 ```
 
 
-## Experimentals
+## Companion tools
 
-### `.morph` File Extension
+The `.morph` file extension and the Vite plugin are **separate projects** that build on top of this engine. They live in their own repos so the engine itself stays a small, focused npm package.
 
-Describe Morph templates within `.morph` file extensions. Available after version 3.5.x. This allows you to create the template files with HTML-like syntax, CSS modules, and JavaScript helpers. During the build process, vite plugin will extract the template, helpers, and handshake data from the file, will compile it to function and will save as ES module, ready to import from other files. CSS support comes as extension of what Morph can do. Writing a Morph file that contains only CSS will be converted to CSS file. In morph files that contain mix of HTML, CSS, and JavaScript, the CSS will be converted to CSS modules.
-
-A `.morph` file contains four separate sections.
-
-The four sections are:
-- **Template (HTML)** - The main template with Morph syntax
-- **Script (JavaScript)** - Helper functions and logic
-- **Style (CSS)** - CSS with automatic module scoping
-- **Handshake (JSON)** - Demo data for testing
-
-Example `.morph` file structure:
-```html
-<!-- Template (HTML) -->
-<div class="card">
-  <h2>{{ title : formatTitle }}</h2>
-  <p>{{ description : truncate }}</p>
-  <h3>Items</h3>
-  {{ items : ul, [], renderItem }}
-  <button data-click="save">Save</button>
-</div>
-
-
-
-<script>
-// Place for helpers
-// Function definition
-function formatTitle ({ data }) {
-            return data.toUpperCase();
-    }
-
-function truncate ({data}) {
-            const length = 100;
-            return data.length > length ? data.substring(0, length) + '...' : data;
-    }
-
-// Template definition
-let renderItem = `<li>{{name}}</li>`;
-let ul = `<ul>{{text}}</ul>`
-</script>
-
-<style>
-.card {
-        background: var(--card-bg, #fff);
-        padding: 1rem;
-        border-radius: 8px;
-    }
-</style>
-
-<script type="application/json">
-// Script with type: application/json
-// Handshake - Place for demo data
-{
-  "title": "Card Title",
-  "description": "Card description",
-  "items": [
-            { "name": "Item 1" },
-            { "name": "Item 2" },
-            { "name": "Item 3" }
-        ]
-}
-</script>
-```
-
-Get started with the official Vite plugin:
-**GitHub Repository:** [vite-plugin-morph](https://github.com/PeterNaydenov/vite-plugin-morph)
-
-Once configured, you can directly import `.morph` files in your code:
-```js
-import myTemplate from './templates/my-template.morph'
-
-// The imported template is ready to use
-const result = myTemplate ( 'render', { name: 'Peter' })
-```
-
-
-
-### VSCode Extension
-
-For better development experience with `.morph` files, you can install the official VSCode extension that provides syntax highlighting:
-
-**Extension Name:** [Morph Template Syntax Highlighting](https://marketplace.visualstudio.com/items?itemName=PeterNaydenov.morph-template-syntax-highlighting)
-
-Install directly from the VSCode Marketplace or search for "Morph Template Syntax Highlighting" in your VSCode extensions panel.
+- **Vite plugin** — [vite-plugin-morph](https://github.com/PeterNaydenov/vite-plugin-morph) compiles `.morph` files (HTML, CSS, JS, JSON sections) into ES modules. The compiled output is a render function produced by this engine.
+- **VSCode extension** — [Morph Template Syntax Highlighting](https://marketplace.visualstudio.com/items?itemName=PeterNaydenov.morph-template-syntax-highlighting) for `.morph` files.
 
 
 ## Links
