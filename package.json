@@ -25,7 +25,7 @@
     },
     "dependencies": {
         "@peter.naydenov/stack": "^3.0.0",
-        "@peter.naydenov/walk": "^5.0.2"
+        "@peter.naydenov/walk": "^5.0.6"
     },
     "devDependencies": {
         "@rollup/plugin-commonjs": "^29.0.3",
