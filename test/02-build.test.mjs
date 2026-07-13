@@ -777,6 +777,32 @@ describe ( 'transformer: build', () => {
                 expect ( result ).to.be.equal ( 'My name is Peter.' )
 
         }) // it ignore comments from template
-    
+
+
+
+    // Regression: data-only placeholders used to use a truthy check on
+    // `info.text`, which silently dropped values like 0 and false. Now they
+    // use the same `!= null` check as the action-chain and string-helper paths.
+    it ( 'Data-only with object { text: 0 } renders the number', () => {
+        const templateFn = morph.build ({ template: 'val={{x}}' });
+        expect ( templateFn ( 'render', { x: { text: 0 }})).to.be.equal ( 'val=0' )
+    }) // it data-only text:0
+
+    it ( 'Data-only with object { text: false } renders the boolean', () => {
+        const templateFn = morph.build ({ template: 'val={{x}}' });
+        expect ( templateFn ( 'render', { x: { text: false }})).to.be.equal ( 'val=false' )
+    }) // it data-only text:false
+
+    it ( 'Data-only with object { text: "" } renders as empty (matches primitive path)', () => {
+        const templateFn = morph.build ({ template: 'val={{x}}' });
+        expect ( templateFn ( 'render', { x: { text: '' }})).to.be.equal ( 'val=' )
+    }) // it data-only text:''
+
+    it ( 'Data-only with object { text: null } drops the placeholder', () => {
+        // null is the only 'no data' marker left; missing key drops the same way.
+        const templateFn = morph.build ({ template: 'val={{x}}' });
+        expect ( templateFn ( 'render', { x: { text: null }})).to.be.equal ( 'val={{x}}' )
+    }) // it data-only text:null drops
+
 
 }) // describe
