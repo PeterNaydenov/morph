@@ -1,7 +1,13 @@
-declare const _default: {
-    TG_PRX: string;
-    TG_SFX: string;
-    TG_SIZE_P: number;
-    TG_SIZE_S: number;
-};
+/**
+ * Template engine configuration settings.
+ *
+ * Defines the delimiters and sizes used for template placeholder parsing.
+ *
+ * @type {Object}
+ * @property {string} TG_PRX - Opening tag prefix for placeholders ('{{')
+ * @property {string} TG_SFX - Closing tag suffix for placeholders ('}}')
+ * @property {number} TG_SIZE_P - Length of opening tag prefix (2)
+ * @property {number} TG_SIZE_S - Length of closing tag suffix (2)
+ */
+declare const _default: any;
 export default _default;

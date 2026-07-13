@@ -1,8 +1,9 @@
-export function actionSave({ name }: {
+declare function actionSave({ name }: {
     name: any;
 }, levelData: any, { memory }: {
     memory: any;
 }): void;
-export function actionOverwrite({ name }: {
+declare function actionOverwrite({ name }: {
     name: any;
 }, levelData: any): any;
+export { actionSave, actionOverwrite };

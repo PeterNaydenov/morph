@@ -9,7 +9,7 @@
  * @param {array} context.cuts - Chopped template parts
  * @returns {any} Debug result or error message
  */
-export function handleDebug(d: string, { handshake, helpers, placeholders, cuts }: {
+declare function handleDebug(d: string, { handshake, helpers, placeholders, cuts }: {
     handshake: object;
     helpers: object;
     placeholders: any[];
@@ -26,15 +26,17 @@ export function handleDebug(d: string, { handshake, helpers, placeholders, cuts 
  * @param {array} context.chop - Current chopped template
  * @param {function} context.build - Build function
  * @param {object} context.buildDependencies - Build dependencies
+ * @param {boolean} [context.escape] - Escape flag of the template
  * @returns {function} Modified template function
  */
-export function handleSet(d: object, { helpers, handshake, placeholders, chop, build, buildDependencies }: {
+declare function handleSet(d: object, { helpers, handshake, placeholders, chop, build, buildDependencies, escape }: {
     helpers: object;
     handshake: object;
     placeholders: any[];
     chop: any[];
     build: Function;
     buildDependencies: object;
+    escape?: boolean;
 }): Function;
 /**
  * Handles snippets command to select specific placeholders.
@@ -43,4 +45,5 @@ export function handleSet(d: object, { helpers, handshake, placeholders, chop, b
  * @param {object} snippets - Snippets mapping
  * @returns {array|null} Selected placeholders or null
  */
-export function handleSnippets(command: string, snippets: object): any[] | null;
+declare function handleSnippets(command: string, snippets: object): any[] | null;
+export { handleDebug, handleSet, handleSnippets };

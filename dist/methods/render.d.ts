@@ -1,4 +1,3 @@
-export default render;
 /**
  * Renders a helper or template with the provided data and context.
  *
@@ -12,3 +11,4 @@ export default render;
  * @returns {any} The result of the rendering process, or an error string if the helper is not available.
  */
 declare function render(theData: any, name: string, helpers: object, original: any, dependencies: object, ...args: any[]): any;
+export default render;
