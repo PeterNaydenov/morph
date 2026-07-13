@@ -66,6 +66,9 @@
         "string",
         "function"
     ],
+    "engines": {
+        "node": ">=18"
+    },
     "allowScripts": {
         "fsevents@2.3.3": true
     }
