@@ -1,5 +1,6 @@
 import settings from "./settings.js";
 import _chopTemplate from "./_chopTemplates.js"
+import { escapeHelper, restoreTags } from "./_escape.js"
 
 
 
@@ -24,18 +25,20 @@ function readData ( field ) {
  * @param {string} tpl.template - Template string with placeholders
  * @param {object} [tpl.helpers={}] - Optional helper functions
  * @param {object} [tpl.handshake] - Optional example data
- * 
+ * @param {boolean} [tpl.escape=false] - Optional. HTML-escape the output of data-only placeholders
+ *
  * @returns {object} Template parsing result containing:
  *   - hasError: Error message or null
  *   - placeholders: Array of placeholder objects
  *   - chop: Array of template parts
- *   - helpers: Helper functions object
+ *   - helpers: Helper functions object (includes the built-in 'escape' helper)
  *   - handshake: Example data object
  *   - snippets: Object mapping snippet names to placeholders
+ *   - escape: Escape flag of the template
  */
 function _readTemplate ( tpl ) {
-    const 
-             { template, helpers={}, handshake } = tpl
+    const
+             { template, helpers={}, handshake, escape=false } = tpl
             ,{ TG_PRX, TG_SFX, TG_SIZE_P, TG_SIZE_S } = settings
             , placeholders = []
             , snippets = {}
@@ -65,23 +68,35 @@ function _readTemplate ( tpl ) {
                                               let holder = {
                                                                 index: i
                                                               , data   : readData    ( x[1] )
-                                                              , action : x[2] ? x[2].split(',').map ( x => x.trim()) : null 
+                                                              , action : x[2] ? x[2].split(',').map ( x => x.trim()) : null
                                                               , name   : x[3] ? x[3].trim() : null
+                                                      }
+                                              // With template escaping on, action 'raw' is a marker, not a helper
+                                              if ( escape  &&  holder.action  &&  holder.action.includes ( 'raw' )) {
+                                                              holder.raw = true
+                                                              const rest = holder.action.filter ( a => a !== 'raw' )
+                                                              holder.action = rest.length ? rest : null
                                                       }
                                               placeholders.push ( holder )
                                               snippets[placeholders.length-1] = holder
                                               if ( holder.name )   snippets[holder.name] = holder
                                       } // if isPlaceholder
                       }) // forEach chop
+
+              // Restore placeholder tags neutralized by a 'curry' render. They come
+              // back as plain text - the scan above is already done, so they can
+              // never be read as placeholders again.
+              for ( let i = 0; i < chop.length; i++ )   chop[i] = restoreTags ( chop[i] )
       } // else error
 
     return {
-              hasError 
+              hasError
             , placeholders
             , chop
-            , helpers
+            , helpers : { escape: escapeHelper, ...helpers }   // Built-in helpers first. User helpers can override them.
             , handshake
             , snippets
+            , escape
             }
 } // _readTemplate func.
 

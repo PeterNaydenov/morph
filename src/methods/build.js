@@ -31,6 +31,7 @@ import {
  * @property {string} template - Data to be rendered;
  * @property {Object.<string, HelperFn|string>} [helpers] - Optional. Object with helper functions or simple templates for this template;
  * @property {object} [handshake] - Optional. Example for data to be rendered with;
+ * @property {boolean} [escape] - Optional. HTML-escape the output of data-only placeholders. Mark single placeholders with action 'raw' to opt out;
  */
 
 /**
@@ -53,7 +54,7 @@ const COMMANDS = [ 'render', 'debug', 'snippets', 'set', 'curry' ]
  * @returns {function|tupleResult} - rendering function
  */
 function build ( tpl, extra = false, buildDependencies = {}) {
-        const { hasError, placeholders, chop, helpers, handshake, snippets } = _readTemplate ( tpl );
+        const { hasError, placeholders, chop, helpers, handshake, snippets, escape } = _readTemplate ( tpl );
 
         if ( hasError ) {
                 const fail = () => hasError
@@ -61,31 +62,10 @@ function build ( tpl, extra = false, buildDependencies = {}) {
             }
 
         /**
-         * Rendering function. First argument selects a command,
-         * the rest of the arguments depend on the command:
-         *   - 'render'      : ( 'render', data, dependencies, ...postprocessFn ) -> string
-         *   - 'debug'       : ( 'debug', instruction ) -> template internals
-         *   - 'snippets'    : ( 'snippets[: names]', data ) -> selected placeholders joined with '<~>'
-         *   - 'set'         : ( 'set', { placeholders, helpers, handshake }) -> new rendering function
-         *   - 'curry'       : ( 'curry', partialData ) -> new rendering function
+         * The rendering core, shared by the commands 'render', 'debug', 'snippets' and 'curry'.
+         * The 'curry' render sets 'neutralize' - rendered values can not inject new placeholders.
          */
-        function success ( command = 'render', d = {}, dependencies = {}, ...args ) {
-
-                const knownCommand = ( typeof command === 'string' )  &&  ( COMMANDS.includes ( command ) || command.startsWith ( 'snippets' ))
-                if ( !knownCommand )   return `Error: Wrong command "${command}". Available commands: ${COMMANDS.join ( ', ' )}.`
-
-                // Commands 'set' and 'curry' do not render. They produce a new rendering function.
-                if ( command === 'set' )   return handleSet ( d, { helpers, handshake, placeholders, chop, build, buildDependencies })
-                if ( command === 'curry' ) {
-                        const rendered = success ( 'render', d, dependencies, ...args )
-                        return build ({ template: rendered, helpers, handshake }, false, buildDependencies )
-                    }
-
-                // Command 'snippets' renders only the selected placeholders. 'snippets: a, b' selects, plain 'snippets' takes all.
-                const
-                      onlySnippets = command.startsWith ( 'snippets' )
-                    , activePlaceholders = onlySnippets  ?  ( handleSnippets ( command, snippets ) || placeholders )  :  placeholders
-                    ;
+        function renderPass ( d, dependencies, args, { onlySnippets = false, activePlaceholders = placeholders, neutralize = false } = {} ) {
 
                 // A string instead of data is a debug instruction. Instruction 'demo' continues by rendering the handshake data.
                 if ( typeof d === 'string' ) {
@@ -95,7 +75,6 @@ function build ( tpl, extra = false, buildDependencies = {}) {
                         d = result
                     }
 
-                // Rendering
                 const dataType = _defineDataType ( d )
                 if ( dataType === 'null' )   return chop.join ( '' )
 
@@ -116,11 +95,43 @@ function build ( tpl, extra = false, buildDependencies = {}) {
                                                 , memory : {}
                                                 , args
                                                 , onlySnippets
+                                                , escape
+                                                , neutralize
                                         });
 
                 if ( dataType === 'array' )   return endData
                 // Extra arguments are post-processing functions: ( result, dependencies ) -> result
                 return args.reduce (( acc, fn ) => ( typeof fn === 'function' )  ?  fn ( acc, deps )  :  acc, endData.join ( '' ))
+        } // renderPass func.
+
+        /**
+         * Rendering function. First argument selects a command,
+         * the rest of the arguments depend on the command:
+         *   - 'render'      : ( 'render', data, dependencies, ...postprocessFn ) -> string
+         *   - 'debug'       : ( 'debug', instruction ) -> template internals
+         *   - 'snippets'    : ( 'snippets[: names]', data ) -> selected placeholders joined with '<~>'
+         *   - 'set'         : ( 'set', { placeholders, helpers, handshake }) -> new rendering function
+         *   - 'curry'       : ( 'curry', partialData ) -> new rendering function
+         */
+        function success ( command = 'render', d = {}, dependencies = {}, ...args ) {
+
+                const knownCommand = ( typeof command === 'string' )  &&  ( COMMANDS.includes ( command ) || command.startsWith ( 'snippets' ))
+                if ( !knownCommand )   return `Error: Wrong command "${command}". Available commands: ${COMMANDS.join ( ', ' )}.`
+
+                // Commands 'set' and 'curry' do not render. They produce a new rendering function.
+                if ( command === 'set' )   return handleSet ( d, { helpers, handshake, placeholders, chop, build, buildDependencies, escape })
+                if ( command === 'curry' ) {
+                        const rendered = renderPass ( d, dependencies, args, { neutralize: true })
+                        return build ({ template: rendered, helpers, handshake, escape }, false, buildDependencies )
+                    }
+
+                // Command 'snippets' renders only the selected placeholders. 'snippets: a, b' selects, plain 'snippets' takes all.
+                const
+                      onlySnippets = command.startsWith ( 'snippets' )
+                    , activePlaceholders = onlySnippets  ?  ( handleSnippets ( command, snippets ) || placeholders )  :  placeholders
+                    ;
+
+                return renderPass ( d, dependencies, args, { onlySnippets, activePlaceholders })
         } // success func.
 
         return extra ? [ true, success ] : success

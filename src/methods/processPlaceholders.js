@@ -4,6 +4,7 @@ import _actionSupply   from "./_actionSupply.js"
 import _setupActions   from "./_setupActions.js"
 import executeActions  from "./executeActions.js"
 import render          from "./render.js"
+import { escapeHtml, neutralizeTags } from "./_escape.js"
 
 /**
  * Processes placeholders in the template with provided data and context.
@@ -18,9 +19,11 @@ import render          from "./render.js"
  * @param {object} params.memory - Internal memory state
  * @param {array} params.args - Additional arguments
  * @param {boolean} params.onlySnippets - Whether to render only the selected placeholders
+ * @param {boolean} [params.escape] - HTML-escape the output of data-only placeholders
+ * @param {boolean} [params.neutralize] - Neutralize placeholder tags in the output values ('curry' render)
  * @returns {array} Rendered result - one string per data element
  */
-function processPlaceholders ({ d, chop, placeholders, original, helpers, dependencies, memory, args, onlySnippets }) {
+function processPlaceholders ({ d, chop, placeholders, original, helpers, dependencies, memory, args, onlySnippets, escape = false, neutralize = false }) {
     const endData = []
 
     // useHelper factory, shared with executeActions. 'currentData' is the fallback
@@ -46,9 +49,19 @@ function processPlaceholders ({ d, chop, placeholders, original, helpers, depend
                 , currentDElement = dElement   // 'overwrite' action can replace it
                 ;
 
+            // Single write point for placeholder results. Escaping covers data-only
+            // placeholders (helper output is the template author's code - trusted).
+            // Neutralizing covers every write - data can not inject placeholders via 'curry'.
+            const place = ( holder, value ) => {
+                    let out = value
+                    if ( escape  &&  !holder.action  &&  !holder.raw )   out = escapeHtml ( out )
+                    if ( neutralize )   out = neutralizeTags ( out )
+                    cuts[holder.index] = out
+                } // place func.
+
             placeholders.forEach ( holder => {
                     const
-                          { index, data, action } = holder
+                          { data, action } = holder
                         , dataOnly = !action
                         ;
                     let info = currentDElement;
@@ -71,16 +84,16 @@ function processPlaceholders ({ d, chop, placeholders, original, helpers, depend
                     if ( dataOnly ) {   // No actions - place the data directly
                             switch ( _defineDataType ( info )) {
                                 case 'function':
-                                        cuts[index] = info ()
+                                        place ( holder, info ())
                                         break
                                 case 'primitive':
-                                        cuts[index] = info
+                                        place ( holder, info )
                                         break
                                 case 'array':
-                                        if ( _defineDataType ( info[0] ) === 'primitive' )   cuts[index] = info[0]
+                                        if ( _defineDataType ( info[0] ) === 'primitive' )   place ( holder, info[0] )
                                         break
                                 case 'object':
-                                        if ( info.text )   cuts[index] = info.text
+                                        if ( info.text )   place ( holder, info.text )
                                         break
                             }
                         }
@@ -106,16 +119,16 @@ function processPlaceholders ({ d, chop, placeholders, original, helpers, depend
                             const fineData = nestedData[0]
                             switch ( _defineDataType ( fineData )) {
                                 case 'primitive':
-                                        cuts[index] = fineData
+                                        place ( holder, fineData )
                                         break
                                 case 'object':
                                         if ( fineData['text'] == null )   return
-                                        cuts[index] = fineData['text']
+                                        place ( holder, fineData['text'] )
                                         break
                                 case 'array': {
                                         const itemType = _defineDataType ( fineData[0] )
-                                        if ( itemType === 'object' )   cuts[index] = fineData.map ( x => x.text ).join ( '' )
-                                        else                           cuts[index] = fineData.join ( '' )
+                                        if ( itemType === 'object' )   place ( holder, fineData.map ( x => x.text ).join ( '' ))
+                                        else                           place ( holder, fineData.join ( '' ))
                                         break
                                     }
                             }

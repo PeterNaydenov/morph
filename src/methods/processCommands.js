@@ -1,3 +1,4 @@
+import { escapeHelper } from './_escape.js'
 
 /**
  * Handles debug commands for template inspection.
@@ -21,7 +22,8 @@ function handleDebug(d, { handshake, helpers, placeholders, cuts }) {
             if (!handshake) return `Error: No handshake data.`
             return structuredClone(handshake)
         case 'helpers':
-            return Object.keys(helpers).join(', ')
+            // List the template's own helpers. Built-ins stay hidden unless overridden.
+            return Object.keys(helpers).filter(k => helpers[k] !== escapeHelper).join(', ')
         case 'placeholders':
             return placeholders.map(h => cuts[h.index]).join(', ')
         case 'count':
@@ -42,9 +44,10 @@ function handleDebug(d, { handshake, helpers, placeholders, cuts }) {
  * @param {array} context.chop - Current chopped template
  * @param {function} context.build - Build function
  * @param {object} context.buildDependencies - Build dependencies
+ * @param {boolean} [context.escape] - Escape flag of the template
  * @returns {function} Modified template function
  */
-function handleSet(d, { helpers, handshake, placeholders, chop, build, buildDependencies }) {
+function handleSet(d, { helpers, handshake, placeholders, chop, build, buildDependencies, escape }) {
     if (typeof d !== 'object' || !d) return `Error: 'set' command requires an object with placeholders, helpers, handshake.`
 
     const newHelpers = { ...helpers, ...(d.helpers || {}) }
@@ -64,7 +67,8 @@ function handleSet(d, { helpers, handshake, placeholders, chop, build, buildDepe
     const newTpl = {
         template: newTemplateStr,
         helpers: newHelpers,
-        handshake: newHandshake
+        handshake: newHandshake,
+        escape
     }
 
     const result = build(newTpl, false, buildDependencies)
