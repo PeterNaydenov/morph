@@ -2,7 +2,13 @@
 
 
 
-### 3.4.0 (2026-07-07)
+
+### 3.4.1 (2026-07-12)
+- [x] Upgrade typescript to v.7.0.2;
+- [x] Dependency update: @peter.naydenov/walk - v.5.0.6;
+
+
+### 3.4.0 (2026-07-12)
 - [x] New: Built-in helper 'escape'. Available in every template without declaring it. Escapes HTML special characters. A user helper with the same name takes precedence;
 - [x] New: Template description option 'escape'. HTML-escapes the output of data-only placeholders. Single placeholders can opt out with action 'raw'. The option survives commands 'set' and 'curry';
 - [x] Fix: Command 'curry' was re-reading rendered data as template syntax. Data values can not inject placeholders anymore - placeholder tags in data render as literal text;
