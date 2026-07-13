@@ -88,7 +88,7 @@ function get ( location ) {
  * // Add and build a template description
  * add(['myTemplate'], {
  *   template: 'Hello {{name}}!',
- *   helpers: { name: (data) => data.data.name }
+ *   helpers: { name: ({ data }) => data.name }
  * });
  */
 function add ( location, tplfn, ...args ) {
