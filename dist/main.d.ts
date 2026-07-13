@@ -51,7 +51,7 @@ declare function get(location: string[]): Function;
  * // Add and build a template description
  * add(['myTemplate'], {
  *   template: 'Hello {{name}}!',
- *   helpers: { name: (data) => data.data.name }
+ *   helpers: { name: ({ data }) => data.name }
  * });
  */
 declare function add(location: string[], tplfn: object | Function | null, ...args: any[]): void;
