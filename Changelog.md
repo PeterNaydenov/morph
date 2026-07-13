@@ -3,9 +3,21 @@
 
 
 
+### 3.4.2 (2026-07-13)
+- [x] Fix: `useHelper` was misidentifying 2+ arg user helpers as a `build()` output (heuristic was `length >= 2`). Such helpers were called with the wrong arguments and produced silent wrong output. Latent since 3.3.0. A `__isMorphTemplate` marker on the `build()` output replaces the arity check;
+- [x] Fix: data-only placeholders with `{ text: 0 }` or `{ text: false }` were silently dropped. Switched to a `!= null` check to match the action-chain and string-helper paths;
+- [x] Chore: rewrote `.npmignore`. Published tarball went from 202 files / 3.6 MB to 49 files / 59 KB. No longer ships `test/`, `coverage/`, `.opencode/`, `.specify/`, `graphify-out/`, `AGENTS.md`, `simple.js`, `build.architecture.png`, or build tooling;
+- [x] Chore: added `engines.node: ">=18"` to `package.json`. The engine uses `structuredClone` (Node 17+);
+- [x] Docs: removed the stale `Conditional render` rows (the `?` action prefix) from the README. The prefix was deprecated in 3.2.0 and is no longer recognised by the engine;
+- [x] Docs: removed the `.morph file extension` section from the README. That feature lives in the separate `vite-plugin-morph` package. Replaced with a `Companion tools` pointer;
+- [x] CI: added GitHub Actions workflow at `.github/workflows/ci.yml`. Tests run on Node 18, 20, 22 on every push to `main` and every pull request;
+
+
+
 ### 3.4.1 (2026-07-12)
 - [x] Upgrade typescript to v.7.0.2;
 - [x] Dependency update: @peter.naydenov/walk - v.5.0.6;
+
 
 
 ### 3.4.0 (2026-07-12)
