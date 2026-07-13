@@ -134,6 +134,11 @@ function build ( tpl, extra = false, buildDependencies = {}) {
                 return renderPass ( d, dependencies, args, { onlySnippets, activePlaceholders })
         } // success func.
 
+        // Marker: lets useHelper() recognise a build() output without relying on
+        // the function's arity (which collides with user helpers that declare
+        // 2+ positional parameters).
+        success.__isMorphTemplate = true
+
         return extra ? [ true, success ] : success
 } // build func.
 

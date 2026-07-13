@@ -28,10 +28,13 @@ function processPlaceholders ({ d, chop, placeholders, original, helpers, depend
 
     // useHelper factory, shared with executeActions. 'currentData' is the fallback
     // when the helper calls useHelper without its own data.
+    // A 'compiled template' is the render function returned by build(). It carries
+    // a __isMorphTemplate marker so we never confuse it with a user helper that
+    // happens to declare 2+ positional parameters.
     const createUseHelperFactory = ( currentData ) => ( targetName, targetData ) => {
             const
                   targetFn = helpers[targetName]
-                , isCompiledTemplate = targetFn  &&  typeof targetFn === 'function'  &&  targetFn.length >= 2
+                , isCompiledTemplate = targetFn  &&  typeof targetFn === 'function'  &&  targetFn.__isMorphTemplate === true
                 ;
             if ( !targetFn )   return `( Error: Helper '${targetName}' is not available )`
 
@@ -93,7 +96,11 @@ function processPlaceholders ({ d, chop, placeholders, original, helpers, depend
                                         if ( _defineDataType ( info[0] ) === 'primitive' )   place ( holder, info[0] )
                                         break
                                 case 'object':
-                                        if ( info.text )   place ( holder, info.text )
+                                        // Match the action-chain path and the
+                                        // string-helper path: only null/undefined
+                                        // drop the placeholder. A value of 0
+                                        // (or false) is real data and must render.
+                                        if ( info.text != null )   place ( holder, info.text )
                                         break
                             }
                         }
