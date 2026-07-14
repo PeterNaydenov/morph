@@ -3,6 +3,14 @@
 
 
 
+### 3.4.5 (2026-07-14)
+- [x] Docs: fixed typos throughout the README;
+- [x] Docs: fixed GitHub badge URLs to use the canonical `PeterNaydenov/morph` casing (lowercase `peterNaydenov` worked but redirected);
+- [x] Docs: made the License section in the README a link to `LICENSE`. Added a "Contributing" and "Security" section that link to the new files;
+- [x] Docs: added industry-standard contributor files. `CONTRIBUTING.md` (workflow, PR rules, style, scope of releases), `SECURITY.md` (private disclosure process, scope), `CODE_OF_CONDUCT.md` (Contributor Covenant v2.1), `.github/ISSUE_TEMPLATE/bug_report.md`, `.github/ISSUE_TEMPLATE/feature_request.md`, `.github/ISSUE_TEMPLATE/config.yml` (disables blank issues, points security and questions elsewhere), and `.github/PULL_REQUEST_TEMPLATE.md`. None of these are shipped to npm (added to `.npmignore`).
+
+
+
 ### 3.4.4 (2026-07-14)
 - [x] Fix: `add()` silently accepted a string instead of an array for the `location` argument, and the destructuring of the string placed the template at a wrong name/storage (e.g. `add('myTemplate', ...)` stored the template as `'m'` in storage `'y'`). Now mirrors `get()`: logs an error and stores nothing;
 - [x] Fix: `get()`'s error message for a non-array `location` hardcoded "is a string" even for objects, numbers, or any other non-array input. Now it says "must be an array" regardless of the actual type;
