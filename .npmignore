@@ -24,6 +24,11 @@ AGENTS.md
 opencode.json
 .github
 
+# Repo-internal contributor docs - not for npm consumers
+CONTRIBUTING.md
+SECURITY.md
+CODE_OF_CONDUCT.md
+
 # Repo-only scratch files
 simple.js
 build.architecture.png
