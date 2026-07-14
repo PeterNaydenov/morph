@@ -1,1 +1,3 @@
-{"globals": ["describe", "it", "before", "after"]}
+{
+    "spec": "test"
+}
