@@ -1,6 +1,17 @@
 ## Release History
 
 
+
+
+### 3.4.4 (2026-07-14)
+- [x] Fix: `add()` silently accepted a string instead of an array for the `location` argument, and the destructuring of the string placed the template at a wrong name/storage (e.g. `add('myTemplate', ...)` stored the template as `'m'` in storage `'y'`). Now mirrors `get()`: logs an error and stores nothing;
+- [x] Fix: `get()`'s error message for a non-array `location` hardcoded "is a string" even for objects, numbers, or any other non-array input. Now it says "must be an array" regardless of the actual type;
+- [x] Chore: migrated test framework from mocha + chai + c8 to vitest. The `test` and `cover` scripts in `package.json` now call `vitest run` and `vitest run --coverage` respectively. All 12 test files were converted mechanically: `import { expect } from 'chai'` → `import { describe, it, expect } from 'vitest'`; `.to.be.equal` → `.toBe`; `.to.be.deep.equal` → `.toEqual`; `.to.have.length` → `.toHaveLength`; `.to.have.property` → `.toHaveProperty`; `.to.be.a('...')` → `.toBeTypeOf('...')`. Added `vitest.config.js`; removed `.mocharc.json`. Coverage numbers are reported by vitest's V8 provider (slightly different branch counting from c8);
+- [x] Chore: removed the `overrides` block from `package.json`. The overrides (`diff`, `serialize-javascript`, `yargs`) were patching known vulnerabilities in mocha/chai/c8 transitive deps. With the migration to vitest, `diff` and `yargs` are no longer in the tree; `serialize-javascript` stays (via `@rollup/plugin-terser`) but already resolves to the patched version. `npm audit` reports 0 vulnerabilities;
+- [x] Docs: tightened the public TypeScript types in JSDoc. `build()`'s return type is now `RenderFn | tupleResult` instead of `Function | tupleResult` (added a new `RenderFn` typedef matching the actual `(command, d, dependencies, ...postprocess)` signature). `add()`'s `tplfn` parameter is now `Template | RenderFn | null` instead of `object | Function | null`. `get()`'s return is now `RenderFn | (() => string)`. `buildDependencies` is now `Record<string, any>` instead of `object`. All these were already correct in the sense that the runtime behaviour was consistent with the JSDoc — the changes are pure DX improvements for TypeScript users.
+
+
+
 ### 3.4.3 (2026-07-13)
 - [x] Types updates;
 - [x] Chore: removed unused `esm` devDependency. The project is `"type": "module"` so the `esm` package (which lets CJS files use `import` syntax) was never used;
