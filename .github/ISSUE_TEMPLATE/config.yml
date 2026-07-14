@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security issue
+    url: https://github.com/PeterNaydenov/morph/blob/master/SECURITY.md
+    about: Please report security issues privately by email, not as a public issue.
+  - name: Question / discussion
+    url: https://github.com/PeterNaydenov/morph/discussions
+    about: Use GitHub Discussions for questions and general help.
