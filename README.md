@@ -2,28 +2,28 @@
 
 # Morph (@peter.naydenov/morph)
 
-![version](https://img.shields.io/github/package-json/v/peterNaydenov/morph)
-![license](https://img.shields.io/github/license/peterNaydenov/morph)
-![GitHub issues](https://img.shields.io/github/issues/peterNaydenov/morph)
-![GitHub top language](https://img.shields.io/github/languages/top/peterNaydenov/morph)
+![version](https://img.shields.io/github/package-json/v/PeterNaydenov/morph)
+![license](https://img.shields.io/github/license/PeterNaydenov/morph)
+![GitHub issues](https://img.shields.io/github/issues/PeterNaydenov/morph)
+![GitHub top language](https://img.shields.io/github/languages/top/PeterNaydenov/morph)
 ![npm package minimized gzipped size (select exports)](https://img.shields.io/bundlejs/size/%40peter.naydenov%2Fmorph)
 
 
 
 ## General Information
 
-`Morph` has a logic-less template syntax. Placeholders are places surrounded by double curly braces `{{ }}` and they represents the pleces where the data will be inserted.
+`Morph` has a logic-less template syntax. Placeholders are places surrounded by double curly braces `{{ }}` and they represent the places where the data will be inserted.
 
-Engine is text based, so it can be used for HTML, CSS, config files, source code, etc.
+Engine is text-based, so it can be used for HTML, CSS, config files, source code, etc.
 Some features of Morph:
 - Simple logic-less template syntax;
-- Builtin storage;
-- Powerfull action system for data decoration;
-- Demo request can render the template with the builtin data;
+- Built-in storage;
+- Powerful action system for data decoration;
+- Demo data via the `'demo'` command renders the template with the built-in handshake;
 - Nesting templates as part of the action system;
 - Partial rendering (render only available data);
 - Option to connect templates to external data sources;
-- Post process plugin mechanism;
+- Post-processing plugin mechanism;
 
 
 
@@ -57,7 +57,7 @@ import morph from "@peter.naydenov/morph"
 
 const myTemplateDescription = {
                  template: `Hello, {{name}}!` // simple template - a string with a placeholder
-                 , helers : {
+                 , helpers : {
                             // helper functions
                         }
                  , handshake : {
@@ -72,7 +72,7 @@ const demo = myTemplate ( 'render', 'demo' )
 // demo === 'Hello, Ivan!'
 ```
 
-Morph contains also a builtin template storages. Instead of creating variable for each template, we can use the storages.
+Morph also has a built-in template storage. Instead of creating a variable for each template, we can use the storage.
 
 ```js
 // add template to the storage. Automatically builds the render function
@@ -138,7 +138,7 @@ const htmlBlock = myTemplate ( 'render', { person: {
 
 
 ## Template Description Structure
-Templates are objects with tree properties: `template`, `helpers`, and `handshake`:
+Templates are objects with three properties: `template`, `helpers`, and `handshake`:
 ```js
 const myTemplateDescription = {
       template: `` // (required) Template string
@@ -153,7 +153,7 @@ const myTemplateDescription = {
 ```
 `Template` is a string with placeholders where we render our external data. It's a skeleton of the template. Placeholders are the dynamic parts of the template.
 
-Helpers are a extra templates or functions needed for rendering the template. Example:
+Helpers are extra templates or functions needed for rendering the template. Example:
 ```js
 const myTemplateDescription = {
       template: `
@@ -176,7 +176,7 @@ const myTemplateDescription = {
             }
 }
 ```
-Helpers will be discussed in details in next documentation section - 'Helper Functions'.
+Helpers will be discussed in detail in the next documentation section - 'Helper Functions'.
 
 
 
@@ -184,7 +184,7 @@ Helpers will be discussed in details in next documentation section - 'Helper Fun
 
 ## Placeholders
 
-Template placeholders can contain data-source and actions separated by ':'. Data-source is a field of the data object used for the placeholder. Actions describe how the data should be decorated. Action is a list of operations separated by comma. Result from the first action is going as a argument to the second and so on. Executetion of actions is from right to left. Actions are optional.
+Template placeholders can contain data-source and actions separated by ':'. Data-source is a field of the data object used for the placeholder. Actions describe how the data should be decorated. An action is a list of operations separated by comma. The result from the first action is going as an argument to the second and so on. Execution of actions is from right to left. Actions are optional.
 
 ```js
 `{{ name : act2, act1 }}`
@@ -193,7 +193,7 @@ Template placeholders can contain data-source and actions separated by ':'. Data
 
 // placeholder could have a name. It's optional and is in the end of the placeholder definition separated by ':'
 `{{ name : act2, act1 : placeholderName }}`
-// Placeholder names are useful when we want to render only few of them and we preffer to call them by name
+// Placeholder names are useful when we want to render only a few of them and we prefer to call them by name
 
 `{{ list : li, a }}`
 // take data from 'list' and render each element first with 'a' then with 'li' actions
@@ -201,7 +201,7 @@ Template placeholders can contain data-source and actions separated by ':'. Data
 `{{ name }}` // render data from 'name'. Only data is provided to this placeholder
 `{{ :someAction}}` // no data, but the result of the action will fill the placeholder
 `{{ @all : someAction }}` // provide all the data to the action 'someAction'
-`{{:someAction : placeName }}` // action 'someAction' will fullfill content of placeholder and placeholder name will be 'placeName'
+`{{:someAction : placeName }}` // action 'someAction' will fulfill content of placeholder and placeholder name will be 'placeName'
 ```
 
 
@@ -227,8 +227,8 @@ Here are some examples:
 {{ friends : []coma }} // example for mixing action
 {{ list : ul, [], li, a}} // example with render and mixing actions
 `
-// NOTE: See that mixing function has no name after the prefix. 
-// Anonymous mixing is a build in function that will do -> resultList.join ( '' )
+// NOTE: See that the mixing function has no name after the prefix.
+// Anonymous mixing is a built-in function that will do -> resultList.join ( '' )
 // The data will be rendered with 'a', then with 'li'
 // then all 'li' elements will be merged and will be provided to 'ul'
 ```
@@ -443,8 +443,16 @@ The `.morph` file extension and the Vite plugin are **separate projects** that b
 ## Credits
 '@peter.naydenov/morph' was created and supported by Peter Naydenov.
 
+## Contributing
+
+Issues and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+## Security
+
+Found a vulnerability? Please follow the disclosure process in [SECURITY.md](SECURITY.md) — do not file a public issue.
+
 ## License
-'@peter.naydenov/morph' is released under the MIT License.
+'@peter.naydenov/morph' is released under the [MIT License](LICENSE).
 
 
 
