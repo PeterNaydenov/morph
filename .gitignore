@@ -3,6 +3,11 @@ node_modules
 .nyc_output
 coverage
 *.d.ts.map
+
+# tsc with rootDir:'src' generates dist/src/ as a duplicate of dist/.
+# The canonical .d.ts files live at dist/main.d.ts and dist/methods/*.d.ts.
+dist/src/
+
 .opencode
 .specify
 specs
