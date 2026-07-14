@@ -1,6 +1,13 @@
 ## Release History
 
 
+### 3.4.3 (2026-07-13)
+- [x] Types updates;
+- [x] Chore: removed unused `esm` devDependency. The project is `"type": "module"` so the `esm` package (which lets CJS files use `import` syntax) was never used;
+- [x] Chore: `.mocharc.json` had a bogus `globals` field (that's an ESLint/JSHint field, not a Mocha one). Replaced with a real Mocha `spec` field;
+- [x] Chore: renamed `test/04-commands.js` and `test/06-deps-injection.js` to use the `.test.js` infix, matching the rest of the suite. The files still ran before (mocha's default `*.{js,cjs,mjs}` glob catches them) but the missing infix made them easy to skip with a stricter pattern like `mocha 'test/**/*.test.js'`;
+- [x] Chore: stopped tracking the stale `dist/src/` duplicate. `tsc` was generating the same `.d.ts` files in two places (`dist/main.d.ts` and `dist/src/main.d.ts`). The duplicate folder is now in `.gitignore`; the canonical types at `dist/main.d.ts` and `dist/methods/*.d.ts` remain.
+
 
 
 ### 3.4.2 (2026-07-13)
