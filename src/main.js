@@ -42,10 +42,10 @@ const storage = { default: {} };
  * const template = get(['myTemplate', 'customStorage']);
  */
 function get ( location ) {
-    if ( !(location instanceof Array) ) {  
-                return function () { 
-                        return 'Error: Argument "location" is a string. Should be an array. E.g. ["templateName", "storageName"].' 
-                    } 
+    if ( !(location instanceof Array) ) {
+                return function () {
+                        return `Error: Argument "location" must be an array. E.g. ["templateName", "storageName"].`
+                    }
         }
     const [prop, strName='default'] = location;
     if ( !storage[strName] ) {
@@ -92,6 +92,13 @@ function get ( location ) {
  * });
  */
 function add ( location, tplfn, ...args ) {
+    if ( !(location instanceof Array) ) {
+            // Mirror get()'s validation. Without this, destructuring a string
+            // would silently store the template under a wrong name/storage
+            // (e.g. add('myTemplate', ...) ends up in storage 'y' as 'm').
+            console.error ( `Error: Argument "location" must be an array. E.g. ["templateName", "storageName"].` )
+            return
+        }
     const [ name, strName='default'] = location
     if ( tplfn == null )  {
             console.warn ( `Warning: Template ${strName}/${name} is not added to storage. The template is null.` )
