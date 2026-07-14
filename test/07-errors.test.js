@@ -1,5 +1,5 @@
 import morph from '../src/main.js'
-import { expect } from 'chai'
+import { describe, it, expect } from 'vitest'
 
 
 
@@ -12,7 +12,7 @@ it ( 'Get component with argument string', () => {
             const template = { template: `My name is {{ name }}.` };
             morph.add ( ['myName'], template );
             const result = morph.get ( 'myName' )({ name: 'Peter' }) // Argument for 'get' should be an array of strings.
-            expect ( result ).to.be.equal ( 'Error: Argument "location" must be an array. E.g. ["templateName", "storageName"].' )
+            expect ( result ).toBe ( 'Error: Argument "location" must be an array. E.g. ["templateName", "storageName"].' )
     }) // it get component with argument string
 
 
@@ -22,7 +22,7 @@ it ( 'Get a non existing component', () => {
             const template = { template: `My name is {{ name }}.` };
             morph.add ( ['myName', 'ale'], template );
             const result = morph.get ( ['myName'] )('render', { name: 'Peter' })
-            expect ( result ).to.be.equal ( 'Error: Template "myName" does not exist in storage "default".' )
+            expect ( result ).toBe ( 'Error: Template "myName" does not exist in storage "default".' )
     }) // it get a non existing component
 
 
@@ -30,14 +30,14 @@ it ( 'Add component - null', () => {
             let triggered = false;
             morph.clear ()
             console.warn = function (str) {
-                    expect ( str ).to.be.equal ( 'Warning: Template default/myName is not added to storage. The template is null.' )
+                    expect ( str ).toBe ( 'Warning: Template default/myName is not added to storage. The template is null.' )
                     triggered = true
                 }
             const template = null;
             morph.add ( ['myName'], template );
-            expect ( triggered ).to.be.equal ( true )
+            expect ( triggered ).toBe ( true )
             const result = morph.get ( ['myName'] )('render', { name: 'Peter' })
-            expect ( result ).to.be.equal ( 'Error: Template "myName" does not exist in storage "default".' )
+            expect ( result ).toBe ( 'Error: Template "myName" does not exist in storage "default".' )
     }) // it add component - null
 
 
@@ -48,13 +48,13 @@ it ( 'Add component - null', () => {
             morph.clear ()
             morph.add ( ['myName'], { template: 'Hi {{name}}' });
             const result = morph.get ( { name: 'myName' } )('render', { name: 'Peter' })
-            expect ( result ).to.be.equal ( 'Error: Argument "location" must be an array. E.g. ["templateName", "storageName"].' )
+            expect ( result ).toBe ( 'Error: Argument "location" must be an array. E.g. ["templateName", "storageName"].' )
     }) // it get component with object argument
 
     it ( 'Get component with number argument returns generic error', () => {
             morph.clear ()
             const result = morph.get ( 42 )({ name: 'Peter' })
-            expect ( result ).to.be.equal ( 'Error: Argument "location" must be an array. E.g. ["templateName", "storageName"].' )
+            expect ( result ).toBe ( 'Error: Argument "location" must be an array. E.g. ["templateName", "storageName"].' )
     }) // it get component with number argument
 
 
@@ -74,12 +74,12 @@ it ( 'Add component - null', () => {
             morph.add ( 'myTemplate', { template: 'Hi {{name}}' });
             console.error = originalError;
 
-            expect ( triggered ).to.be.equal ( true )
-            expect ( captured ).to.be.equal ( 'Error: Argument "location" must be an array. E.g. ["templateName", "storageName"].' )
+            expect ( triggered ).toBe ( true )
+            expect ( captured ).toBe ( 'Error: Argument "location" must be an array. E.g. ["templateName", "storageName"].' )
 
             // Nothing should have been stored - 'myTemplate' must not be reachable.
             const result = morph.get ( ['myTemplate'] )('render', { name: 'Peter' })
-            expect ( result ).to.be.equal ( 'Error: Template "myTemplate" does not exist in storage "default".' )
+            expect ( result ).toBe ( 'Error: Template "myTemplate" does not exist in storage "default".' )
     }) // it add component with string location
 
 

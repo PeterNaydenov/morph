@@ -1,5 +1,5 @@
 import morph from '../src/main.js';
-import { expect } from 'chai';
+import { describe, it, expect } from 'vitest';
 
 
 
@@ -15,7 +15,7 @@ describe ( 'transformer: build', () => {
                                                         name: 'Peter'
                                                       , age: 50
                                                  })
-                 expect ( result ).to.be.equal ( 'Your name is Peter. Your age is 50.' )
+                 expect ( result ).toBe ( 'Your name is Peter. Your age is 50.' )
          }) // it simple mustache like placeholders, no actions
 
 
@@ -31,7 +31,7 @@ describe ( 'transformer: build', () => {
                         };
                 const templateFn = morph.build ( myTpl );
                 const result = templateFn ( 'render', { names: ['Peter', 'Ivan'] });
-                expect ( result ).to.be.equal ( 'My friends are Peter, Ivan.' );
+                expect ( result ).toBe ( 'My friends are Peter, Ivan.' );
         }) // it mixing actions
 
 
@@ -42,7 +42,7 @@ describe ( 'transformer: build', () => {
                         }
                 const templateFn = morph.build ( myTpl );
                 const result = templateFn();   // No data required
-                expect ( result ).to.be.equal ( 'My name is Peter.' );
+                expect ( result ).toBe ( 'My name is Peter.' );
         }) // it No placeholders
 
 
@@ -61,10 +61,10 @@ describe ( 'transformer: build', () => {
                 const templateFn = morph.build ( myTpl );
 
                 const result = templateFn('render', { job: 'Software Engineer' });
-                expect ( result ).to.be.equal ( 'My job is hidden.' );
+                expect ( result ).toBe ( 'My job is hidden.' );
                 
                 const result2 = templateFn('render', { job: 'doctor' });
-                expect ( result2 ).to.be.equal ( 'My job is doctor.' );
+                expect ( result2 ).toBe ( 'My job is doctor.' );
         }) // it data action to change the result
 
 
@@ -81,11 +81,11 @@ describe ( 'transformer: build', () => {
                         }
                 const templateFn = morph.build ( myTpl );
                 const result = templateFn ( 'render' , { job: 'programmer' });
-                expect ( result ).to.be.equal ( 'My job is programmer.' );
+                expect ( result ).toBe ( 'My job is programmer.' );
 
                 const result2 = templateFn ( 'render' , { job: 'Software Engineer' });
                 // Skip rendering a placeholder:
-                expect ( result2 ).to.be.equal ( `My job is {{ job : jobPossible }}.` );
+                expect ( result2 ).toBe ( `My job is {{ job : jobPossible }}.` );
           }) // it primitive data with helper function
 
 
@@ -93,7 +93,7 @@ describe ( 'transformer: build', () => {
      it ( 'Missing command', () => {
                 const myTpl = { template : `My name is {{ name : notExistingHelper }}.`}
                 const fn = morph.build ( myTpl );
-                expect ( fn({name: 'Peter'}) ).to.be.equal ( `Error: Wrong command "[object Object]". Available commands: render, debug, snippets, set, curry.` )
+                expect ( fn({name: 'Peter'}) ).toBe ( `Error: Wrong command "[object Object]". Available commands: render, debug, snippets, set, curry.` )
           })
 
 
@@ -101,7 +101,7 @@ describe ( 'transformer: build', () => {
     it ( 'Missing helper function', () => {
                 const myTpl = { template : `My name is {{ name : notExistingHelper }}.`}
                 const fn = morph.build ( myTpl );
-                expect ( fn('render', {name:'Peter'}) ).to.be.equal ( `My name is ( Error: Helper 'notExistingHelper' is not available ).` )
+                expect ( fn('render', {name:'Peter'}) ).toBe ( `My name is ( Error: Helper 'notExistingHelper' is not available ).` )
         }) // it Missing helper function
 
 
@@ -123,7 +123,7 @@ describe ( 'transformer: build', () => {
                                                   name: [ 'Peter', 'Stoyan' ]
                                                 , more: `extended version`
                                         })
-                expect ( result ).to.be.equal ( 'Hello, <ul><li>Peter</li><li>stranger</li></ul>! extended version' )
+                expect ( result ).toBe ( 'Hello, <ul><li>Peter</li><li>stranger</li></ul>! extended version' )
         }) // it Long chain with variaty of actions
 
 
@@ -149,7 +149,7 @@ describe ( 'transformer: build', () => {
                                                                 , { name: 'Stoyan', age: 35 }
                                                                 ]}
                                         )                
-                expect ( result ).to.be.equal ( 'My friends: <ul><li>Peter: old</li><li>Ivan: young</li><li>Stoyan: old</li></ul>' )
+                expect ( result ).toBe ( 'My friends: <ul><li>Peter: old</li><li>Ivan: young</li><li>Stoyan: old</li></ul>' )
         }) // it data action on array of objects
 
 
@@ -166,10 +166,10 @@ describe ( 'transformer: build', () => {
                                           , { name: 'Stoyan', age: 35 }
                                 ])
                 // Result is array of rendered templates
-                expect ( result ).to.have.length ( 3 )
-                expect ( result[0] ).to.be.equal ( 'My name is Peter. My age is 30.' )
-                expect ( result[1] ).to.be.equal ( 'My name is Ivan. My age is 25.' )
-                expect ( result[2] ).to.be.equal ( 'My name is Stoyan. My age is 35.' )
+                expect ( result ).toHaveLength ( 3 )
+                expect ( result[0] ).toBe ( 'My name is Peter. My age is 30.' )
+                expect ( result[1] ).toBe ( 'My name is Ivan. My age is 25.' )
+                expect ( result[2] ).toBe ( 'My name is Stoyan. My age is 35.' )
         }) // it data array
 
 
@@ -198,7 +198,7 @@ describe ( 'transformer: build', () => {
                                                 , web   : 'example.com'
                                                 , email : 'peter@example.com'
                                         })
-                expect ( result ).to.be.equal ( 'My name is Peter. My web page is <a href="example.com">example.com</a>. Contact me on <a href="peter@example.com">e-mail</a>.' )
+                expect ( result ).toBe ( 'My name is Peter. My web page is <a href="example.com">example.com</a>. Contact me on <a href="peter@example.com">e-mail</a>.' )
         }) // it use all data @all
 
 
@@ -226,7 +226,7 @@ describe ( 'transformer: build', () => {
                         };
                 const templateFn = morph.build (  myTpl );
                 const result = templateFn ( 'render', data );
-                expect ( result ).to.be.equal ( 'People and their jobs: <ul><li>Peter - Software Engineer</li><li>Stoyan - designer</li></ul>' )
+                expect ( result ).toBe ( 'People and their jobs: <ul><li>Peter - Software Engineer</li><li>Stoyan - designer</li></ul>' )
                 
         }) // it Ignore rendering if data is null
 
@@ -240,7 +240,7 @@ describe ( 'transformer: build', () => {
                 const templateFn = morph.build ( myTpl );
                 if ( typeof templateFn === 'function' ) {
                         const result = templateFn( 'render', { person: 'Peter' });
-                        expect ( result ).to.be.equal ( 'My name is {{ name }}.' )
+                        expect ( result ).toBe ( 'My name is {{ name }}.' )
                    }
                 else  {
                         throw new Error ( 'Test failed' )                        
@@ -260,7 +260,7 @@ describe ( 'transformer: build', () => {
                                                                   name: 'Peter' 
                                                                 , extraData: '' // Provide an empty string to hide a placeholder
                                                         });
-                                expect ( result ).to.be.equal ( 'My name is Peter.' )        
+                                expect ( result ).toBe ( 'My name is Peter.' )        
                         }
                 else  {
                         throw new Error ( 'Test failed' )                        
@@ -282,7 +282,7 @@ describe ( 'transformer: build', () => {
                         }
                 const templateFn = morph.build ( myTpl );                
                 const result = ( typeof templateFn === 'function' ) ? templateFn () : false;
-                expect ( result ).to.be.equal ( 'My name is Peter.' )
+                expect ( result ).toBe ( 'My name is Peter.' )
      }) // it Data changes without render
 
 
@@ -301,7 +301,7 @@ describe ( 'transformer: build', () => {
                         }
                 const templateFn = morph.build ( myTpl );
                 const result = ( typeof templateFn === 'function' ) ? templateFn () : false;
-                expect ( result ).to.be.equal ( 'My name is Peter.' )
+                expect ( result ).toBe ( 'My name is Peter.' )
      }) // it Data save and use
 
 
@@ -333,7 +333,7 @@ describe ( 'transformer: build', () => {
                 
                 let deps = { ex: morph.get (['external'] )};
                 const result = morph.get ( ['myTpl'] )( 'render', myData, deps )
-                expect ( result ).to.be.equal ( 'Hi,Peter!Hi,Ivan!Hi,Stoyan!' )
+                expect ( result ).toBe ( 'Hi,Peter!Hi,Ivan!Hi,Stoyan!' )
      }) // it Call external template with array data
 
 
@@ -346,7 +346,7 @@ describe ( 'transformer: build', () => {
                         }
                 const templateFn = morph.build ( myTpl );
                 const result = templateFn ( 'render', null );
-                expect ( result ).to.be.equal ( myTpl.template )
+                expect ( result ).toBe ( myTpl.template )
         }) // it data as null or undefined
 
 
@@ -368,7 +368,7 @@ describe ( 'transformer: build', () => {
                                                                 , link  : `http://example.com`
                                                         }
                                         });
-                expect ( result ).to.be.equal ( 'Here is - <a href="http://example.com">My portfolio: example.com</a>.' )
+                expect ( result ).toBe ( 'Here is - <a href="http://example.com">My portfolio: example.com</a>.' )
         }) // it sequence of render processes with object
 
 
@@ -385,7 +385,7 @@ describe ( 'transformer: build', () => {
                         };
                 const templateFn = morph.build ( myTpl );
                 const result = templateFn ();
-                expect ( result ).to.be.equal ( 'Profile active.' )
+                expect ( result ).toBe ( 'Profile active.' )
         }) // it action only
 
 
@@ -400,7 +400,7 @@ describe ( 'transformer: build', () => {
                         }
                 const templateFn = morph.build ( myTpl );
                 const result = templateFn ( 'render', { name: 'Stoyan'});
-                expect ( result ).to.be.equal ( 'My name is Stoyan' )
+                expect ( result ).toBe ( 'My name is Stoyan' )
        }) // it mixing a string
 
 
@@ -411,8 +411,8 @@ describe ( 'transformer: build', () => {
                                 template: `List: {{ items : [] }}`
                         };
                 const templateFn = morph.build ( myTpl );
-                expect ( templateFn ( 'render', { items: [ null, 'a', 'b' ]})).to.be.equal ( 'List: ab' )
-                expect ( templateFn ( 'render', { items: [ 'a', null, 'b' ]})).to.be.equal ( 'List: ab' )
+                expect ( templateFn ( 'render', { items: [ null, 'a', 'b' ]})).toBe ( 'List: ab' )
+                expect ( templateFn ( 'render', { items: [ 'a', null, 'b' ]})).toBe ( 'List: ab' )
        }) // it mixing an array with null elements
 
 
@@ -424,7 +424,7 @@ describe ( 'transformer: build', () => {
                         };
                 const templateFn = morph.build ( myTpl );
                 const result = templateFn ();
-                expect ( result ).to.be.equal ( 'Error: Nested placeholders. Close placeholder before open new one.' )
+                expect ( result ).toBe ( 'Error: Nested placeholders. Close placeholder before open new one.' )
         }) // it broken template
 
 
@@ -436,7 +436,7 @@ describe ( 'transformer: build', () => {
                         };
                 const templateFn = morph.build ( myTpl );
                 const result = templateFn ( 'render', { name: 'Stoyan' });
-                expect ( result ).to.be.equal ( 'Error: Placeholder with missing closing tag.' )
+                expect ( result ).toBe ( 'Error: Placeholder with missing closing tag.' )
         }) // it broken template after a valid placeholder
 
 
@@ -448,7 +448,7 @@ describe ( 'transformer: build', () => {
                         };
                 const templateFn = morph.build ( myTpl );
                 const result = templateFn ( 'render', { person: { text: 'Ivan', age: 25 }});
-                expect ( result ).to.be.equal ( 'My name is Ivan.' )
+                expect ( result ).toBe ( 'My name is Ivan.' )
         })
 
 
@@ -460,7 +460,7 @@ describe ( 'transformer: build', () => {
                         };
                 const templateFn = morph.build ( myTpl );
                 const result = templateFn ( 'render', { person: [ 'John', 'Milen', 'Vladislav' ]});
-                expect ( result ).to.be.equal ( 'My name is John.' )
+                expect ( result ).toBe ( 'My name is John.' )
         })
 
 
@@ -475,7 +475,7 @@ describe ( 'transformer: build', () => {
                         };
                 const templateFn = morph.build ( myTpl );
                 const result = templateFn('render', { friendsList: [ 'John', 'Milen', 'Vladislav' ]});
-                expect ( result ).to.be.equal ( 'My friends are <li>John</li><li>Milen</li><li>Vladislav</li>.' )        
+                expect ( result ).toBe ( 'My friends are <li>John</li><li>Milen</li><li>Vladislav</li>.' )        
         }) // it auto mixing
 
 
@@ -504,7 +504,7 @@ describe ( 'transformer: build', () => {
                                         , friends: [ 'John', 'Milen', 'Vladislav' ]
                                         }
                                 );
-                expect ( result ).to.be.equal ( 'My name is Peter. My friends are John, Milen, Vladislav.' )
+                expect ( result ).toBe ( 'My name is Peter. My friends are John, Milen, Vladislav.' )
         }) // it nested templates
 
 
@@ -533,7 +533,7 @@ describe ( 'transformer: build', () => {
                         };
                 const templateFn = morph.build ( myTpl );
                 const result = templateFn ( 'render', data );
-                expect ( result ).to.be.equal ( 'My list: <ul><li>John</li><li>Milen - 25</li><li>Vladislav</li><li>Stoyan - 30</li></ul>.' )
+                expect ( result ).toBe ( 'My list: <ul><li>John</li><li>Milen - 25</li><li>Vladislav</li><li>Stoyan - 30</li></ul>.' )
         }) // it list - data deep object
 
 
@@ -566,7 +566,7 @@ describe ( 'transformer: build', () => {
                 }
                 const templateFn = morph.build ( myTemplateDescription );
                 const result = templateFn ( 'render', 'demo' );
-                expect ( result.trim() ).to.be.equal ( `<h1>My title</h1> <ul><li><a href="item1.com">0.Item 1</a></li><li><a href="item2.com">1.Item 2</a></li><li><a href="item3.com">2.Item 3</a></li></ul>`)
+                expect ( result.trim() ).toBe ( `<h1>My title</h1> <ul><li><a href="item1.com">0.Item 1</a></li><li><a href="item2.com">1.Item 2</a></li><li><a href="item3.com">2.Item 3</a></li></ul>`)
         }) // it modify root data
 
 
@@ -592,7 +592,7 @@ describe ( 'transformer: build', () => {
                         };
                 const templateFn = morph.build ( myTpl );
                 const result = templateFn ( 'render', data );
-                expect ( result ).to.be.equal ( 'Profile: <ul><li>Peter - (180cm,66kg)</li></ul>.' )
+                expect ( result ).toBe ( 'Profile: <ul><li>Peter - (180cm,66kg)</li></ul>.' )
         }) // it object - data deep object
 
 
@@ -616,7 +616,7 @@ describe ( 'transformer: build', () => {
                         };
                 const templateFn = morph.build ( myTpl );
                 const result = templateFn ( 'render', data );
-                expect ( result ).to.be.equal ( 'Profile: (180cm,66kg).' )
+                expect ( result ).toBe ( 'Profile: (180cm,66kg).' )
         }) // it object - data deep object
 
 
@@ -638,7 +638,7 @@ describe ( 'transformer: build', () => {
                         };
                 const templateFn = morph.build ( myTpl );
                 const result = templateFn ( 'render', data );
-                expect ( result ).to.be.equal ( 'Age: 50.' )
+                expect ( result ).toBe ( 'Age: 50.' )
         }) // it Access a deep property
 
 
@@ -690,7 +690,7 @@ describe ( 'transformer: build', () => {
                         };
                 const templateFn = morph.build( myTpl );
                 const result = templateFn ( 'render', 'demo' ).replace ( /\s+/g, '' );
-                expect ( result ).to.be.equal ( `
+                expect ( result ).toBe ( `
                         <h2>Contacts</h2>
                         
                         <div class="contact">
@@ -735,8 +735,8 @@ describe ( 'transformer: build', () => {
                                   template : `Profile: {{ me: +line }}.`
                                 , helpers: {
                                                 line: ({ data:x }) => {
-                                                                expect ( x ).to.have.property ( 'stats' )
-                                                                expect ( x ).to.have.property ( 'name' )
+                                                                expect ( x ).toHaveProperty ( 'stats' )
+                                                                expect ( x ).toHaveProperty ( 'name' )
                                                                 const { height, weight } = x.stats;
                                                                 touch = true
                                                                 return `${x.name} - (${height}cm,${weight}kg)`
@@ -755,8 +755,8 @@ describe ( 'transformer: build', () => {
                         };
                 const templateFn = morph.build ( myTpl );
                 const result = templateFn ( 'render', data );
-                expect ( result ).to.be.equal ( 'Profile: Peter - (180cm,66kg).' )
-                expect ( touch ).to.be.true
+                expect ( result ).toBe ( 'Profile: Peter - (180cm,66kg).' )
+                expect ( touch ).toBe(true)
         }) // it use extra renders "+"
 
 
@@ -774,7 +774,7 @@ describe ( 'transformer: build', () => {
                         };
                 const templateFn = morph.build ( myTpl );
                 const result = templateFn( 'render', { name: 'Peter' });
-                expect ( result ).to.be.equal ( 'My name is Peter.' )
+                expect ( result ).toBe ( 'My name is Peter.' )
 
         }) // it ignore comments from template
 
@@ -785,23 +785,23 @@ describe ( 'transformer: build', () => {
     // use the same `!= null` check as the action-chain and string-helper paths.
     it ( 'Data-only with object { text: 0 } renders the number', () => {
         const templateFn = morph.build ({ template: 'val={{x}}' });
-        expect ( templateFn ( 'render', { x: { text: 0 }})).to.be.equal ( 'val=0' )
+        expect ( templateFn ( 'render', { x: { text: 0 }})).toBe ( 'val=0' )
     }) // it data-only text:0
 
     it ( 'Data-only with object { text: false } renders the boolean', () => {
         const templateFn = morph.build ({ template: 'val={{x}}' });
-        expect ( templateFn ( 'render', { x: { text: false }})).to.be.equal ( 'val=false' )
+        expect ( templateFn ( 'render', { x: { text: false }})).toBe ( 'val=false' )
     }) // it data-only text:false
 
     it ( 'Data-only with object { text: "" } renders as empty (matches primitive path)', () => {
         const templateFn = morph.build ({ template: 'val={{x}}' });
-        expect ( templateFn ( 'render', { x: { text: '' }})).to.be.equal ( 'val=' )
+        expect ( templateFn ( 'render', { x: { text: '' }})).toBe ( 'val=' )
     }) // it data-only text:''
 
     it ( 'Data-only with object { text: null } drops the placeholder', () => {
         // null is the only 'no data' marker left; missing key drops the same way.
         const templateFn = morph.build ({ template: 'val={{x}}' });
-        expect ( templateFn ( 'render', { x: { text: null }})).to.be.equal ( 'val={{x}}' )
+        expect ( templateFn ( 'render', { x: { text: null }})).toBe ( 'val={{x}}' )
     }) // it data-only text:null drops
 
 

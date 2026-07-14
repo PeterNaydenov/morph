@@ -1,5 +1,5 @@
 
-import { expect } from 'chai'
+import { describe, it, expect } from 'vitest'
 import morph from '../src/main.js'
 
 describe('Helper Function argument: useHelper', () => {
@@ -15,7 +15,7 @@ describe('Helper Function argument: useHelper', () => {
         const data = { value: 'Hello' }
         const app = morph.build({ template, helpers })
         const result = app('render', data)
-        expect(result).to.equal('Formatted: Hello')
+        expect(result).toBe('Formatted: Hello')
     }) // it Allow a helper to call another helper function
 
 
@@ -37,10 +37,10 @@ describe('Helper Function argument: useHelper', () => {
                 { text: 'Just text' }
             ]
         })
-        expect(result1).to.equal('<a href="http://example.com">Click me</a>Just text')
+        expect(result1).toBe('<a href="http://example.com">Click me</a>Just text')
 
         const result2 = app('render', { items: [{ text: 'Just text' }] })
-        expect(result2).to.equal('Just text')
+        expect(result2).toBe('Just text')
     }) // it Allow a helper to call a template helper
 
 
@@ -55,7 +55,7 @@ describe('Helper Function argument: useHelper', () => {
         const template = '{{value : processor}}'
         const app = morph.build({ template, helpers })
         const result = app('render', { value: 'Original' })
-        expect(result).to.equal('[Overridden]')
+        expect(result).toBe('[Overridden]')
     }) // it Allow passing overridden data to useHelper 
 
 
@@ -71,7 +71,7 @@ describe('Helper Function argument: useHelper', () => {
         const template = '{{val : addExc}}'
         const app = morph.build({ template, helpers })
         const result = app('render', { val: 'Hello ' })
-        expect(result).to.equal('Hello World!')
+        expect(result).toBe('Hello World!')
     })
 
 
@@ -85,7 +85,7 @@ describe('Helper Function argument: useHelper', () => {
         const template = '{{val : level3}}'
         const app = morph.build({ template, helpers })
         const result = app('render', { val: 'x' })
-        expect(result).to.equal('L3(L2(L1(x)))')
+        expect(result).toBe('L3(L2(L1(x)))')
     })
 
 
@@ -96,7 +96,7 @@ describe('Helper Function argument: useHelper', () => {
         const template = '{{value : caller}}'
         const app = morph.build({ template, helpers })
         const result = app('render', { value: 'test' })
-        expect(result).to.equal("( Error: Helper 'missingHelper' is not available )")
+        expect(result).toBe("( Error: Helper 'missingHelper' is not available )")
     }) // it Should return error when helper does not exist
 
 
@@ -115,7 +115,7 @@ describe('Helper Function argument: useHelper', () => {
         const app = morph.build({ template: '{{x : caller}}', helpers })
         const result = app('render', { x: 'X' })
         // Before the fix, the result was 'string+X' (called as show('render','X',deps))
-        expect(result).to.equal('object+undefined')
+        expect(result).toBe('object+undefined')
     }) // it 2-arg user helper
 
 
@@ -132,7 +132,7 @@ describe('Helper Function argument: useHelper', () => {
         const result = app('render', { x: 'X' })
         // First arg is the standard options object; the rest are forwarded
         // trailing args (none here).
-        expect(result).to.equal('object')
+        expect(result).toBe('object')
     }) // it 3-arg user helper
 
 
@@ -150,7 +150,7 @@ describe('Helper Function argument: useHelper', () => {
         // debug instruction (the build() success() function treats string data
         // as instructions by design).
         const result = outer('render', { x: { name: 'Peter' } })
-        expect(result).to.equal('Hi Peter')
+        expect(result).toBe('Hi Peter')
     }) // it build() output still works through useHelper
 
 }) // describe

@@ -5,6 +5,7 @@
 tsconfig.json
 rollup.config.js
 .mocharc.json
+vitest.config.js
 dist/src/
 
 # Tests

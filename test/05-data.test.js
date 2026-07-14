@@ -1,5 +1,5 @@
 import morph from '../src/main.js'
-import { expect } from 'chai'
+import { describe, it, expect } from 'vitest'
 
 
 
@@ -27,7 +27,7 @@ describe ( 'morph: Data', () => {
                                                     }
                                             
                                         });
-                expect ( result ).to.be.equal ( 'My name is Roberto. Age is 30.' )
+                expect ( result ).toBe ( 'My name is Roberto. Age is 30.' )
         }) // it using string literals in helpers
 
 
@@ -49,7 +49,7 @@ describe ( 'morph: Data', () => {
                                                 }
                                         
                                     });
-                expect ( result ).to.be.equal ( 'My name is {{ person: hello }}.' )
+                expect ( result ).toBe ( 'My name is {{ person: hello }}.' )
         }) // it helper returns null
 
 
@@ -84,7 +84,7 @@ describe ( 'morph: Data', () => {
                                                     , { name: 'Bob' , age: 34 , href: 'http://bob.com' }
                                                 ]
                                     });
-                expect ( result ).to.be.equal ( `Hello, I'm <a href="http://robert.com">Robert - 30 years old</a>, John - 64 years old, <a href="http://bob.com">Bob - 34 years old</a>` )
+                expect ( result ).toBe ( `Hello, I'm <a href="http://robert.com">Robert - 30 years old</a>, John - 64 years old, <a href="http://bob.com">Bob - 34 years old</a>` )
         }) // it conditional rendering with string literals
 
 
@@ -101,7 +101,7 @@ describe ( 'morph: Data', () => {
                 const templateFn = morph.build ( myTpl );
                 // TemplateFn arguments are: data, dependencies, ...postProcessFunctions
                 const result = templateFn ( 'render', {}, {}, post1, post2, post3 );
-                expect ( result ).to.be.equal ( `The template: >post1 >post2 >post3` )
+                expect ( result ).toBe ( `The template: >post1 >post2 >post3` )
         }) // it post process functions
 
 
@@ -122,7 +122,7 @@ describe ( 'morph: Data', () => {
                           }
                 const templateFn = morph.build ( myTpl );
                 const result = templateFn();
-                expect ( result ).to.be.equal ( `Hello from Robert. I'm 30 years old software developer` )
+                expect ( result ).toBe ( `Hello from Robert. I'm 30 years old software developer` )
         }) // it read data from external state
 
 
@@ -144,7 +144,7 @@ describe ( 'morph: Data', () => {
                                       , age: () => state.age
                                       , job: () => state.job
                                     });
-                expect ( result ).to.be.equal ( `Hello from Robert. I'm 30 years old software developer` )
+                expect ( result ).toBe ( `Hello from Robert. I'm 30 years old software developer` )
         }) // it function arguments - data only
 
 
@@ -170,7 +170,7 @@ describe ( 'morph: Data', () => {
                                       , age: () => state.age
                                       , job: () => state.job
                                     });
-                expect ( result ).to.be.equal ( `Hello from Robert. I'm 33 years old software developer` )
+                expect ( result ).toBe ( `Hello from Robert. I'm 33 years old software developer` )
         }) // it function arguments with actions
 
 
@@ -182,7 +182,7 @@ describe ( 'morph: Data', () => {
                         };
                 const templateFn = morph.build ( myTpl );
                 const result = templateFn ( 'render', { a: { b: null } });
-                expect ( result ).to.be.equal ( 'Value: {{ a/b/c }}' )
+                expect ( result ).toBe ( 'Value: {{ a/b/c }}' )
         }) // it null in the middle of a breadcrumb path
 
 
@@ -194,7 +194,7 @@ describe ( 'morph: Data', () => {
                         };
                 const templateFn = morph.build ( myTpl );
                 const result = templateFn ( 'render', [ null, { name: 'Ana' } ]);
-                expect ( result ).to.be.deep.equal ([ '-{{ name }}-', '-Ana-' ])
+                expect ( result ).toEqual ([ '-{{ name }}-', '-Ana-' ])
         }) // it null as a data element
 
 

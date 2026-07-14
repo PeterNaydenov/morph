@@ -1,5 +1,5 @@
 import morph from '../src/main.js'
-import { expect } from 'chai'
+import { describe, it, expect } from 'vitest'
 
 
 
@@ -12,7 +12,7 @@ describe ( 'morph: commands', () => {
                 const myTpl = { template : `My name is {{ name }}.` };
                 morph.add ( ['myName'], myTpl );
                 const result = morph.get ( ['myName'] )( 'debug' ,'raw')
-                expect ( result ).to.be.equal ( 'My name is {{ name }}.' )
+                expect ( result ).toBe ( 'My name is {{ name }}.' )
         }) // it request a template
 
 
@@ -25,7 +25,7 @@ describe ( 'morph: commands', () => {
                     };
                 morph.add ( ['myName'], myTpl );
                 const result = morph.get ( ['myName'] )( 'debug', 'handshake' )
-                expect ( result ).to.be.deep.equal ( demo )
+                expect ( result ).toEqual ( demo )
         }) // it request a handshake
 
 
@@ -39,7 +39,7 @@ describe ( 'morph: commands', () => {
                     };
                 morph.add ( ['myName'], myTpl );
                 const result = morph.get ([ 'myName'] )( 'render', 'demo' )
-                expect ( result ).to.be.equal ( 'My name is Stoyan.' )
+                expect ( result ).toBe ( 'My name is Stoyan.' )
     }) // it request a demo
 
 
@@ -55,7 +55,7 @@ describe ( 'morph: commands', () => {
                 morph.add ( ['myName'], myTpl );
                 const result = morph.get ( ['myName'] )( 'fake' )
 
-                expect ( result ).to.be.equal ( 'Error: Wrong command "fake". Available commands: render, debug, snippets, set, curry.' )
+                expect ( result ).toBe ( 'Error: Wrong command "fake". Available commands: render, debug, snippets, set, curry.' )
         }) // it wrong command to component
 
 
@@ -69,7 +69,7 @@ describe ( 'morph: commands', () => {
                     };
                 morph.add ( ['myName'], myTpl );
                 const result = morph.get ( ['myName'] )( 'debug', 'fake' )
-                expect ( result ).to.be.equal ( 'Error: Wrong instruction "fake". Available instructions: raw, demo, handshake, helpers, placeholders, count.' )
+                expect ( result ).toBe ( 'Error: Wrong instruction "fake". Available instructions: raw, demo, handshake, helpers, placeholders, count.' )
         }) // it wrong instruction to component
     
 
@@ -82,7 +82,7 @@ describe ( 'morph: commands', () => {
                     };
                 morph.add ( ['myName'], myTpl );
                 const result = morph.get ( ['myName'] )( 'debug', 'placeholders' )
-                expect ( result ).to.be.equal ( '{{ name }}, {{ age }}' )
+                expect ( result ).toBe ( '{{ name }}, {{ age }}' )
         }) // it see placeholders
 
 
@@ -95,7 +95,7 @@ describe ( 'morph: commands', () => {
                     };
                 morph.add ( ['myName'], myTpl );
                 const result = morph.get ( ['myName'] )( 'snippets', 'demo' )
-                expect ( result ).to.be.equal ( 'Stoyan<~>30' )
+                expect ( result ).toBe ( 'Stoyan<~>30' )
         }) // it get snippets
 
 
@@ -124,7 +124,7 @@ describe ( 'morph: commands', () => {
   
             const fn = morph.build ( template );
             const result = fn ( 'snippets : theName, tagList', 'demo' );
-            expect ( result ).to.be.equal (`Ivan Petrov<~><span>tag1</span>,<span>tag2</span>,<span>tag3</span>`)
+            expect ( result ).toBe (`Ivan Petrov<~><span>tag1</span>,<span>tag2</span>,<span>tag3</span>`)
         }) // it call snippets by name
 
 
@@ -153,12 +153,12 @@ describe ( 'morph: commands', () => {
   
             const fn = morph.build ( template );
             const result = fn ( 'snippets: 2,3', 'demo' );
-            expect ( result ).to.be.equal (`Ivan Petrov<~><span>tag1</span>,<span>tag2</span>,<span>tag3</span>`)
+            expect ( result ).toBe (`Ivan Petrov<~><span>tag1</span>,<span>tag2</span>,<span>tag3</span>`)
             
             // separate results with <~>
             let list = result.split ( '<~>' );
-            expect ( list[0] ).to.be.equal ( 'Ivan Petrov' );
-            expect ( list[1] ).to.be.equal ( '<span>tag1</span>,<span>tag2</span>,<span>tag3</span>' );
+            expect ( list[0] ).toBe ( 'Ivan Petrov' );
+            expect ( list[1] ).toBe ( '<span>tag1</span>,<span>tag2</span>,<span>tag3</span>' );
         }) // it call snippets by indexes
     
 

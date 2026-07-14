@@ -18,8 +18,8 @@
         "./src/*": "./src/*"
     },
     "scripts": {
-        "test": "mocha test",
-        "cover": "c8 mocha",
+        "test": "vitest run",
+        "cover": "vitest run --coverage",
         "build": "npm run build:types && rollup -c",
         "build:types": "tsc"
     },
@@ -31,33 +31,29 @@
         "@rollup/plugin-commonjs": "^29.0.3",
         "@rollup/plugin-node-resolve": "^16.0.3",
         "@rollup/plugin-terser": "^1.0.0",
-        "c8": "^11.0.0",
-        "chai": "6.2.2",
-        "mocha": "11.7.6",
+        "@vitest/coverage-v8": "^4.0.0",
         "rollup": "^4.62.2",
-        "typescript": "^7.0.2"
-    },
-    "overrides": {
-        "diff": "^8.0.2",
-        "serialize-javascript": "^7.0.5",
-        "yargs": "^17.7.3"
+        "typescript": "^7.0.2",
+        "vitest": "^4.0.0"
     },
     "repository": {
         "type": "git",
         "url": "git+https://github.com/PeterNaydenov/morph.git"
     },
-    "c8": {
-        "include": [
-            "src/**/*.js"
-        ],
-        "exclude": [
-            "node_modules",
-            "test"
-        ],
-        "reporter": [
-            "lcov",
-            "text-summary"
-        ]
+    "vitest": {
+        "coverage": {
+            "include": [
+                "src/**/*.js"
+            ],
+            "exclude": [
+                "node_modules",
+                "test"
+            ],
+            "reporter": [
+                "lcov",
+                "text-summary"
+            ]
+        }
     },
     "keywords": [
         "template",

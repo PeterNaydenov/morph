@@ -1,5 +1,5 @@
 import morph from '../src/main.js'
-import { expect } from 'chai';
+import { describe, it, expect } from 'vitest';
 
 
 
@@ -20,7 +20,7 @@ describe ( 'Morph - modify template function with command "set"', () => {
 
                 // Note: This helper is not used. Just to test if set() returns a function
                 const result = template ( 'set', extensions );
-                expect ( typeof result ).to.equal ( 'function' )
+                expect ( typeof result ).toBe ( 'function' )
         }) // it
 
 
@@ -32,13 +32,13 @@ describe ( 'Morph - modify template function with command "set"', () => {
                                     })
 
                 let result = template('render', { name: 'test' });
-                expect ( result ).to.equal('Hello test!');
+                expect ( result ).toBe('Hello test!');
 
                 const extensions = { helpers: { format: ({data}) => data.toUpperCase() } };
                 const newTemplate = template('set', extensions);
 
                 result = newTemplate('render', { name: 'test' });
-                expect(result).to.equal('Hello TEST!');
+                expect(result).toBe('Hello TEST!');
         }) // it 
 
 
@@ -54,14 +54,14 @@ describe ( 'Morph - modify template function with command "set"', () => {
                 const extensions2 = { handshake: { name: 'test' } };
                 
                 let result = template ( 'render', 'demo' );
-                expect ( result ).to.equal ( 'Hello World!' )
+                expect ( result ).toBe ( 'Hello World!' )
                 
                 // handshake merged, but demo uses original name. 'greeting' is not used
                 result = template ( 'set', extensions )('render', 'demo' );
-                expect ( result ).to.equal ( 'Hello World!' )
+                expect ( result ).toBe ( 'Hello World!' )
                 // handshake is merged and name is overwritten.
                 result = template ( 'set', extensions2 )('render', 'demo' )
-                expect ( result ).to.equal ( 'Hello test!' )
+                expect ( result ).toBe ( 'Hello test!' )
         }) // it
 
 
@@ -77,7 +77,7 @@ describe ( 'Morph - modify template function with command "set"', () => {
                 const extensions = { placeholders: { 0: '{{ greeting }}' } };
                 const result = template ( 'set', extensions )( 'render', { greeting: 'Hi' })
                 // Placeholder was replaced with {{ greeting }}
-                expect ( result ).to.equal ( 'Hello Hi!' )
+                expect ( result ).toBe ( 'Hello Hi!' )
         }) // it
 
 
@@ -100,7 +100,7 @@ describe ( 'Morph - modify template function with command "set"', () => {
                     };
 
                 let result = template ( 'set', extensions )('render', { greeting: 'hi' })
-                expect(result).to.equal('Hello HI!');
+                expect(result).toBe('Hello HI!');
         }) // it
 
 
@@ -121,7 +121,7 @@ describe ( 'Morph - modify template function with command "set"', () => {
                                     }
                         };
                 const result = template ( 'set', extensions )('render', { greeting: 'hi' })
-                expect ( result ).to.equal ( 'Hello HI!' )
+                expect ( result ).toBe ( 'Hello HI!' )
         }) // it Define an empty placeholder
 
 
@@ -138,7 +138,7 @@ describe ( 'Morph - modify template function with command "set"', () => {
                                 }
                         }
                 const result = template ( 'set', extensions )('render', { name: 'test' })
-                expect ( result ).to.equal ( 'Hello TEST!' )
+                expect ( result ).toBe ( 'Hello TEST!' )
         }) // it Create a template with no helpers
 
 
@@ -151,8 +151,8 @@ describe ( 'Morph - modify template function with command "set"', () => {
                                     })
                 const byName  = template ( 'set', { placeholders: { typo: 'value' }})
                 const byIndex = template ( 'set', { placeholders: { 9: 'value' }})
-                expect ( byName  ).to.equal ( `Error: Placeholder "typo" does not exist in the template.` )
-                expect ( byIndex ).to.equal ( `Error: Placeholder "9" does not exist in the template.` )
+                expect ( byName  ).toBe ( `Error: Placeholder "typo" does not exist in the template.` )
+                expect ( byIndex ).toBe ( `Error: Placeholder "9" does not exist in the template.` )
         }) // it set a placeholder that does not exist
 
 
@@ -164,7 +164,7 @@ describe ( 'Morph - modify template function with command "set"', () => {
                                         handshake: { name: 'World' }
                                     })
                 const result = template ( 'render', { name: 'test' })
-                expect ( result ).to.equal ( `Hello ( Error: Helper 'format' is not available )!` )
+                expect ( result ).toBe ( `Hello ( Error: Helper 'format' is not available )!` )
         }) // it Create a template with no helpers
 
 

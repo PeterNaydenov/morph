@@ -1,5 +1,5 @@
 import morph from '../src/main.js'
-import { expect } from 'chai'
+import { describe, it, expect } from 'vitest'
 
 
 describe ( 'morph: storage', () => {
@@ -12,7 +12,7 @@ describe ( 'morph: storage', () => {
                     };
             morph.add ( ['myTpl'], morph.build ( myTpl ) );
             const result = morph.get (['myTpl'])('render', { name: 'Peter' })
-            expect ( result ).to.be.equal ( 'My name is Peter.' )
+            expect ( result ).toBe ( 'My name is Peter.' )
         })
 
 
@@ -25,7 +25,7 @@ describe ( 'morph: storage', () => {
                     // Can we check if the template is already in the storage?
             morph.add ( ['myName'], myTpl );
             const result = morph.get (['myName'])( 'render', { name: 'Peter' })
-            expect ( result ).to.be.equal ( 'My name is Peter.' )
+            expect ( result ).toBe ( 'My name is Peter.' )
         })
 
 
@@ -34,7 +34,7 @@ describe ( 'morph: storage', () => {
         // 
             morph.clear ()
             console.error = ( str ) => {   // Override console.error to avoid console output
-                    expect ( str ).to.be.equal ( 'Error: Template "fake" looks broken and is not added to storage.' )
+                    expect ( str ).toBe ( 'Error: Template "fake" looks broken and is not added to storage.' )
                 }
             const fakeTpl = { a: 12, b: 'Hello' };
             morph.add ( ['fake'], fakeTpl );
@@ -48,7 +48,7 @@ describe ( 'morph: storage', () => {
             const myTplFn = morph.build ( myTpl );
             morph.add ( ['myTpl'], myTplFn );
             const result = morph.get ( ['myTpl'] )('render',  { name: 'Peter' })
-            expect ( result ).to.be.equal ( 'My name is Peter.' )
+            expect ( result ).toBe ( 'My name is Peter.' )
        }) // it add component to default storage
 
 
@@ -65,17 +65,17 @@ describe ( 'morph: storage', () => {
             // result of morph.get() is a function that returns a error.
             // Error will popup as a rendering result
             
-            expect ( result ).to.be.equal ( 'Error: Template "myName" does not exist in storage "default".' )
+            expect ( result ).toBe ( 'Error: Template "myName" does not exist in storage "default".' )
             result = morph.get (['myName', 'hidden'])( 'render', { name: 'Peter' })
             
-            expect ( result ).to.be.equal ( 'My name is Peter.' )
+            expect ( result ).toBe ( 'My name is Peter.' )
 
             let list = morph.list ();
-            expect ( list ).to.have.length ( 0 )
+            expect ( list ).toHaveLength ( 0 )
 
             list = morph.list (['hidden']);
-            expect ( list ).to.have.length ( 1 )
-            expect ( list[0] ).to.be.equal ( 'myName' )
+            expect ( list ).toHaveLength ( 1 )
+            expect ( list[0] ).toBe ( 'myName' )
        }) // it add template definition to custom storage
 
 
@@ -85,19 +85,19 @@ describe ( 'morph: storage', () => {
             const myTpl = { template: `My name is {{ name }}.` };
             morph.add ( ['myTpl'], myTpl );
             const list = morph.list ();
-            expect ( list ).to.have.length ( 1 )
+            expect ( list ).toHaveLength ( 1 )
             morph.remove ( ['myTpl'] );
             const result = morph.list ();
-            expect ( result ).to.have.length ( 0 )
+            expect ( result ).toHaveLength ( 0 )
         }) // it remove component from storage
 
 
     it ( 'Try to get non existing storage/template', () => {
             morph.clear ()
             const fn = morph.get ( ['myTpl', 'extraStorage'] );
-            expect ( fn() ).to.be.equal ( 'Error: Storage "extraStorage" does not exist.' )
+            expect ( fn() ).toBe ( 'Error: Storage "extraStorage" does not exist.' )
             const fn2 = morph.get ( ['myTpl'] );
-            expect ( fn2() ).to.be.equal ( 'Error: Template "myTpl" does not exist in storage "default".' )
+            expect ( fn2() ).toBe ( 'Error: Template "myTpl" does not exist in storage "default".' )
         }) // it try to get non existing storage/template
 
 
@@ -105,9 +105,9 @@ describe ( 'morph: storage', () => {
     it ( 'Remove from storage component that does not exist', () => {
             morph.clear ()
             let result = morph.remove ( ['myTpl', 'extraStorage'] );
-            expect ( result ).to.be.equal ( 'Error: Storage "extraStorage" does not exist.' )
+            expect ( result ).toBe ( 'Error: Storage "extraStorage" does not exist.' )
             let result2 = morph.remove ( ['myTpl'] )
-            expect ( result2 ).to.be.equal ( 'Error: Template "myTpl" does not exist in storage "default".' )
+            expect ( result2 ).toBe ( 'Error: Template "myTpl" does not exist in storage "default".' )
         }) // it remove from storage component that does not exist
 
 
@@ -115,7 +115,7 @@ describe ( 'morph: storage', () => {
     it ( 'list a non existing storage', () => {
             morph.clear ()
             const list = morph.list ( ['extraStorage'] );
-            expect ( list ).to.have.length ( 0 )
+            expect ( list ).toHaveLength ( 0 )
         })
 
 }) // describe

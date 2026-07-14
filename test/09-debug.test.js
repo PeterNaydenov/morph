@@ -1,5 +1,5 @@
 import morph from '../src/main.js'
-import { expect } from 'chai';
+import { describe, it, expect } from 'vitest';
 
 
 
@@ -13,7 +13,7 @@ describe ( 'Morph - debug a template function', () => {
                                     });
 
                 const result = template ( 'debug', 'raw' );
-                expect ( result ).to.equal ( 'Hello {{name}}!' )
+                expect ( result ).toBe ( 'Hello {{name}}!' )
         }) // it check the raw template
 
 
@@ -26,7 +26,7 @@ describe ( 'Morph - debug a template function', () => {
                                     });
 
                 const result = template ( 'debug', 'handshake' );
-                expect ( result ).to.be.deep.equal ( { name: 'World' } )
+                expect ( result ).toEqual ( { name: 'World' } )
         }) // it get a handshake
 
 
@@ -37,7 +37,7 @@ describe ( 'Morph - debug a template function', () => {
                                             handshake: { name: 'World' }
                                     });
                         const result = template ( 'debug', 'demo' );
-                        expect ( result ).to.equal ( 'Hello WORLD!' )
+                        expect ( result ).toBe ( 'Hello WORLD!' )
         }) // it check for rendered version
 
 
@@ -52,7 +52,7 @@ describe ( 'Morph - debug a template function', () => {
                                             handshake: { name: 'World' }
                                     });
                         const result = template ( 'debug', 'helpers' );
-                        expect ( result ).to.be.equal ( 'up, down' )
+                        expect ( result ).toBe ( 'up, down' )
         }) // it check available helpers
 
 
@@ -65,7 +65,7 @@ describe ( 'Morph - debug a template function', () => {
                                  });
                            
                     const result = template ( 'debug', 'placeholders' );
-                    expect ( result ).to.be.equal ( '{{name : uppercase}}, {{ congrats: list: congrats }}' )
+                    expect ( result ).toBe ( '{{name : uppercase}}, {{ congrats: list: congrats }}' )
         }) // it check for placeholders
 
 
@@ -78,12 +78,12 @@ describe ( 'Morph - debug a template function', () => {
                                 });
                     
                     let result = template ( 'debug', 'count' );
-                    expect ( result ).to.be.equal ( 2 )
+                    expect ( result ).toBe ( 2 )
                     // Let's render the name
                     let tpl = template ( 'curry', { name: 'World'})
                     // Now we have just one placeholder
                     result = tpl ( 'debug', 'count' );
-                    expect ( result ).to.be.equal ( 1 )
+                    expect ( result ).toBe ( 1 )
         }) // it check for placeholders
  
 }) // describe

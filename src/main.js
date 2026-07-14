@@ -1,14 +1,19 @@
 /***
  *   Morph (@peter.naydenov/morph)
- * 
+ *
  *   Text based template engine
- * 
- * 
+ *
+ *
  *   History notes:
- *   - Idea was born on October 28th, 2024.  
+ *   - Idea was born on October 28th, 2024.
  *   - Published on GitHub for first time: November 30th, 2024
  *   - Version 1.0.0: December 28st, 2024
- * 
+ *
+ */
+
+/**
+ * @typedef {import('./methods/build.js').Template} Template
+ * @typedef {import('./methods/build.js').RenderFn} RenderFn
  */
 
 
@@ -30,7 +35,7 @@ const storage = { default: {} };
  *   - First element: The name of the template
  *   - Second element (optional): The name of the storage. Defaults to 'default'
  * 
- * @returns {Function} The template (render function) if found, or an error function that returns
+ * @returns {RenderFn|(() => string)} The template (render function) if found, or an error function that returns
  *   an error message if the storage or template doesn't exist.
  * 
  * @example
@@ -73,11 +78,11 @@ function get ( location ) {
  * If the template is already a function, it's added directly to storage.
  * If it's a template description object, it's built first and then added.
  * If the template is null or broken, a warning/error is logged and it's not added.
- * 
+ *
  * @param {string[]} location - The location to add the template to. Array of two elements:
  *   - First element: The name of the template
  *   - Second element (optional): The name of the storage. Defaults to 'default'
- * @param {object|function|null} tplfn - The template description object, pre-built template function, or null
+ * @param {Template|RenderFn|null} tplfn - The template description object, pre-built render function, or null
  * @param {...any} args - Additional arguments passed to the build function (only used when tplfn is a template description)
  * 
  * @example

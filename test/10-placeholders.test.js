@@ -1,4 +1,4 @@
-import { expect } from 'chai';
+import { describe, it, expect } from 'vitest';
 import build from '../src/methods/build.js';
 
 describe('t-placeholders: parsing and functionality', () => {
@@ -14,10 +14,10 @@ describe('t-placeholders: parsing and functionality', () => {
             };
             
             const result = build(tpl);
-            expect(result).to.be.a('function');
+            expect(result).toBeTypeOf('function');
             
             const output = result('render', { info: 'world' });
-            expect(output).to.equal('Hello WORLD!');
+            expect(output).toBe('Hello WORLD!');
         });
 
         it('should parse placeholder with no data but action and name', () => {
@@ -30,7 +30,7 @@ describe('t-placeholders: parsing and functionality', () => {
             
             const result = build(tpl);
             const output = result('render', {});
-            expect(output).to.equal('Result: ACTION_ONLY');
+            expect(output).toBe('Result: ACTION_ONLY');
         });
 
         it('should parse placeholder with no data, action and name (compact format)', () => {
@@ -43,7 +43,7 @@ describe('t-placeholders: parsing and functionality', () => {
             
             const result = build(tpl);
             const output = result('render', {});
-            expect(output).to.equal('Compact: COMPACT_ACTION');
+            expect(output).toBe('Compact: COMPACT_ACTION');
         });
 
         it('should handle no data with action and name with spaces', () => {
@@ -56,7 +56,7 @@ describe('t-placeholders: parsing and functionality', () => {
             
             const result = build(tpl);
             const output = result('render', {});
-            expect(output).to.equal('Spaced: SPACED_ACTION');
+            expect(output).toBe('Spaced: SPACED_ACTION');
         });
 
         it('should handle no data with action and name using render prefix', () => {
@@ -69,7 +69,7 @@ describe('t-placeholders: parsing and functionality', () => {
             
             const result = build(tpl);
             const output = result('render', {});
-            expect(output).to.equal('Render: TEST');
+            expect(output).toBe('Render: TEST');
         });
 
         it('should parse placeholder with only action', () => {
@@ -82,7 +82,7 @@ describe('t-placeholders: parsing and functionality', () => {
             
             const result = build(tpl);
             const output = result('render', {});
-            expect(output).to.equal('Simple: ACTION_RESULT');
+            expect(output).toBe('Simple: ACTION_RESULT');
         });
 
         it('should parse placeholder with data only', () => {
@@ -93,7 +93,7 @@ describe('t-placeholders: parsing and functionality', () => {
             
             const result = build(tpl);
             const output = result('render', { data: 'VALUE' });
-            expect(output).to.equal('Data: VALUE');
+            expect(output).toBe('Data: VALUE');
         });
 
         it('should parse placeholder with data and action only', () => {
@@ -106,7 +106,7 @@ describe('t-placeholders: parsing and functionality', () => {
             
             const result = build(tpl);
             const output = result('render', { data: 'test' });
-            expect(output).to.equal('Data+Action: processed:test');
+            expect(output).toBe('Data+Action: processed:test');
         });
 
         it('should parse placeholder with data and name only', () => {
@@ -117,7 +117,7 @@ describe('t-placeholders: parsing and functionality', () => {
             
             const result = build(tpl);
             const output = result('render', { data: 'value' });
-            expect(output).to.equal('Data+Name: value');
+            expect(output).toBe('Data+Name: value');
         });
     });
 
@@ -134,7 +134,7 @@ describe('t-placeholders: parsing and functionality', () => {
             
             const result = build(tpl);
             const output = result('render', { data: 'spaced' });
-            expect(output).to.equal('Test SPACED and SPACED');
+            expect(output).toBe('Test SPACED and SPACED');
         });
 
         it('should handle multiple spaces consistently', () => {
@@ -147,7 +147,7 @@ describe('t-placeholders: parsing and functionality', () => {
             
             const result = build(tpl);
             const output = result('render', { data: 'test' });
-            expect(output).to.equal('Start[test]End');
+            expect(output).toBe('Start[test]End');
         });
 
         it('should handle no spaces', () => {
@@ -160,7 +160,7 @@ describe('t-placeholders: parsing and functionality', () => {
             
             const result = build(tpl);
             const output = result('render', { data: 'compact' });
-            expect(output).to.equal('CompactcompactCompact');
+            expect(output).toBe('CompactcompactCompact');
         });
     });
 
@@ -176,7 +176,7 @@ describe('t-placeholders: parsing and functionality', () => {
             
             const result = build(tpl);
             const output = result('render', { data: 'test' });
-            expect(output).to.equal('Single: TEST');
+            expect(output).toBe('Single: TEST');
         });
 
         it('should handle action with spaces around commas', () => {
@@ -189,7 +189,7 @@ describe('t-placeholders: parsing and functionality', () => {
             
             const result = build(tpl);
             const output = result('render', { data: 'x' });
-            expect(output).to.equal('Spaced: X');
+            expect(output).toBe('Spaced: X');
         });
     });
 
@@ -205,7 +205,7 @@ describe('t-placeholders: parsing and functionality', () => {
             
             const result = build(tpl);
             const output = result('render', {});
-            expect(output).to.equal('Empty data: EMPTY_DATA_SECTION');
+            expect(output).toBe('Empty data: EMPTY_DATA_SECTION');
         });
 
         it('should handle nested data paths', () => {
@@ -222,7 +222,7 @@ describe('t-placeholders: parsing and functionality', () => {
                     } 
                 } 
             });
-            expect(output).to.equal('Nested: John Doe');
+            expect(output).toBe('Nested: John Doe');
         });
     });
 
@@ -239,7 +239,7 @@ describe('t-placeholders: parsing and functionality', () => {
             
             const result = build(tpl);
             const output = result('render', { info: 'hello', count: 42 });
-            expect(output).to.equal('Full: HELLO | NoData: STATIC_VALUE | DataOnly: 42');
+            expect(output).toBe('Full: HELLO | NoData: STATIC_VALUE | DataOnly: 42');
         });
 
         it('should handle placeholders with special characters in data', () => {
@@ -252,7 +252,7 @@ describe('t-placeholders: parsing and functionality', () => {
             
             const result = build(tpl);
             const output = result('render', { 'user-name': 'test-value' });
-            expect(output).to.equal('Special: test_value');
+            expect(output).toBe('Special: test_value');
         });
 
         it('should handle mixed placeholders with data and actions', () => {
@@ -266,7 +266,7 @@ describe('t-placeholders: parsing and functionality', () => {
             
             const result = build(tpl);
             const output = result('render', { data: 'value' });
-            expect(output).to.equal('value ACTION PROCESSED:value');
+            expect(output).toBe('value ACTION PROCESSED:value');
         });
     });
 });

@@ -1,5 +1,5 @@
 import morph from '../src/main.js'
-import { expect } from 'chai'
+import { describe, it, expect } from 'vitest'
 
 
 
@@ -10,7 +10,7 @@ describe ( 'morph: HTML escaping', () => {
     it ( 'Built-in helper "escape" works without declaration', () => {
                 const templateFn = morph.build ({ template: `<p>{{ text : escape }}</p>` });
                 const result = templateFn ( 'render', { text: `<script>steal()</script>` });
-                expect ( result ).to.be.equal ( '<p>&lt;script&gt;steal()&lt;/script&gt;</p>' )
+                expect ( result ).toBe ( '<p>&lt;script&gt;steal()&lt;/script&gt;</p>' )
         }) // it built-in helper escape
 
 
@@ -18,7 +18,7 @@ describe ( 'morph: HTML escaping', () => {
     it ( 'Escapes all five special characters', () => {
                 const templateFn = morph.build ({ template: `{{ text : escape }}` });
                 const result = templateFn ( 'render', { text: `& < > " '` });
-                expect ( result ).to.be.equal ( '&amp; &lt; &gt; &quot; &#39;' )
+                expect ( result ).toBe ( '&amp; &lt; &gt; &quot; &#39;' )
         }) // it escapes all five special characters
 
 
@@ -29,7 +29,7 @@ describe ( 'morph: HTML escaping', () => {
                                 , escape   : true
                         });
                 const result = templateFn ( 'render', { comment: `<img src=x onerror=alert(1)>` });
-                expect ( result ).to.be.equal ( '<p>&lt;img src=x onerror=alert(1)&gt;</p>' )
+                expect ( result ).toBe ( '<p>&lt;img src=x onerror=alert(1)&gt;</p>' )
         }) // it template option escape
 
 
@@ -40,7 +40,7 @@ describe ( 'morph: HTML escaping', () => {
                                 , escape   : true
                         });
                 const result = templateFn ( 'render', { trusted: '<i>ok</i>', untrusted: '<i>no</i>' });
-                expect ( result ).to.be.equal ( '<i>ok</i> | &lt;i&gt;no&lt;/i&gt;' )
+                expect ( result ).toBe ( '<i>ok</i> | &lt;i&gt;no&lt;/i&gt;' )
         }) // it action raw opts out
 
 
@@ -53,7 +53,7 @@ describe ( 'morph: HTML escaping', () => {
                                 , helpers  : { li: `<li>{{ text }}</li>` }
                         });
                 const result = templateFn ( 'render', { items: [ 'a', 'b' ]});
-                expect ( result ).to.be.equal ( '<ul><li>a</li><li>b</li></ul>' )
+                expect ( result ).toBe ( '<ul><li>a</li><li>b</li></ul>' )
         }) // it helper output stays untouched
 
 
@@ -64,10 +64,10 @@ describe ( 'morph: HTML escaping', () => {
                                 , escape   : true
                         });
                 const afterCurry = templateFn ( 'curry', { a: 'A' })( 'render', { b: '<b>' });
-                expect ( afterCurry ).to.be.equal ( 'A &lt;b&gt;' )
+                expect ( afterCurry ).toBe ( 'A &lt;b&gt;' )
 
                 const afterSet = templateFn ( 'set', { handshake: { a: 'x' }})( 'render', { a: '<a>', b: 'B' });
-                expect ( afterSet ).to.be.equal ( '&lt;a&gt; B' )
+                expect ( afterSet ).toBe ( '&lt;a&gt; B' )
         }) // it escaping survives set and curry
 
 
@@ -77,7 +77,7 @@ describe ( 'morph: HTML escaping', () => {
                 const curried = templateFn ( 'curry', { name: '{{ role }}' });   // user-controlled value
                 const result = curried ( 'render', { role: 'admin' });
                 // The injected tags render as literal text. The template's own placeholder still works.
-                expect ( result ).to.be.equal ( 'Hello {{ role }}, role: admin' )
+                expect ( result ).toBe ( 'Hello {{ role }}, role: admin' )
         }) // it curry injection
 
 
@@ -90,7 +90,7 @@ describe ( 'morph: HTML escaping', () => {
                                         }
                         });
                 const result = templateFn ( 'render', { user: { name: '<img>' }});
-                expect ( result ).to.be.equal ( 'Name: &lt;img&gt;' )
+                expect ( result ).toBe ( 'Name: &lt;img&gt;' )
         }) // it useHelper escape
 
 
@@ -101,7 +101,7 @@ describe ( 'morph: HTML escaping', () => {
                                 , helpers  : { escape: ({ data }) => `CUSTOM:${data}` }
                         });
                 const result = templateFn ( 'render', { x: 'value' });
-                expect ( result ).to.be.equal ( 'CUSTOM:value' )
+                expect ( result ).toBe ( 'CUSTOM:value' )
         }) // it user helper escape takes precedence
 
 
@@ -112,7 +112,7 @@ describe ( 'morph: HTML escaping', () => {
                                 , helpers  : { up: ({ data }) => data.toUpperCase () }
                         });
                 const result = templateFn ( 'debug', 'helpers' );
-                expect ( result ).to.be.equal ( 'up' )
+                expect ( result ).toBe ( 'up' )
         }) // it built-in helpers stay hidden
 
 

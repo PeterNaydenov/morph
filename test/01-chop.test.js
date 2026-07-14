@@ -1,5 +1,5 @@
 import chopTemplates from'../src/methods/_chopTemplates.js'
-import { expect } from 'chai';
+import { describe, it, expect } from 'vitest';
 
 describe ( 't-templates: chop', () => {
 
@@ -16,7 +16,7 @@ describe ( 't-templates: chop', () => {
                 const tpl = chopTemplates ( settings);
                 const res = tpl(str);
 
-                expect(res).to.be.deep.equal ([
+                expect(res).toEqual ([
                     'Hello, ', '{{name:ul,li,a}}', '! Say: ', '{{shout}}', ', ', '{{shout}}', '!'
                   ])
         }) // it chop

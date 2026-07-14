@@ -40,6 +40,16 @@ import {
  * @property {function} 1 - The rendering function or an error function.
  */
 
+/**
+ * @callback RenderFn
+ * The render function returned by build(). First argument is the command name.
+ * @param {string} [command] - 'render' (default), 'debug', 'snippets', 'set', or 'curry'.
+ * @param {any} [d] - Data to render with, or a debug instruction when command is 'debug'.
+ * @param {object} [dependencies] - Per-call dependencies, merged on top of build-time dependencies.
+ * @param {...((result: string, dependencies: object) => string)} [postprocess] - Post-processing functions applied to the rendered output.
+ * @returns {any} Rendered string, debug result, or new render function (for 'set' and 'curry').
+ */
+
 
 
 const COMMANDS = [ 'render', 'debug', 'snippets', 'set', 'curry' ]
@@ -50,8 +60,8 @@ const COMMANDS = [ 'render', 'debug', 'snippets', 'set', 'curry' ]
  *
  * @param {Template} tpl - template definition;
  * @param {boolean} [extra] - Optional. How to receive the answer - false:as a string(answer) or true: as tuple[success, answer];
- * @param {object} [buildDependencies] - Optional. External dependencies injected;
- * @returns {function|tupleResult} - rendering function
+ * @param {Record<string, any>} [buildDependencies] - Optional. External dependencies injected;
+ * @returns {RenderFn|tupleResult} - rendering function
  */
 function build ( tpl, extra = false, buildDependencies = {}) {
         const { hasError, placeholders, chop, helpers, handshake, snippets, escape } = _readTemplate ( tpl );

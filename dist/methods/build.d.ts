@@ -25,12 +25,13 @@ export type Template = {
     escape?: boolean;
 };
 export type tupleResult = Array;
+export type RenderFn = (command?: string, d?: any, dependencies?: object, ...postprocess?: ((result: string, dependencies: object) => string)) => any;
 /**
  *
  * @param {Template} tpl - template definition;
  * @param {boolean} [extra] - Optional. How to receive the answer - false:as a string(answer) or true: as tuple[success, answer];
- * @param {object} [buildDependencies] - Optional. External dependencies injected;
- * @returns {function|tupleResult} - rendering function
+ * @param {Record<string, any>} [buildDependencies] - Optional. External dependencies injected;
+ * @returns {RenderFn|tupleResult} - rendering function
  */
-declare function build(tpl: Template, extra?: boolean, buildDependencies?: object): Function | tupleResult;
+declare function build(tpl: Template, extra?: boolean, buildDependencies?: Record<string, any>): RenderFn | tupleResult;
 export default build;
