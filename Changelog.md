@@ -3,6 +3,11 @@
 
 
 
+### 3.4.6 (2026-07-18)
+- [x] Chore: dropped Node 18 from the CI matrix and bumped `engines.node` to `">=20"`. The 3.4.5 release shipped with `">=18"` and a Node 18 CI entry, but vitest 4 / `@vitest/coverage-v8` require Node 20+. CI now tests on Node 20, 22, 24.
+
+
+
 ### 3.4.5 (2026-07-14)
 - [x] Docs: fixed typos throughout the README;
 - [x] Docs: fixed GitHub badge URLs to use the canonical `PeterNaydenov/morph` casing (lowercase `peterNaydenov` worked but redirected);
