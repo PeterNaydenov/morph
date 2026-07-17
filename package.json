@@ -62,7 +62,7 @@
         "function"
     ],
     "engines": {
-        "node": ">=18"
+        "node": ">=20"
     },
     "allowScripts": {
         "fsevents@2.3.3": true
