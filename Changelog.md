@@ -1,5 +1,7 @@
 ## Release History
 
+### 3.5.0 (2026-07-19)
+- [x] Agentic skill was added
 
 
 
