@@ -1,5 +1,12 @@
 ## Release History
 
+
+
+### 3.5.1 (2026-07-19)
+- [x] Dependency update: @peter.naydenov/walk - v.5.0.7;
+
+
+
 ### 3.5.0 (2026-07-19)
 - [x] Agentic skill was added
 
