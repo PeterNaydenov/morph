@@ -1,6 +1,11 @@
 ## Release History
 
 
+### 3.5.3 (2026-08-20)
+- [x] Dependency update. @peter.naydenov/walk 6.0.0;
+
+
+
 ### 3.5.2 (2026-07-25)
 - [x] Dependency update. @peter.naydenov/stack 3.0.1;
 
