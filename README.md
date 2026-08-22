@@ -76,9 +76,12 @@ Morph also has a built-in template storage. Instead of creating a variable for e
 
 ```js
 // add template to the storage. Automatically builds the render function
-// Array of two elements. 0 - template name, 1 - optional. Storage name. Defaults to 'default'
+// Location is a string (shorthand for the 'default' storage) or an array of two elements:
+// 0 - template name, 1 - optional storage name. Defaults to 'default'
+morph.add ( 'myTemplate', myTemplateDescription )       // same as ['myTemplate']
 morph.add ( ['myTemplate'], myTemplateDescription ) 
 // get template from the storage and render it
+const htmlBlock = morph.get ( 'myTemplate' )( { name: 'Peter' })   // same as ['myTemplate']
 const htmlBlock = morph.get ( ['myTemplate'] )({ name: 'Peter' }) 
 // it's same as text above
 morph.add ( ['myTemplate', 'default'], myTemplateDescription )
@@ -88,6 +91,8 @@ morph.add ( ['myTemplate', 'hidden'], myTemplateDescription ) // write template 
 const htmlBlock = morph.get ( ['myTemplate', 'hidden'] )( 'render', { name: 'Peter' }) // render template from 'hidden' storage
 morph.get ( ['myTemplate'] )('render', { name: 'Peter' }) // call template 'myTemplate' from default storage
 // will return error, because default storage does not have template "myTemplate"
+// missing templates come back as error functions marked with isError: true
+if ( morph.get ( ['myTemplate'] ).isError )   console.log ( 'Template is not in the storage' )
 ```
 
 Let's see a more complex example before we go into details:
