@@ -41,9 +41,10 @@ declare function handleSet(d: object, { helpers, handshake, placeholders, chop, 
 /**
  * Handles snippets command to select specific placeholders.
  *
- * @param {string} command - Snippets command
- * @param {object} snippets - Snippets mapping
- * @returns {array|null} Selected placeholders or null
+ * @param {string} command - Snippets command ('snippets' or 'snippets: a, b')
+ * @param {object} snippets - Snippets mapping (by index and by name)
+ * @returns {array|null|string} Selected placeholders, null for 'all snippets',
+ *   or an error message when the selection is malformed or unknown.
  */
-declare function handleSnippets(command: string, snippets: object): any[] | null;
+declare function handleSnippets(command: string, snippets: object): any[] | null | string;
 export { handleDebug, handleSet, handleSnippets };
