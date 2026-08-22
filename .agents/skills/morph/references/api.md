@@ -55,6 +55,7 @@ type HelperFn = (args: {
 Add a template (or a pre-built render function) to storage. Auto-builds if you pass a description.
 
 ```js
+morph.add('myTemplate', { template: '...', helpers: {...} });   // string shorthand -> 'default'
 morph.add(['myTemplate'], { template: '...', helpers: {...} });
 morph.add(['myTemplate', 'hidden'], preBuiltFn);
 ```
@@ -63,17 +64,17 @@ morph.add(['myTemplate', 'hidden'], preBuiltFn);
 
 | Name | Type | Default | Purpose |
 | --- | --- | --- | --- |
-| `location` | `[name: string, storageName?: string]` | required | Array. Storage name defaults to `'default'`. |
+| `location` | `string \| [name: string, storageName?: string]` | required | A string means a template in `'default'` storage. Array form targets a named storage; storage name defaults to `'default'`. |
 | `templateOrFn` | `Template \| RenderFn \| null` | required | A description, a pre-built render function, or `null` (no-op with a console warning). |
 | `...buildArgs` | any | — | Extra args passed to `build()` if a description was passed. |
 
 ### Returns
 
-`void`. On failure (broken template, null input, non-array location), the function logs to `console.error` / `console.warn` and stores nothing.
+`void`. On failure (broken template, null input, invalid location type), the function logs to `console.error` / `console.warn` and stores nothing.
 
 ### Validation
 
-- Non-array `location` → logs `"Argument 'location' must be an array. E.g. ['templateName', 'storageName']."` and stores nothing. (Fixed in 3.4.4; before that it silently stored the template under a wrong name/storage.)
+- Invalid `location` type (not a string or array) → logs `"Argument 'location' must be a string or an array. E.g. 'templateName' or ['templateName', 'storageName']."` and stores nothing.
 - Null `templateOrFn` → logs a warning.
 - Description fails to build → logs the build error and stores nothing.
 
@@ -82,6 +83,7 @@ morph.add(['myTemplate', 'hidden'], preBuiltFn);
 Retrieve a template from storage.
 
 ```js
+const fn = morph.get('myTemplate');          // string shorthand -> 'default'
 const fn = morph.get(['myTemplate']);
 const fn = morph.get(['myTemplate', 'hidden']);
 ```
@@ -90,15 +92,17 @@ const fn = morph.get(['myTemplate', 'hidden']);
 
 | Name | Type | Default | Purpose |
 | --- | --- | --- | --- |
-| `location` | `[name: string, storageName?: string]` | required | Array. Storage name defaults to `'default'`. |
+| `location` | `string \| [name: string, storageName?: string]` | required | A string means a template in `'default'` storage. Array form targets a named storage; storage name defaults to `'default'`. |
 
 ### Returns
 
 - A `RenderFn` if the template exists.
 - An **error function** if the storage or template doesn't exist. Calling the error function returns a string with the error. This is intentional — it lets you call the returned function unconditionally and surface the error at render time.
+- Error functions carry an `isError: true` property, so callers can detect a miss before rendering. Real templates never have this property.
 
 ```js
 const fn = morph.get(['missing']);
+if (fn.isError)   console.error(fn());   // detect before rendering
 const result = fn(); // "Error: Template \"missing\" does not exist in storage \"default\"."
 ```
 
@@ -137,6 +141,7 @@ morph.clear();
 Remove one template.
 
 ```js
+morph.remove('myTemplate');   // string shorthand -> 'default' storage
 morph.remove(['myTemplate']);
 const err = morph.remove(['nonexistent']); // "Error: Template \"nonexistent\" does not exist in storage \"default\"."
 ```
@@ -145,18 +150,18 @@ const err = morph.remove(['nonexistent']); // "Error: Template \"nonexistent\" d
 
 | Name | Type | Default | Purpose |
 | --- | --- | --- | --- |
-| `location` | `[name: string, storageName?: string]` | required | Array. Storage name defaults to `'default'`. |
+| `location` | `string \| [name: string, storageName?: string]` | required | A string means a template in `'default'` storage. Array form targets a named storage; storage name defaults to `'default'`. |
 
 ### Returns
 
-`undefined` on success, or a string with the error if the storage/template doesn't exist.
+`undefined` on success, or a string with the error if the argument type is wrong or the storage/template doesn't exist.
 
 ## Storage semantics
 
 - One `'default'` storage always exists.
 - Named storages are created on first `add` and persist until `clear` (which deletes them) or process exit.
 - The same template name can exist in different storages (`['header', 'public']` and `['header', 'admin']` are independent).
-- `get` and `remove` read the storage name from the second element of `location`; passing only `['name']` defaults to `'default'`.
+- `add`, `get` and `remove` accept the same `location`: a plain string is shorthand for `'default'` storage, array form is `[name, storageName?]`. Write, read and remove with strings — you are always working with `'default'`.
 
 ## Returned render function
 

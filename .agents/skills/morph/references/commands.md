@@ -76,6 +76,21 @@ The render still uses the template's data, helpers, and dependencies.
 `snippets` is not a separate render — it's a filtered view of the same
 one.
 
+### Snippet-only templates
+
+A template may consist of nothing but snippets — no surrounding text.
+Such templates work as **libraries**: plain `fn('snippets', data)`
+renders every snippet, acting as a table of contents for what the
+template exposes.
+
+### Error cases (strict validation)
+
+- `'snippetsXYZ'` (typo glued to the name) → `"Error: Wrong command ..."`
+  — only exact `snippets` or `snippets: <selection>` are valid.
+- `'snippets:'` (missing selection) → error asking for a comma-separated list.
+- `'snippets: first,'` (empty name in selection) → error.
+- Unknown name/index (`'snippets: nope'`) → `"Error: Snippet \"nope\" does not exist in the template."`
+
 ## `set`
 
 Modify the template in place and return a **new** render function with
@@ -113,6 +128,18 @@ const step1 = fn('curry', { name: 'Alice' });
 // no matching data are left as `{{ ... }}` in the new template.
 step1('render', { place: 'Mars' });
 // 'Hello Alice! Welcome to Mars.'
+```
+
+### `curry` with array data
+
+Mirrors `render`: one result per element. An object produces a single
+render function; an array produces **one render function per element**.
+
+```js
+const steps = fn('curry', [{ name: 'Alice' }, {}]);
+// steps is [renderFn, renderFn]
+steps[0]('render');              // 'Hello Alice!' — fully curried
+steps[1]('render', { name: 'Bob' }); // remaining placeholder filled later
 ```
 
 ### Why use `curry`
