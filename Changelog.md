@@ -1,6 +1,16 @@
 ## Release History
 
 
+### 3.6.0 (2026-08-22)
+- [x] Feature: unified string shorthand for the storage API. `add()`, `get()` and `remove()` now accept a plain string as `location` - it addresses a template in the `'default'` storage. `add('myTpl', desc)` ≡ `add(['myTpl'], desc)`, same for `get()` and `remove()`. Write, read and remove with strings always work with `'default'`. Before this release only `remove()` accepted the shorthand (and before 3.4.4 a bare string was silently destructured character-by-character, placing templates in wrong storages);
+- [x] Feature: error functions returned by `get()` now carry an `isError: true` marker, so callers can detect a miss before rendering: `const tpl = get('myTpl'); if (tpl.isError) ...`. Real templates never have the property. Existing behavior is unchanged - error functions stay callable and surface the message as render output;
+- [x] Feature: command `curry` now supports array data, mirroring `render`: one curried render function per data element. Before, an array produced a broken render function that always failed with "Error: Template is not a string.";
+- [x] Fix: strict validation of the `snippets` command. Only exact `'snippets'` (render all) or `'snippets: a, b'` (selection) are valid. Typos like `'snippetsXYZ'` were silently treated as plain `'snippets'`; missing selections (`'snippets:'`), empty names (`'snippets: first,'`) and unknown names/indexes are now reported with descriptive errors instead of producing broken output;
+- [x] Types: public signatures updated for the new shapes - `location` is now `string | string[]` across the storage API, and `get()` returns `RenderFn | MorphErrorFn` where `MorphErrorFn = (() => string) & { isError: true }`;
+- [x] Docs: README, skill references and JSDoc are up to date with the changes above;
+
+
+
 ### 3.5.3 (2026-08-20)
 - [x] Dependency update. @peter.naydenov/walk 6.0.0;
 
