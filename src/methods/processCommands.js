@@ -78,20 +78,27 @@ function handleSet(d, { helpers, handshake, placeholders, chop, build, buildDepe
 /**
  * Handles snippets command to select specific placeholders.
  *
- * @param {string} command - Snippets command
- * @param {object} snippets - Snippets mapping
- * @returns {array|null} Selected placeholders or null
+ * @param {string} command - Snippets command ('snippets' or 'snippets: a, b')
+ * @param {object} snippets - Snippets mapping (by index and by name)
+ * @returns {array|null|string} Selected placeholders, null for 'all snippets',
+ *   or an error message when the selection is malformed or unknown.
  */
 function handleSnippets(command, snippets) {
-    if (command.includes(':')) {
-        let snippetNames = command.split(':')
-            .slice(1)[0]
-            .trim()
-            .split(',')
-            .map(t => t.trim())
-        return snippetNames.map(item => snippets[item])
-    }
-    return null // Indicates 'all snippets' or logic handled by caller
+    if (!command.includes(':'))   return null // Indicates 'all snippets' or logic handled by caller
+
+    const selection = command.split(':').slice(1).join(':').trim()
+    if (selection === '')
+            return `Error: Command "snippets:" requires a comma-separated list of snippet names or indexes.`
+
+    const selected = []
+    for (const item of selection.split(',').map(t => t.trim())) {
+            if (item === '')
+                    return `Error: Command "snippets" received an empty snippet name. Use a comma-separated list of names or indexes.`
+            const found = snippets[item]
+            if (!found)   return `Error: Snippet "${item}" does not exist in the template.`
+            selected.push(found)
+        }
+    return selected
 }
 
 export { handleDebug, handleSet, handleSnippets }

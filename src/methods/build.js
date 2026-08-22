@@ -125,23 +125,28 @@ function build ( tpl, extra = false, buildDependencies = {}) {
          */
         function success ( command = 'render', d = {}, dependencies = {}, ...args ) {
 
-                const knownCommand = ( typeof command === 'string' )  &&  ( COMMANDS.includes ( command ) || command.startsWith ( 'snippets' ))
+                // Snippets commands: exact 'snippets' (all) or 'snippets: a, b' (selection).
+                // Anything else starting with 'snippets' is a typo and must be reported.
+                const isSnippets = command === 'snippets' || /^snippets\s*:/.test ( command )
+                const knownCommand = ( typeof command === 'string' )  &&  ( COMMANDS.includes ( command ) || isSnippets )
                 if ( !knownCommand )   return `Error: Wrong command "${command}". Available commands: ${COMMANDS.join ( ', ' )}.`
 
                 // Commands 'set' and 'curry' do not render. They produce a new rendering function.
                 if ( command === 'set' )   return handleSet ( d, { helpers, handshake, placeholders, chop, build, buildDependencies, escape })
                 if ( command === 'curry' ) {
                         const rendered = renderPass ( d, dependencies, args, { neutralize: true })
-                        return build ({ template: rendered, helpers, handshake, escape }, false, buildDependencies )
+                        // Curry mirrors 'render': one result per data element. An object
+                        // produces a single rendering function, an array - one per element.
+                        const curried = r => build ({ template: r, helpers, handshake, escape }, false, buildDependencies )
+                        return Array.isArray ( rendered )   ?   rendered.map ( curried )   :   curried ( rendered )
                     }
 
-                // Command 'snippets' renders only the selected placeholders. 'snippets: a, b' selects, plain 'snippets' takes all.
-                const
-                      onlySnippets = command.startsWith ( 'snippets' )
-                    , activePlaceholders = onlySnippets  ?  ( handleSnippets ( command, snippets ) || placeholders )  :  placeholders
-                    ;
+                if ( !isSnippets )   return renderPass ( d, dependencies, args )
 
-                return renderPass ( d, dependencies, args, { onlySnippets, activePlaceholders })
+                // Command 'snippets' renders only the selected placeholders. 'snippets: a, b' selects, plain 'snippets' takes all.
+                const selected = handleSnippets ( command, snippets )
+                if ( typeof selected === 'string' )   return selected   // Malformed or unknown selection
+                return renderPass ( d, dependencies, args, { onlySnippets: true, activePlaceholders: selected || placeholders })
         } // success func.
 
         // Marker: lets useHelper() recognise a build() output without relying on
