@@ -1,6 +1,16 @@
 ## Release History
 
 
+### 3.7.0 (2026-08-23)
+- [x] Fix: rendering no longer crashes on mistakes. Templates with an unknown helper in a data or mix action now render an error message in place of the placeholder, and the rest of the template renders as usual. Previously such templates threw an exception;
+- [x] Fix: data containing functions inside objects or arrays no longer breaks rendering - the placeholder shows an explanatory error message instead. (A plain function as a data value keeps working as before and is called automatically);
+- [x] Feature: actions in one placeholder now always pass their result to the next action, so multi-step placeholders work reliably. Some chains that silently crashed before now render correctly;
+- [x] Chore: internal cleanup - duplicate function-data handling removed;
+- [x] Chore: action behavior documented with verified examples;
+- [x] Chore: test coverage improved to ~96%;
+
+
+
 ### 3.6.0 (2026-08-22)
 - [x] Feature: unified string shorthand for the storage API. `add()`, `get()` and `remove()` now accept a plain string as `location` - it addresses a template in the `'default'` storage. `add('myTpl', desc)` ≡ `add(['myTpl'], desc)`, same for `get()` and `remove()`. Write, read and remove with strings always work with `'default'`. Before this release only `remove()` accepted the shorthand (and before 3.4.4 a bare string was silently destructured character-by-character, placing templates in wrong storages);
 - [x] Feature: error functions returned by `get()` now carry an `isError: true` marker, so callers can detect a miss before rendering: `const tpl = get('myTpl'); if (tpl.isError) ...`. Real templates never have the property. Existing behavior is unchanged - error functions stay callable and surface the message as render output;
