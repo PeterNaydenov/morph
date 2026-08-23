@@ -183,7 +183,7 @@ morph.get(['header', 'admin']) ('render', 'demo') // "Admin: root"
 ## References
 
 - `references/api.md` — `morph.build`, `morph.add`, `morph.get`, `morph.list`, `morph.clear`, `morph.remove`
-- `references/placeholders-and-actions.md` — placeholder syntax, data sources, action prefixes, right-to-left order, level markers
+- `references/placeholders-and-actions.md` — placeholder syntax, data sources, action prefixes, right-to-left order, level markers. Includes **verified worked examples** and a **failure-behavior table** (silent vs throwing cases). When writing tests or debugging actions: run the behavior in a scratch script before asserting it — several action behaviors are surprising on first contact.
 - `references/commands.md` — `render`, `debug`, `snippets`, `set`, `curry`
 - `references/helpers.md` — helper signature, `useHelper`, `dependencies`, `memory`
 - `references/escape.md` — three escape modes, `raw` action, security boundary

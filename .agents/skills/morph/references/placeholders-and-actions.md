@@ -72,6 +72,101 @@ The data is the **input to the rightmost action**, not the output of
 the leftmost. If you write `{{ x : a, b, c }}` thinking "first `a`
 transforms `x`, then `b`, then `c`" — flip the order.
 
+> **Chain composition (verified behavior):** actions compose right-to-left.
+> Each action receives the previous action's result, even when that result
+> is a plain value rather than a list — `{{ v : wrap, wrap }}` with
+> `wrap: ({ data }) => \`<${data}>\`` renders `<x>` as `<<x>>`. Safe idioms:
+> - a single render helper: `{{ v : bold }}`
+> - render helpers with one final mix: `{{ persons : []coma, web }}`
+> - data transformation feeding a render: see the memory pair below
+>
+> Historically, chains where a middle action collapsed the level data to
+> a plain value crashed (`TypeError: levelData.forEach`). Since 3.6.x the
+> engine wraps such values back into the level array and keeps composing.
+
+## Verified worked examples
+
+Every example below is executed in `test/12-actions.test.js` — treat
+these as ground truth, not illustrations.
+
+### Render action (bare name)
+
+```js
+template: '[{{ v : show }}]'
+helpers:  { show: ({ data }) => '«' + data + '»' }
+data:     { v: 'x' }
+// → '[«x»]'
+```
+
+Missing render helper → an error string is placed as the value, no
+throw: `( Error: Helper 'ghost' is not available )`
+
+### `>` data action
+
+| Input data | Helper `({ data }) => data * 2` | Output |
+| --- | --- | --- |
+| `5` | receives `5` | `[10]` |
+| `'a'` | receives `'a'` | `[NaN]` — helper must handle types itself |
+| `[1,2]` | called **per item**: `1`, then `2` | `[24]` (results concatenated) |
+| `null` | never called | raw placeholder survives |
+
+Missing `>` helper → an error string is placed as the value:
+`( Error: Helper 'ghost' is not available )`
+
+### `+` extendedRender
+
+Post-processes every item of a list that lives inside an object:
+
+```js
+template: '{{ list : +shout }}'
+helpers:  { shout: ({ data }) => String(data).toUpperCase() }
+data:     { list: ['a', 'b'] }
+// → 'A,B'   (helper called once per item)
+```
+
+- With a **bare array** as root render data (`fn('render', ['a','b'])`)
+  the placeholder stays raw — extendedRender targets object-held lists.
+- Missing `+` helper → **silently ignored**, rendering continues.
+
+### `[]` anonymous mix
+
+Joins array data into one string (uses each item's `text` property when
+present):
+
+```js
+template: '[{{ v : [] }}]'
+data:     { v: ['a','b'] }        // → '[ab]'
+data:     { v: [{text:'x'},{text:'y'}] }   // → '[xy]'
+```
+
+For object data it publishes rendered `text` values upward by breadcrumb
+keys — see the "Conditional rendering with string literals" idiom in
+`test/05-data.test.js`.
+
+### `[]name` named mix
+
+The helper receives the data and produces the merged value. An
+array-returning helper has its result spread back and joined:
+
+```js
+template: '{{ list : []pick }}'
+helpers:  { pick: ({ data }) => data.slice(0, 2) }
+data:     { list: [7, 8, 9] }
+// → '78'
+```
+
+Missing `[]helper` → an error string is placed as the value:
+`( Error: Helper 'ghost' is not available )`
+
+### Memory pair `^save` / `^^` overwrite
+
+```js
+template: '{{ a : ^saved }}|{{ b : >useSaved : ^^ }}'
+helpers:  { useSaved: ({ data, memory }) => data + '-' + memory.saved }
+data:     { a: 'X', b: 'Y' }
+// → 'X|Y-X'
+```
+
 ## Levels (`#`)
 
 When the data is nested (an array of objects, an object of arrays), `#`
@@ -156,3 +251,26 @@ from the action list before execution.
 | Action name `escape` shadows built-in | Renamed user helper shadows the engine's `escape`; rename yours or call `useHelper('escape', val)` explicitly |
 | `{{ cond ? }}` is a no-op | The `?` conditional prefix was removed in 3.2.0; use a render helper that returns `''` on false |
 | Hidden items still appear in the output | The auto-mix step (`[]` with no name) leaves `null` as the literal empty string `''` but still records the slot. To fully omit items, return `null` from the render helper **and** write an explicit mix helper that filters `null` out — e.g. `coma: ({ data }) => data.filter(x => x != null).map(x => x.text ?? x).join(', ')`. See the "Conditional rendering with string literals" pattern in `test/05-data.test.js`. |
+
+## Failure behavior (what happens when things go wrong)
+
+The engine treats **errors as values**: a failed placeholder renders an
+error string while the rest of the template still renders. Nothing in
+the action pipeline throws.
+
+| Situation | Behavior | Throws? |
+| --- | --- | --- |
+| Missing helper of **any** kind (render, `>`, `[]name`) | Error string placed as value: `( Error: Helper 'ghost' is not available )` | no |
+| Missing **`+`** helper | silently ignored; rendering continues | no |
+| Data source resolves to `null`/missing | placeholder left **raw** in output (`{{ x : >f }}`) | no |
+| Helper returns `null` in a render chain | item becomes `''` (empty slot) — filter explicitly to omit | no |
+| Middle action collapses level data to a scalar | engine wraps it back; chain keeps composing right-to-left | no |
+| A **function inside an object/array** of render data | error string placed as value (data can not be copied for safe rendering) | no |
+| A bare **function** as data value | resolved by the engine *before* actions run — helpers never see the function itself | no |
+| Broken template syntax (unclosed tags, etc.) | build fails; error string returned from the render fn | no |
+
+**Testing advice for agents:** when asserting action semantics for the
+first time, run the behavior in a scratch script before writing the
+expectation. Several behaviors (raw-placeholder survival, per-item
+calls, single resolution of function data) are surprising on first
+contact.
