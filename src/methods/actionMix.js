@@ -43,6 +43,12 @@ function actionMix ({ name }, theData, { helpers, extendArguments, nestedData, l
                 } // switch dataType
         }
     else {   // Named mixing action - the helper produces the merged value
+            // Errors as values: a missing helper becomes the placeholder's
+            // value instead of crashing the whole render.
+            if ( !helpers[name] ) {
+                    nestedData[level] = `( Error: Helper '${name}' is not available )`
+                    return
+                }
             const val = helpers[name] ({ data: theData, ...extendArguments, full: theData, useHelper: useHelper ( theData ) })
 
             theData.length = 0

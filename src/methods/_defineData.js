@@ -29,11 +29,20 @@ function _defineData ( dSource, action ) {
     const nestedData = [];
     let dataDeepLevel = 0;
 
+    // Bare functions are normally resolved upstream (processPlaceholders is
+    // the single authoritative resolution point). This guard stays as a safety
+    // net for direct/internal callers: resolve instead of letting the
+    // structuredClone below throw on an uncopiable function.
     if ( dSource instanceof Function )   return {  dataDeepLevel:0, nestedData:[[dSource()]] }
     if ( dSource == null             )   return {  dataDeepLevel:0, nestedData:[ null ] }
     if ( typeof dSource === 'string' )   return {  dataDeepLevel:0, nestedData:[[dSource]] }
 
-    const d = structuredClone ( dSource )
+    // Errors as values: functions (or other non-clonable values) inside
+    // objects/arrays can not be copied for safe rendering. The placeholder
+    // gets an error string instead of the whole render crashing.
+    let d
+    try   { d = structuredClone ( dSource ) }
+    catch { return {  dataDeepLevel:0, nestedData:[ [ `( Error: Render data contains values that can not be copied - functions are not supported inside objects/arrays. )` ] ] } }
  
     // Note: Nest data only if action has '#'
     if ( !action.includes('#') ) {

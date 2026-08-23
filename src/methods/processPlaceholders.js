@@ -83,12 +83,14 @@ function processPlaceholders ({ d, chop, placeholders, original, helpers, depend
                     else if ( data === '@all' || data === null || data === '@root' )   info = currentDElement
                     else if ( data )   info = ( info != null )  ?  info[data]  :  null
 
+                    // The single point where function data is resolved: called once
+                    // per render, per element. Both the data-only path and the
+                    // action chain see plain values from here on. (Bare functions
+                    // nested deeper are not supported - see _defineData.)
+                    if ( _defineDataType ( info ) === 'function' )   info = info ()
 
                     if ( dataOnly ) {   // No actions - place the data directly
                             switch ( _defineDataType ( info )) {
-                                case 'function':
-                                        place ( holder, info ())
-                                        break
                                 case 'primitive':
                                         place ( holder, info )
                                         break

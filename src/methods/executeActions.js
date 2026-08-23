@@ -30,8 +30,13 @@ function executeActions ({ nestedData, actSetup, helpers, original, dependencies
     for ( const step of actSetup ) {
             const
                   { type, level } = step
-                , levelData = nestedData[level] || []
+                , rawLevelData = nestedData[level] || []
                 ;
+            // A middle action can collapse the level data to a plain value
+            // (e.g. a '>' data helper over primitive data). Wrap it back into
+            // an array so the chain keeps composing right-to-left instead of
+            // crashing on forEach.
+            const levelData = Array.isArray ( rawLevelData )  ?  rawLevelData  :  [ rawLevelData ]
 
             levelData.forEach ( ( theData, iData ) => {
                         const context = {
