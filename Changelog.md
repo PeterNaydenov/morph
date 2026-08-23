@@ -1,6 +1,13 @@
 ## Release History
 
 
+
+### 3.8.0 (2026-08-23)
+- [x] Code: Refactoring. Dead code removed and readability improved across all methods. No API changes;
+- [x] Code: Dependency object shared accross the methods. Now used by all methods;
+
+
+
 ### 3.7.0 (2026-08-23)
 - [x] Fix: rendering no longer crashes on mistakes. Templates with an unknown helper in a data or mix action now render an error message in place of the placeholder, and the rest of the template renders as usual. Previously such templates threw an exception;
 - [x] Fix: data containing functions inside objects or arrays no longer breaks rendering - the placeholder shows an explanatory error message instead. (A plain function as a data value keeps working as before and is called automatically);
