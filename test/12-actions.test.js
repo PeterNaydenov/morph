@@ -1,7 +1,15 @@
 import morph from '../src/main.js'
-import _actionSupply from '../src/methods/_actionSupply.js'
-import _renderHolder from '../src/methods/_renderHolder.js'
+import _actionSupplyFactory from '../src/methods/_actionSupply.js'
+import _renderHolderFactory from '../src/methods/_renderHolder.js'
+import _chopTemplate from '../src/methods/_chopTemplates.js'
+import stack from '@peter.naydenov/stack'
+import settings from '../src/methods/settings.js'
 import { describe, it, expect } from 'vitest'
+
+// Factories receive their dependencies explicitly - easy to mock without a
+// testing library. Here the real ones are injected.
+const _actionSupply = _actionSupplyFactory ({ stack })
+const _renderHolder = _renderHolderFactory ({ _chopTemplate, settings })
 
 
 
@@ -165,6 +173,14 @@ describe ( 'morph: action edge cases (coverage)', () => {
                 // rightmost runs first, its result feeds the next action
                 expect ( fn ( 'render', { v: 'x' }) ).toBe ( '[<<x>>]' )
         }) // it chain composition
+
+
+
+    it ( 'Data-only array placeholders render all elements joined (same as chains and mixes)', () => {
+                const fn = morph.build ({ template: `[{{ tags }}]` });
+                expect ( fn ( 'render', { tags: ['a', 'b'] }) ).toBe ( '[ab]' )
+                expect ( fn ( 'render', { tags: [{ text: 'x' }, { text: 'y' }] }) ).toBe ( '[xy]' )
+        }) // it data-only arrays join
 
 
 

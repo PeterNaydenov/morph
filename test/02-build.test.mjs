@@ -453,14 +453,14 @@ describe ( 'transformer: build', () => {
 
 
 
-     it ( 'Data only - array. Should render first element', () => {
-                // If provided data is array - default field is the first element of the array
+     it ( 'Data only - array. Should render all elements joined', () => {
+                // Arrays render as their elements joined - same as action chains and mixes
                 const myTpl = {
                                 template : `My name is {{ person }}.`
                         };
                 const templateFn = morph.build ( myTpl );
                 const result = templateFn ( 'render', { person: [ 'John', 'Milen', 'Vladislav' ]});
-                expect ( result ).toBe ( 'My name is John.' )
+                expect ( result ).toBe ( 'My name is JohnMilenVladislav.' )
         })
 
 

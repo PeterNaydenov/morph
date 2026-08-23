@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import build from '../src/methods/build.js';
+import morph from '../src/main.js';
 
 describe('t-placeholders: parsing and functionality', () => {
 
@@ -13,7 +13,7 @@ describe('t-placeholders: parsing and functionality', () => {
                 }
             };
             
-            const result = build(tpl);
+            const result = morph.build(tpl);
             expect(result).toBeTypeOf('function');
             
             const output = result('render', { info: 'world' });
@@ -28,7 +28,7 @@ describe('t-placeholders: parsing and functionality', () => {
                 }
             };
             
-            const result = build(tpl);
+            const result = morph.build(tpl);
             const output = result('render', {});
             expect(output).toBe('Result: ACTION_ONLY');
         });
@@ -41,7 +41,7 @@ describe('t-placeholders: parsing and functionality', () => {
                 }
             };
             
-            const result = build(tpl);
+            const result = morph.build(tpl);
             const output = result('render', {});
             expect(output).toBe('Compact: COMPACT_ACTION');
         });
@@ -54,7 +54,7 @@ describe('t-placeholders: parsing and functionality', () => {
                 }
             };
             
-            const result = build(tpl);
+            const result = morph.build(tpl);
             const output = result('render', {});
             expect(output).toBe('Spaced: SPACED_ACTION');
         });
@@ -67,7 +67,7 @@ describe('t-placeholders: parsing and functionality', () => {
                 }
             };
             
-            const result = build(tpl);
+            const result = morph.build(tpl);
             const output = result('render', {});
             expect(output).toBe('Render: TEST');
         });
@@ -80,7 +80,7 @@ describe('t-placeholders: parsing and functionality', () => {
                 }
             };
             
-            const result = build(tpl);
+            const result = morph.build(tpl);
             const output = result('render', {});
             expect(output).toBe('Simple: ACTION_RESULT');
         });
@@ -91,7 +91,7 @@ describe('t-placeholders: parsing and functionality', () => {
                 helpers: {}
             };
             
-            const result = build(tpl);
+            const result = morph.build(tpl);
             const output = result('render', { data: 'VALUE' });
             expect(output).toBe('Data: VALUE');
         });
@@ -104,7 +104,7 @@ describe('t-placeholders: parsing and functionality', () => {
                 }
             };
             
-            const result = build(tpl);
+            const result = morph.build(tpl);
             const output = result('render', { data: 'test' });
             expect(output).toBe('Data+Action: processed:test');
         });
@@ -115,7 +115,7 @@ describe('t-placeholders: parsing and functionality', () => {
                 helpers: {}
             };
             
-            const result = build(tpl);
+            const result = morph.build(tpl);
             const output = result('render', { data: 'value' });
             expect(output).toBe('Data+Name: value');
         });
@@ -132,7 +132,7 @@ describe('t-placeholders: parsing and functionality', () => {
                 }
             };
             
-            const result = build(tpl);
+            const result = morph.build(tpl);
             const output = result('render', { data: 'spaced' });
             expect(output).toBe('Test SPACED and SPACED');
         });
@@ -145,7 +145,7 @@ describe('t-placeholders: parsing and functionality', () => {
                 }
             };
             
-            const result = build(tpl);
+            const result = morph.build(tpl);
             const output = result('render', { data: 'test' });
             expect(output).toBe('Start[test]End');
         });
@@ -158,7 +158,7 @@ describe('t-placeholders: parsing and functionality', () => {
                 }
             };
             
-            const result = build(tpl);
+            const result = morph.build(tpl);
             const output = result('render', { data: 'compact' });
             expect(output).toBe('CompactcompactCompact');
         });
@@ -174,7 +174,7 @@ describe('t-placeholders: parsing and functionality', () => {
                 }
             };
             
-            const result = build(tpl);
+            const result = morph.build(tpl);
             const output = result('render', { data: 'test' });
             expect(output).toBe('Single: TEST');
         });
@@ -187,7 +187,7 @@ describe('t-placeholders: parsing and functionality', () => {
                 }
             };
             
-            const result = build(tpl);
+            const result = morph.build(tpl);
             const output = result('render', { data: 'x' });
             expect(output).toBe('Spaced: X');
         });
@@ -203,7 +203,7 @@ describe('t-placeholders: parsing and functionality', () => {
                 }
             };
             
-            const result = build(tpl);
+            const result = morph.build(tpl);
             const output = result('render', {});
             expect(output).toBe('Empty data: EMPTY_DATA_SECTION');
         });
@@ -214,7 +214,7 @@ describe('t-placeholders: parsing and functionality', () => {
                 helpers: {}
             };
             
-            const result = build(tpl);
+            const result = morph.build(tpl);
             const output = result('render', { 
                 user: { 
                     profile: { 
@@ -237,7 +237,7 @@ describe('t-placeholders: parsing and functionality', () => {
                 }
             };
             
-            const result = build(tpl);
+            const result = morph.build(tpl);
             const output = result('render', { info: 'hello', count: 42 });
             expect(output).toBe('Full: HELLO | NoData: STATIC_VALUE | DataOnly: 42');
         });
@@ -250,7 +250,7 @@ describe('t-placeholders: parsing and functionality', () => {
                 }
             };
             
-            const result = build(tpl);
+            const result = morph.build(tpl);
             const output = result('render', { 'user-name': 'test-value' });
             expect(output).toBe('Special: test_value');
         });
@@ -264,7 +264,7 @@ describe('t-placeholders: parsing and functionality', () => {
                 }
             };
             
-            const result = build(tpl);
+            const result = morph.build(tpl);
             const output = result('render', { data: 'value' });
             expect(output).toBe('value ACTION PROCESSED:value');
         });
