@@ -1,4 +1,12 @@
-import stack from "@peter.naydenov/stack"
+/**
+ * Factory for the action-supply generator. Receives the stack library through
+ * the dependency object - this module performs no imports.
+ *
+ * @param {object} deps
+ * @param {Function} deps.stack - @peter.naydenov/stack factory
+ * @returns {Function} The _actionSupply generator function
+ */
+function _actionSupplyFactory ({ stack }) {
 
 
 
@@ -26,10 +34,11 @@ function* _actionSupply ( act, level ) {
     while ( action && !action.isEmpty () ) {
                     let newAct = yield action.pull ()
                     if ( newAct )  action.push ( newAct )
-            }                        
-} // _actionSupply func.
+            }
+    } // _actionSupply func.
 
 
-export default _actionSupply
+return _actionSupply
+} // _actionSupplyFactory func.
 
-
+export default _actionSupplyFactory

@@ -1,5 +1,14 @@
-import _defineDataType from "./_defineType.js"
-import walk from '@peter.naydenov/walk'
+/**
+ * Factory for the 'mix' action handler. Receives its dependencies through
+ * the dependency object - this module performs no imports.
+ *
+ * @param {object} deps
+ * @param {Function} deps._defineDataType - Data type classifier
+ * @param {Function} deps.walk - @peter.naydenov/walk factory
+ * @param {Function} deps.missingHelper - Error-string builder for unavailable helpers
+ * @returns {Function} The actionMix function
+ */
+function actionMixFactory ({ _defineDataType, walk, missingHelper }) {
 
 
 
@@ -46,7 +55,7 @@ function actionMix ({ name }, theData, { helpers, extendArguments, nestedData, l
             // Errors as values: a missing helper becomes the placeholder's
             // value instead of crashing the whole render.
             if ( !helpers[name] ) {
-                    nestedData[level] = `( Error: Helper '${name}' is not available )`
+                    nestedData[level] = missingHelper ( name )
                     return
                 }
             const val = helpers[name] ({ data: theData, ...extendArguments, full: theData, useHelper: useHelper ( theData ) })
@@ -61,10 +70,10 @@ function actionMix ({ name }, theData, { helpers, extendArguments, nestedData, l
                         break
                 } // switch valType
         }
-} // actionMix func.
+    } // actionMix func.
 
 
+return actionMix
+} // actionMixFactory func.
 
-export default actionMix
-
-
+export default actionMixFactory

@@ -1,10 +1,20 @@
-import _defineData     from "./_defineData.js"
-import _defineDataType from "./_defineType.js"
-import _actionSupply   from "./_actionSupply.js"
-import _setupActions   from "./_setupActions.js"
-import executeActions  from "./executeActions.js"
-import render          from "./render.js"
-import { escapeHtml, neutralizeTags } from "./_escape.js"
+/**
+ * Factory for the placeholder processor - the rendering core. Receives its
+ * dependencies through the dependency object - this module performs no imports.
+ *
+ * @param {object} deps
+ * @param {Function} deps._defineData - Data-definition step
+ * @param {Function} deps._defineDataType - Data type classifier
+ * @param {Function} deps._actionSupply - Action supplier generator
+ * @param {Function} deps._setupActions - Action-chain parser
+ * @param {Function} deps.executeActions - Action executor
+ * @param {Function} deps.render - Helper/template renderer
+ * @param {Function} deps.escapeHtml - HTML escaper for data-only placeholders
+ * @param {Function} deps.neutralizeTags - Placeholder-tag neutralizer ('curry' renders)
+ * @param {Function} deps.missingHelper - Error-string builder for unavailable helpers
+ * @returns {Function} The processPlaceholders function
+ */
+function processPlaceholdersFactory ({ _defineData, _defineDataType, _actionSupply, _setupActions, executeActions, render, escapeHtml, neutralizeTags, missingHelper }) {
 
 /**
  * Processes placeholders in the template with provided data and context.
@@ -36,7 +46,7 @@ function processPlaceholders ({ d, chop, placeholders, original, helpers, depend
                   targetFn = helpers[targetName]
                 , isCompiledTemplate = targetFn  &&  typeof targetFn === 'function'  &&  targetFn.__isMorphTemplate === true
                 ;
-            if ( !targetFn )   return `( Error: Helper '${targetName}' is not available )`
+            if ( !targetFn )   return missingHelper ( targetName )
 
             if ( isCompiledTemplate ) {
                     try   { return targetFn ( 'render', targetData || currentData, dependencies ) }
@@ -70,13 +80,15 @@ function processPlaceholders ({ d, chop, placeholders, original, helpers, depend
                     let info = currentDElement;
 
                     // Data resolution. A name with '/' is a breadcrumb path into the data,
-                    // unless the data has it as a literal key. Missing or null steps resolve to [].
+                    // unless the data has it as a literal key. Missing or null steps
+                    // resolve to null - a missing value keeps the placeholder raw.
+                    // (An explicitly provided empty array still renders as ''.)
                     if ( data && data.includes ( '/' )) {
                             if ( info != null  &&  info.hasOwnProperty ( data ))   info = info[data]
                             else {
                                     data.split ( '/' ).forEach ( step => {
                                             if ( info != null  &&  info.hasOwnProperty ( step ))   info = info[step]
-                                            else                                                   info = []
+                                            else                                                   info = null
                                         })
                                 }
                         }
@@ -95,7 +107,11 @@ function processPlaceholders ({ d, chop, placeholders, original, helpers, depend
                                         place ( holder, info )
                                         break
                                 case 'array':
-                                        if ( _defineDataType ( info[0] ) === 'primitive' )   place ( holder, info[0] )
+                                        // One rule everywhere: an array placeholder
+                                        // renders as its elements joined - same as
+                                        // the action-chain and mix paths below.
+                                        if ( _defineDataType ( info[0] ) === 'object' )   place ( holder, info.map ( x => x.text ).join ( '' ))
+                                        else                                              place ( holder, info.join ( '' ))
                                         break
                                 case 'object':
                                         // Match the action-chain path and the
@@ -150,10 +166,10 @@ function processPlaceholders ({ d, chop, placeholders, original, helpers, depend
         }) // forEach d
 
     return endData
-} // processPlaceholders func.
+    } // processPlaceholders func.
 
 
+return processPlaceholders
+} // processPlaceholdersFactory func.
 
-export default processPlaceholders
-
-
+export default processPlaceholdersFactory

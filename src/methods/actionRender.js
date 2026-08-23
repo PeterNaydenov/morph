@@ -1,5 +1,13 @@
-import _defineDataType from "./_defineType.js"
-import render from "./render.js"
+/**
+ * Factory for the 'render' action handler. Receives its dependencies through
+ * the dependency object - this module performs no imports.
+ *
+ * @param {object} deps
+ * @param {Function} deps._defineDataType - Data type classifier
+ * @param {Function} deps.render - Helper/template renderer
+ * @returns {Function} The actionRender function
+ */
+function actionRenderFactory ({ _defineDataType, render }) {
 
 
 
@@ -11,6 +19,9 @@ import render from "./render.js"
  *   - primitive results replace the data item;
  *   - object data receives the result as its 'text' property;
  *   - a null result marks the item as null, so later steps can skip it.
+ *
+ * Note: bare functions as data never reach this switch — they are resolved
+ * (called) in processPlaceholders before actions execute.
  *
  * @param {object} step - Action step: { name } is the helper name
  * @param {any} theData - Current data item from the level slice
@@ -33,9 +44,6 @@ function actionRender ({ name }, theData, { helpers, original, dependencies, use
                         else                                             theData[i] = text
                     })
                 break
-        case 'function':
-                nestedData[level] = callHelper ( theData (), theData )
-                break
         case 'primitive':
                 if ( isRenderFunction )   nestedData[level] = callHelper ( theData, theData )
                 else                      nestedData[level] = render ( theData, name, helpers, original, dependencies )
@@ -44,11 +52,11 @@ function actionRender ({ name }, theData, { helpers, original, dependencies, use
                 if ( isRenderFunction )   theData['text'] = callHelper ( theData, theData )
                 else                      theData['text'] = render ( theData, name, helpers, original, dependencies )
                 break
-    } // switch dataType
-} // actionRender func.
+        } // switch dataType
+    } // actionRender func.
 
 
+return actionRender
+} // actionRenderFactory func.
 
-export default actionRender
-
-
+export default actionRenderFactory

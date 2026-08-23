@@ -1,13 +1,18 @@
-import _readTemplate       from "./_readTemplate.js"
-import _defineDataType     from "./_defineType.js"
-import walk                from '@peter.naydenov/walk'
-import processPlaceholders from './processPlaceholders.js'
-import {
-           handleDebug
-         , handleSet
-         , handleSnippets } from './processCommands.js'
-
-
+/**
+ * Factory for the template builder - the heart of the engine. Receives its
+ * dependencies through the dependency object - this module performs no imports.
+ *
+ * @param {object} deps
+ * @param {Function} deps._readTemplate - Template reader/validator
+ * @param {Function} deps._defineDataType - Data type classifier
+ * @param {Function} deps.walk - @peter.naydenov/walk factory (deep copy)
+ * @param {Function} deps.processPlaceholders - The rendering core
+ * @param {Function} deps.handleDebug - 'debug' command handler
+ * @param {Function} deps.handleSet - 'set' command handler
+ * @param {Function} deps.handleSnippets - Snippets-selection parser
+ * @returns {Function} The build function
+ */
+function buildFactory ({ _readTemplate, _defineDataType, walk, processPlaceholders, handleDebug, handleSet, handleSnippets }) {
 /**
  * @callback UseHelperFn
  * @param {string} name - Name of the helper to call.
@@ -155,10 +160,10 @@ function build ( tpl, extra = false, buildDependencies = {}) {
         success.__isMorphTemplate = true
 
         return extra ? [ true, success ] : success
-} // build func.
+    } // build func.
 
 
+return build
+} // buildFactory func.
 
-export default build
-
-
+export default buildFactory

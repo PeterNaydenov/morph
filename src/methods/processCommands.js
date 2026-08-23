@@ -1,4 +1,13 @@
-import { escapeHelper } from './_escape.js'
+/**
+ * Factory for the template command handlers ('debug', 'set', 'snippets').
+ * Receives its dependencies through the dependency object - this module
+ * performs no imports.
+ *
+ * @param {object} deps
+ * @param {Function} deps.escapeHelper - Built-in 'escape' helper (listed by debug instruction 'helpers')
+ * @returns {{ handleDebug: Function, handleSet: Function, handleSnippets: Function }}
+ */
+function processCommandsFactory ({ escapeHelper }) {
 
 /**
  * Handles debug commands for template inspection.
@@ -101,4 +110,7 @@ function handleSnippets(command, snippets) {
     return selected
 }
 
-export { handleDebug, handleSet, handleSnippets }
+return { handleDebug, handleSet, handleSnippets }
+} // processCommandsFactory func.
+
+export default processCommandsFactory

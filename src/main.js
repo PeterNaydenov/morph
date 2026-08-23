@@ -12,17 +12,114 @@
  */
 
 /**
+ * Composition root - THE single place where all imports happen. Every module
+ * under ./methods/ is a factory that receives its dependencies through one
+ * dependency object; nothing else in the library performs an import. Swap any
+ * entry of the `deps` object to mock it - no testing library required.
+ */
+
+// External libraries
+import stack    from '@peter.naydenov/stack'
+import walk     from '@peter.naydenov/walk'
+
+// Pure utilities (no imports inside)
+import settings         from './methods/settings.js'
+import _chopTemplate    from './methods/_chopTemplates.js'
+import _defineDataType  from './methods/_defineType.js'
+import { missingHelper } from './methods/_errors.js'
+import { actionSave, actionOverwrite } from './methods/actionSave.js'
+import _setupActions    from './methods/_setupActions.js'
+import actionExtendedRender from './methods/actionExtendedRender.js'
+
+// Factories (receive their dependencies below)
+import _escapeFactory               from './methods/_escape.js'
+import _actionSupplyFactory         from './methods/_actionSupply.js'
+import _defineDataFactory           from './methods/_defineData.js'
+import _readTemplateFactory         from './methods/_readTemplate.js'
+import _renderHolderFactory         from './methods/_renderHolder.js'
+import renderFactory                from './methods/render.js'
+import actionDataFactory            from './methods/actionData.js'
+import actionMixFactory             from './methods/actionMix.js'
+import actionRenderFactory          from './methods/actionRender.js'
+import executeActionsFactory        from './methods/executeActions.js'
+import processCommandsFactory       from './methods/processCommands.js'
+import processPlaceholdersFactory   from './methods/processPlaceholders.js'
+import buildFactory                 from './methods/build.js'
+
+
+
+// Wiring - dependency order: leaves first, consumers after them
+const deps = { settings, stack, walk, _defineDataType, missingHelper, _setupActions }
+
+Object.assign ( deps, _escapeFactory ({ settings }) )                       // escapeHtml, escapeHelper, neutralizeTags, restoreTags
+
+deps._actionSupply      = _actionSupplyFactory ({ stack })
+deps._defineData        = _defineDataFactory ({ walk })
+deps._chopTemplate      = _chopTemplate                                     // takes settings as its argument
+deps._renderHolder      = _renderHolderFactory ({ _chopTemplate: deps._chopTemplate, settings })
+deps.render             = renderFactory ({ _renderHolder: deps._renderHolder, missingHelper })
+deps.actionData         = actionDataFactory ({ _defineDataType, missingHelper })
+deps.actionMix          = actionMixFactory ({ _defineDataType, walk, missingHelper })
+deps.actionRender       = actionRenderFactory ({ _defineDataType, render: deps.render })
+deps.actionSave         = actionSave
+deps.actionOverwrite    = actionOverwrite
+deps.actionExtendedRender = actionExtendedRender
+deps.executeActions     = executeActionsFactory (deps)
+
+const { handleDebug, handleSet, handleSnippets } = processCommandsFactory ({ escapeHelper: deps.escapeHelper })
+
+deps.processPlaceholders = processPlaceholdersFactory ({
+                                  _defineData       : deps._defineData
+                                , _defineDataType
+                                , _actionSupply     : deps._actionSupply
+                                , _setupActions
+                                , executeActions    : deps.executeActions
+                                , render            : deps.render
+                                , escapeHtml        : deps.escapeHtml
+                                , neutralizeTags    : deps.neutralizeTags
+                                , missingHelper
+                            })
+
+const build = buildFactory ({
+                                  _readTemplate       : _readTemplateFactory (deps)
+                                , _defineDataType
+                                , walk
+                                , processPlaceholders : deps.processPlaceholders
+                                , handleDebug
+                                , handleSet
+                                , handleSnippets
+                            })
+
+
+
+/**
  * @typedef {import('./methods/build.js').Template} Template
  * @typedef {import('./methods/build.js').RenderFn} RenderFn
  * @typedef {(() => string) & { isError: true }} MorphErrorFn - Error function returned by get() on a miss. Callable - returns the error message; carries an `isError` marker for detection before rendering.
  */
 
 
-import build from "./methods/build.js"
-
-
-
 const storage = { default: {} };
+
+
+
+/**
+ * The single source of the location-argument contract shared by get(), add()
+ * and remove(): a plain string is shorthand for a template in the 'default'
+ * storage, an array is [name, storageName?].
+ *
+ * @param {string|string[]} location - Raw location argument
+ * @returns {[string, string]|null} [name, storageName] with 'default' as the
+ *   fallback storage, or null when the argument type is invalid.
+ */
+function normalizeLocation ( location ) {
+    const loc = ( typeof location === 'string' )  ?  [ location ]  :  location
+    if ( !(loc instanceof Array) )   return null
+    const [ name, strName='default' ] = loc
+    return [ name, strName ]
+} // normalizeLocation func.
+
+const LOCATION_ERROR = `Error: Argument "location" must be a string or an array. E.g. "templateName" or ["templateName", "storageName"].`
 
 
 
@@ -60,11 +157,9 @@ function get ( location ) {
     // Error stubs carry an 'isError' marker so callers can detect a miss
     // before rendering. Real templates never have this property.
     const errorFn = message => Object.assign ( () => message, { isError: true })
-    if ( typeof location === 'string' )   location = [ location ]
-    if ( !(location instanceof Array) ) {
-                return errorFn ( `Error: Argument "location" must be a string or an array. E.g. "templateName" or ["templateName", "storageName"].` )
-        }
-    const [prop, strName='default'] = location;
+    const loc = normalizeLocation ( location )
+    if ( !loc )   return errorFn ( LOCATION_ERROR )
+    const [ prop, strName ] = loc
     if ( !storage[strName] )
             return errorFn ( `Error: Storage "${strName}" does not exist.` )
     if ( !storage[strName][prop] )
@@ -105,15 +200,14 @@ function get ( location ) {
  * });
  */
 function add ( location, tplfn, ...args ) {
-    if ( typeof location === 'string' )   location = [ location ]
-    if ( !(location instanceof Array) ) {
-            // Mirror get()'s validation. Without this, destructuring a string
-            // would silently store the template under a wrong name/storage
-            // (e.g. add(42, ...) would try storage '2' as name '4').
-            console.error ( `Error: Argument "location" must be a string or an array. E.g. "templateName" or ["templateName", "storageName"].` )
+    const loc = normalizeLocation ( location )
+    if ( !loc ) {
+            // Invalid types are reported - a raw value would destructure into
+            // wrong name/storage (e.g. 42 would try storage '2' as name '4').
+            console.error ( LOCATION_ERROR )
             return
         }
-    const [ name, strName='default'] = location
+    const [ name, strName ] = loc
     if ( tplfn == null )  {
             console.warn ( `Warning: Template ${strName}/${name} is not added to storage. The template is null.` )
             return
@@ -205,10 +299,9 @@ function clear ( ) {
  * remove(['myTemplate', 'customStorage']);
  */
 function remove ( location ) {
-    if ( typeof location === 'string' )   location = [ location ]
-    if ( !(location instanceof Array) )
-            return `Error: Argument "location" must be a string or an array. E.g. "templateName" or ["templateName", "storageName"].`
-    const [name, strName='default'] = location;
+    const loc = normalizeLocation ( location )
+    if ( !loc )   return LOCATION_ERROR
+    const [name, strName] = loc;
     if ( !storage[strName]       )   return `Error: Storage "${strName}" does not exist.`
     if ( !storage[strName][name] )   return `Error: Template "${name}" does not exist in storage "${strName}".`
     delete storage[strName][name]

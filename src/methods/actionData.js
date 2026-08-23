@@ -1,4 +1,13 @@
-import _defineDataType from "./_defineType.js"
+/**
+ * Factory for the 'data' action handler. Receives its dependencies through
+ * the dependency object - this module performs no imports.
+ *
+ * @param {object} deps
+ * @param {Function} deps._defineDataType - Data type classifier
+ * @param {Function} deps.missingHelper - Error-string builder for unavailable helpers
+ * @returns {Function} The actionData function
+ */
+function actionDataFactory ({ _defineDataType, missingHelper }) {
 
 
 
@@ -22,7 +31,7 @@ function actionData ({ name }, theData, { helpers, extendArguments, nestedData, 
     // Errors as values: a missing helper becomes the placeholder's value
     // instead of crashing the whole render.
     if ( !helpers[name] ) {
-            nestedData[level] = `( Error: Helper '${name}' is not available )`
+            nestedData[level] = missingHelper ( name )
             return
         }
     const callHelper = ( data, full, uhContext ) => helpers[name] ({ data, ...extendArguments, full, useHelper: useHelper ( uhContext ) })
@@ -40,11 +49,11 @@ function actionData ({ name }, theData, { helpers, extendArguments, nestedData, 
         case 'primitive':
                 nestedData[level] = callHelper ( theData, theData, theData )
                 break
-    } // switch dataType
-} // actionData func.
+        } // switch dataType
+    } // actionData func.
 
 
+return actionData
+} // actionDataFactory func.
 
-export default actionData
-
-
+export default actionDataFactory

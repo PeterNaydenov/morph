@@ -1,5 +1,3 @@
-import settings from "./settings.js"
-
 const
       ESCAPE_MAP = {
                       '&'  : '&amp;'
@@ -13,6 +11,16 @@ const
     , NEUTRAL_PRX = '\u0000{'
     , NEUTRAL_SFX = '\u0000}'
     ;
+
+/**
+ * Factory for the escape utilities. Receives the engine settings (placeholder
+ * delimiters) through the dependency object - this module performs no imports.
+ *
+ * @param {object} deps
+ * @param {object} deps.settings - Template delimiters ({@link module:settings})
+ * @returns {{ escapeHtml: Function, escapeHelper: Function, neutralizeTags: Function, restoreTags: Function }}
+ */
+function _escapeFactory ({ settings }) {
 
 
 
@@ -70,7 +78,7 @@ function restoreTags ( part ) {
 } // restoreTags func.
 
 
+return { escapeHtml, escapeHelper, neutralizeTags, restoreTags }
+} // _escapeFactory func.
 
-export { escapeHtml, escapeHelper, neutralizeTags, restoreTags }
-
-
+export default _escapeFactory

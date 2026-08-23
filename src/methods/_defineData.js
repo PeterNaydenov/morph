@@ -1,4 +1,12 @@
-import walk from '@peter.naydenov/walk'
+/**
+ * Factory for the data-definition step. Receives the walk library through the
+ * dependency object - this module performs no imports.
+ *
+ * @param {object} deps
+ * @param {Function} deps.walk - @peter.naydenov/walk factory
+ * @returns {Function} The _defineData function
+ */
+function _defineDataFactory ({ walk }) {
 
 
 
@@ -72,10 +80,10 @@ function findObjects ({key, value, breadcrumbs}) {
 
     walk ({ data:d, objectCallback:findObjects })
     return { dataDeepLevel, nestedData }
-} // _defineData func.
+    } // _defineData func.
 
 
+return _defineData
+} // _defineDataFactory func.
 
-export default _defineData
-
-
+export default _defineDataFactory

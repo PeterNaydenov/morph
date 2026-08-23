@@ -1,5 +1,13 @@
-import _chopTemplate from './_chopTemplates.js'
-import settings from './settings.js'
+/**
+ * Factory for the simple-template renderer. Receives its dependencies through
+ * the dependency object - this module performs no imports.
+ *
+ * @param {object} deps
+ * @param {Function} deps._chopTemplate - Template chopping function
+ * @param {object} deps.settings - Template delimiters
+ * @returns {Function} The _renderHolder function
+ */
+function _renderHolderFactory ({ _chopTemplate, settings }) {
 
 
 
@@ -39,10 +47,10 @@ function _renderHolder ( template, data ) {
                 } // if isPlaceholder
         }) // forEach chop
     return chop.join ( '' )
-} // _renderHolder func.
+    } // _renderHolder func.
 
 
+return _renderHolder
+} // _renderHolderFactory func.
 
-export default _renderHolder
-
-
+export default _renderHolderFactory

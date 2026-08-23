@@ -1,5 +1,14 @@
 
-import _renderHolder from './_renderHolder.js'
+/**
+ * Factory for the helper/template renderer. Receives its dependencies through
+ * the dependency object - this module performs no imports.
+ *
+ * @param {object} deps
+ * @param {Function} deps._renderHolder - Simple-template renderer (string helpers)
+ * @param {Function} deps.missingHelper - Error-string builder for unavailable helpers
+ * @returns {Function} The render function
+ */
+function renderFactory ({ _renderHolder, missingHelper }) {
 
 
 
@@ -17,7 +26,7 @@ import _renderHolder from './_renderHolder.js'
  */
 function render ( theData, name, helpers, original, dependencies, ...args ) {
         const useHelper = ( targetName, targetData ) => render ( targetData || theData, targetName, helpers, original, dependencies, ...args )
-        if ( !helpers[name] )   return `( Error: Helper '${name}' is not available )`
+        if ( !helpers[name] )   return missingHelper ( name )
 
         const isRenderFunction = typeof helpers[name] === 'function';
         if ( isRenderFunction )   return helpers[name] ({ data: theData, dependencies, full: original, useHelper }, ...args )
@@ -25,8 +34,10 @@ function render ( theData, name, helpers, original, dependencies, ...args ) {
         // String helpers are mini templates. Wrap primitives, so the template can address them as {{ text }}.
         const dataForHolder = ( typeof theData === 'object'  &&  theData !== null )  ?  theData  :  { text: theData }
         return _renderHolder ( helpers[name], dataForHolder )
-} // render func.
+    } // render func.
 
 
+return render
+} // renderFactory func.
 
-export default render
+export default renderFactory

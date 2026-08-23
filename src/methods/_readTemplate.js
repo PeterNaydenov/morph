@@ -1,6 +1,15 @@
-import settings from "./settings.js";
-import _chopTemplate from "./_chopTemplates.js"
-import { escapeHelper, restoreTags } from "./_escape.js"
+/**
+ * Factory for the template reader. Receives its dependencies through the
+ * dependency object - this module performs no imports.
+ *
+ * @param {object} deps
+ * @param {object} deps.settings - Template delimiters
+ * @param {Function} deps._chopTemplate - Template chopping function
+ * @param {Function} deps.escapeHelper - Built-in 'escape' helper
+ * @param {Function} deps.restoreTags - Restores neutralized placeholder tags
+ * @returns {Function} The _readTemplate function
+ */
+function _readTemplateFactory ({ settings, _chopTemplate, escapeHelper, restoreTags }) {
 
 
 
@@ -98,10 +107,10 @@ function _readTemplate ( tpl ) {
             , snippets
             , escape
             }
-} // _readTemplate func.
+    } // _readTemplate func.
 
 
+return _readTemplate
+} // _readTemplateFactory func.
 
-export default _readTemplate
-
-
+export default _readTemplateFactory

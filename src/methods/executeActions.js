@@ -1,11 +1,21 @@
-import actionRender                    from './actionRender.js'
-import actionData                      from './actionData.js'
-import actionMix                       from './actionMix.js'
-import actionExtendedRender            from './actionExtendedRender.js'
-import { actionSave, actionOverwrite } from './actionSave.js'
+/**
+ * Factory for the action executor. Receives the action handlers through the
+ * dependency object - this module performs no imports.
+ *
+ * @param {object} deps
+ * @param {Function} deps.actionRender - 'render' handler
+ * @param {Function} deps.actionData - '>' handler
+ * @param {Function} deps.actionMix - '[]' handler
+ * @param {Function} deps.actionExtendedRender - '+' handler
+ * @param {Function} deps.actionSave - '^name' handler
+ * @param {Function} deps.actionOverwrite - '^^' handler
+ * @returns {Function} The executeActions function
+ */
+function executeActionsFactory ({ actionRender, actionData, actionMix, actionExtendedRender, actionSave, actionOverwrite }) {
 
 
 
+/**
 /**
  * Executes the action chain of a placeholder over the prepared nested data.
  *
@@ -75,10 +85,10 @@ function executeActions ({ nestedData, actSetup, helpers, original, dependencies
         } // for actSetup
 
     return currentDElement
-} // executeActions func.
+    } // executeActions func.
 
 
+return executeActions
+} // executeActionsFactory func.
 
-export default executeActions
-
-
+export default executeActionsFactory
