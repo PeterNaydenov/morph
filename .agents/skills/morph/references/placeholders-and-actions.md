@@ -34,7 +34,10 @@ into three optional parts separated by `:`:
 2. `@all` and `@root` resolve to the current data context (not the call
    root). With nested `{{ @all : ... }}` inside a list iteration, the
    `@all` is the current item, not the call.
-3. Missing or null intermediate steps resolve to `[]`, not `undefined`.
+3. Missing or null intermediate steps resolve to `null` — the placeholder
+   stays **raw** in the output, so template authors can spot typos.
+   (An explicitly provided empty array renders as `''`; a non-empty
+   array renders as its elements joined.)
 4. Reserved prefix characters (`>`, `+`, `^`, `[`) at the start of a data
    source name are not interpreted as action prefixes — the parser knows
    the data source is the first `:`-delimited segment, not the prefix.
