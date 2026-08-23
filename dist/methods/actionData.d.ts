@@ -5,6 +5,11 @@
  * Function data provides its value by being called. The uncalled item stays
  * available to the helper as the 'full' argument.
  *
+ * Note: bare functions as data never reach this switch — they are resolved
+ * (called) in processPlaceholders before actions execute. Functions nested
+ * inside objects/arrays are not supported (see `structuredClone` in
+ * _defineData).
+ *
  * @param {object} step - Action step: { name } is the helper name
  * @param {any} theData - Current data item from the level slice
  * @param {object} context - Execution context (see executeActions.js)
