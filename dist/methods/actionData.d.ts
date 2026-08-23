@@ -1,18 +1,14 @@
 /**
- * Action 'data' ('>'). Calls the named helper to transform the data before
- * rendering. The result replaces the level data.
+ * Factory for the 'data' action handler. Receives its dependencies through
+ * the dependency object - this module performs no imports.
  *
- * Function data provides its value by being called. The uncalled item stays
- * available to the helper as the 'full' argument.
- *
- * Note: bare functions as data never reach this switch — they are resolved
- * (called) in processPlaceholders before actions execute. Functions nested
- * inside objects/arrays are not supported (see `structuredClone` in
- * _defineData).
- *
- * @param {object} step - Action step: { name } is the helper name
- * @param {any} theData - Current data item from the level slice
- * @param {object} context - Execution context (see executeActions.js)
+ * @param {object} deps
+ * @param {Function} deps._defineDataType - Data type classifier
+ * @param {Function} deps.missingHelper - Error-string builder for unavailable helpers
+ * @returns {Function} The actionData function
  */
-declare function actionData({ name }: object, theData: any, { helpers, extendArguments, nestedData, level, useHelper }: object): void;
-export default actionData;
+declare function actionDataFactory({ _defineDataType, missingHelper }: {
+    _defineDataType: Function;
+    missingHelper: Function;
+}): Function;
+export default actionDataFactory;

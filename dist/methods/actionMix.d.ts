@@ -1,17 +1,15 @@
 /**
- * Action 'mix' ('[]'). Merges the level data into a single value.
+ * Factory for the 'mix' action handler. Receives its dependencies through
+ * the dependency object - this module performs no imports.
  *
- * Anonymous mix ('[]', no helper name):
- *   - array  : joins all items (or their 'text' property) into one string;
- *   - object : publishes the 'text' results to the upper data levels,
- *              matching values by their breadcrumb keys.
- *
- * Named mix ('[]helperName'): the helper receives the data and produces
- * the merged value itself.
- *
- * @param {object} step - Action step: { name } is the helper name ('' for anonymous mix)
- * @param {any} theData - Current data item from the level slice
- * @param {object} context - Execution context (see executeActions.js)
+ * @param {object} deps
+ * @param {Function} deps._defineDataType - Data type classifier
+ * @param {Function} deps.walk - @peter.naydenov/walk factory
+ * @param {Function} deps.missingHelper - Error-string builder for unavailable helpers
+ * @returns {Function} The actionMix function
  */
-declare function actionMix({ name }: object, theData: any, { helpers, extendArguments, nestedData, level, useHelper }: object): void;
-export default actionMix;
+declare function actionMixFactory({ _defineDataType, walk, missingHelper }: {
+    _defineDataType: Function;
+    walk: Function;
+}): Function;
+export default actionMixFactory;

@@ -1,14 +1,14 @@
 /**
- * Renders a helper or template with the provided data and context.
+ * Factory for the helper/template renderer. Receives its dependencies through
+ * the dependency object - this module performs no imports.
  *
- * @param {any} theData - The data to process.
- * @param {string} name - The name of the helper or template to render.
- * @param {object} helpers - Dictionary of available helpers.
- * @param {any} original - The full original data context.
- * @param {object} dependencies - injected dependencies.
- * @param {...any} args - Additional arguments.
- *
- * @returns {any} The result of the rendering process, or an error string if the helper is not available.
+ * @param {object} deps
+ * @param {Function} deps._renderHolder - Simple-template renderer (string helpers)
+ * @param {Function} deps.missingHelper - Error-string builder for unavailable helpers
+ * @returns {Function} The render function
  */
-declare function render(theData: any, name: string, helpers: object, original: any, dependencies: object, ...args: any[]): any;
-export default render;
+declare function renderFactory({ _renderHolder, missingHelper }: {
+    _renderHolder: Function;
+    missingHelper: Function;
+}): Function;
+export default renderFactory;

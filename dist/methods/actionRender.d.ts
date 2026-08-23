@@ -1,15 +1,14 @@
 /**
- * Action 'render'. Renders the current data item with the named helper and
- * writes the result back into the data slice.
+ * Factory for the 'render' action handler. Receives its dependencies through
+ * the dependency object - this module performs no imports.
  *
- * Write-back rules:
- *   - primitive results replace the data item;
- *   - object data receives the result as its 'text' property;
- *   - a null result marks the item as null, so later steps can skip it.
- *
- * @param {object} step - Action step: { name } is the helper name
- * @param {any} theData - Current data item from the level slice
- * @param {object} context - Execution context (see executeActions.js)
+ * @param {object} deps
+ * @param {Function} deps._defineDataType - Data type classifier
+ * @param {Function} deps.render - Helper/template renderer
+ * @returns {Function} The actionRender function
  */
-declare function actionRender({ name }: object, theData: any, { helpers, original, dependencies, useHelper, extendArguments, nestedData, level }: object): void;
-export default actionRender;
+declare function actionRenderFactory({ _defineDataType, render }: {
+    _defineDataType: Function;
+    render: Function;
+}): Function;
+export default actionRenderFactory;

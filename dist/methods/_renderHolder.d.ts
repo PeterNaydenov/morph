@@ -1,17 +1,14 @@
 /**
- * Renders a simple template by replacing placeholders with data values.
+ * Factory for the simple-template renderer. Receives its dependencies through
+ * the dependency object - this module performs no imports.
  *
- * Processes templates with basic placeholder substitution without actions or helpers.
- * Only supports direct field replacement from the data object.
- *
- * @param {string} template - Template string with placeholders
- * @param {object} data - Data object containing values for placeholder replacement
- *
- * @returns {string|null} Rendered template string or null if data is null
- *
- * @example
- * const result = _renderHolder('Hello {{name}}!', { name: 'World' });
- * // Returns: 'Hello World!'
+ * @param {object} deps
+ * @param {Function} deps._chopTemplate - Template chopping function
+ * @param {object} deps.settings - Template delimiters
+ * @returns {Function} The _renderHolder function
  */
-declare function _renderHolder(template: string, data: object): string | null;
-export default _renderHolder;
+declare function _renderHolderFactory({ _chopTemplate, settings }: {
+    _chopTemplate: Function;
+    settings: object;
+}): Function;
+export default _renderHolderFactory;

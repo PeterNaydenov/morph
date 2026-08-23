@@ -1,27 +1,18 @@
 /**
- * Parses and validates a template description object.
+ * Factory for the template reader. Receives its dependencies through the
+ * dependency object - this module performs no imports.
  *
- * Extracts placeholders, validates helpers, and prepares template for building.
- *
- * @param {object} tpl - Template description object
- * @param {string} tpl.template - Template string with placeholders
- * @param {object} [tpl.helpers={}] - Optional helper functions
- * @param {object} [tpl.handshake] - Optional example data
- * @param {boolean} [tpl.escape=false] - Optional. HTML-escape the output of data-only placeholders
- *
- * @returns {object} Template parsing result containing:
- *   - hasError: Error message or null
- *   - placeholders: Array of placeholder objects
- *   - chop: Array of template parts
- *   - helpers: Helper functions object (includes the built-in 'escape' helper)
- *   - handshake: Example data object
- *   - snippets: Object mapping snippet names to placeholders
- *   - escape: Escape flag of the template
+ * @param {object} deps
+ * @param {object} deps.settings - Template delimiters
+ * @param {Function} deps._chopTemplate - Template chopping function
+ * @param {Function} deps.escapeHelper - Built-in 'escape' helper
+ * @param {Function} deps.restoreTags - Restores neutralized placeholder tags
+ * @returns {Function} The _readTemplate function
  */
-declare function _readTemplate(tpl: {
-    template: string;
-    helpers?: object;
-    handshake?: object;
-    escape?: boolean;
-}): object;
-export default _readTemplate;
+declare function _readTemplateFactory({ settings, _chopTemplate, escapeHelper, restoreTags }: {
+    settings: object;
+    _chopTemplate: Function;
+    escapeHelper: Function;
+    restoreTags: Function;
+}): Function;
+export default _readTemplateFactory;

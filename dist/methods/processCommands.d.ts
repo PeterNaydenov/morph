@@ -1,50 +1,17 @@
 /**
- * Handles debug commands for template inspection.
+ * Factory for the template command handlers ('debug', 'set', 'snippets').
+ * Receives its dependencies through the dependency object - this module
+ * performs no imports.
  *
- * @param {string} d - Debug instruction
- * @param {object} context - Context object
- * @param {object} context.handshake - Example data
- * @param {object} context.helpers - Helper functions
- * @param {array} context.placeholders - Placeholder definitions
- * @param {array} context.cuts - Chopped template parts
- * @returns {any} Debug result or error message
+ * @param {object} deps
+ * @param {Function} deps.escapeHelper - Built-in 'escape' helper (listed by debug instruction 'helpers')
+ * @returns {{ handleDebug: Function, handleSet: Function, handleSnippets: Function }}
  */
-declare function handleDebug(d: string, { handshake, helpers, placeholders, cuts }: {
-    handshake: object;
-    helpers: object;
-    placeholders: any[];
-    cuts: any[];
-}): any;
-/**
- * Handles the 'set' command to modify template properties.
- *
- * @param {object} d - Modification data
- * @param {object} context - Context object
- * @param {object} context.helpers - Current helper functions
- * @param {object} context.handshake - Current handshake data
- * @param {array} context.placeholders - Current placeholders
- * @param {array} context.chop - Current chopped template
- * @param {function} context.build - Build function
- * @param {object} context.buildDependencies - Build dependencies
- * @param {boolean} [context.escape] - Escape flag of the template
- * @returns {function} Modified template function
- */
-declare function handleSet(d: object, { helpers, handshake, placeholders, chop, build, buildDependencies, escape }: {
-    helpers: object;
-    handshake: object;
-    placeholders: any[];
-    chop: any[];
-    build: Function;
-    buildDependencies: object;
-    escape?: boolean;
-}): Function;
-/**
- * Handles snippets command to select specific placeholders.
- *
- * @param {string} command - Snippets command ('snippets' or 'snippets: a, b')
- * @param {object} snippets - Snippets mapping (by index and by name)
- * @returns {array|null|string} Selected placeholders, null for 'all snippets',
- *   or an error message when the selection is malformed or unknown.
- */
-declare function handleSnippets(command: string, snippets: object): any[] | null | string;
-export { handleDebug, handleSet, handleSnippets };
+declare function processCommandsFactory({ escapeHelper }: {
+    escapeHelper: Function;
+}): {
+    handleDebug: Function;
+    handleSet: Function;
+    handleSnippets: Function;
+};
+export default processCommandsFactory;

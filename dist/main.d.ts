@@ -16,12 +16,6 @@ export type MorphErrorFn = (() => string) & {
     isError: true;
 };
 /**
- * @typedef {import('./methods/build.js').Template} Template
- * @typedef {import('./methods/build.js').RenderFn} RenderFn
- * @typedef {(() => string) & { isError: true }} MorphErrorFn - Error function returned by get() on a miss. Callable - returns the error message; carries an `isError` marker for detection before rendering.
- */
-import build from "./methods/build.js";
-/**
  * Retrieves a template from storage.
  *
  * A plain string is accepted as shorthand for a template in the 'default' storage.
@@ -134,7 +128,7 @@ declare function clear(): void;
  */
 declare function remove(location: string | string[]): void | string;
 declare const morphAPI: {
-    build: typeof build;
+    build: Function;
     get: typeof get;
     add: typeof add;
     list: typeof list;
