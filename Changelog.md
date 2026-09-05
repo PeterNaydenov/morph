@@ -2,6 +2,14 @@
 
 
 
+### 3.9.0 (2026-09-05)
+- [x] Feature: Added a skill at `skills/git-morph/SKILL.md`;
+- [x] Dependency update. @peter.naydenov/walk - v.6.1.0;
+- [x] Dev dependencies update. Vitest - v.5.0.0;
+
+
+
+
 ### 3.8.0 (2026-08-23)
 - [x] Code: Refactoring. Dead code removed and readability improved across all methods. No API changes;
 - [x] Code: Dependency object shared accross the methods. Now used by all methods;
