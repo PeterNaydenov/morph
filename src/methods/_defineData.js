@@ -1,3 +1,5 @@
+import settings from "./settings";
+
 /**
  * Factory for the data-definition step. Receives the walk library through the
  * dependency object - this module performs no imports.
@@ -58,7 +60,7 @@ function _defineData ( dSource, action ) {
             return { dataDeepLevel:0, nestedData }
         }
         
-    /**
+/**
  * Callback function for walking through data structure to collect nested objects.
  * 
  * @param {object} params - Walk parameters
@@ -78,7 +80,8 @@ function findObjects ({key, value, breadcrumbs}) {
                     return value
             } // findObjects func.
 
-    walk ({ data:d, objectCallback:findObjects })
+    const settings = { parentPath: false, copy: false };
+    walk ({ data:d, objectCallback:findObjects, settings })
     return { dataDeepLevel, nestedData }
     } // _defineData func.
 

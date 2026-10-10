@@ -37,9 +37,12 @@ function actionMix ({ name }, theData, { helpers, extendArguments, nestedData, l
                         else                       nestedData[level] = theData['text']
 
                         // Publish up: replace matching breadcrumb values on every level above
-                        const check = ({ value, breadcrumbs }) => nestedData[level][breadcrumbs]  ?  nestedData[level][breadcrumbs]  :  value
+                        const 
+                              check = ({ value, breadcrumbs }) => nestedData[level][breadcrumbs]  ?  nestedData[level][breadcrumbs]  :  value
+                            , settings = { parentPath: false }
+                            ;
                         for ( let i = level - 1; i >= 0; i-- ) {
-                                nestedData[i] = walk ({ data: nestedData[i], objectCallback: check })
+                                nestedData[i] = walk ({ data: nestedData[i], objectCallback: check, settings })
                             }
                         break
                     }
