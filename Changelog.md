@@ -1,6 +1,11 @@
 ## Release History
 
 
+### 3.10.0 (2026-10-10)
+- [x] Dependency update. @peter.naydenov/walk - v.7.0.0;
+- [x] Update code to use speed optimizations from @peter.naydenov/walk;
+
+
 
 ### 3.9.0 (2026-09-05)
 - [x] Feature: Added a skill at `skills/git-morph/SKILL.md`;
