@@ -9,6 +9,7 @@
     "types": "./dist/main.d.ts",
     "exports": {
         ".": {
+            "types": "./dist/main.d.ts",
             "import": "./src/main.js",
             "require": "./dist/morph.cjs",
             "default": "./src/main.js"
