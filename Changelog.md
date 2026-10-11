@@ -1,9 +1,17 @@
 ## Release History
 
 
+
+### 3.10.1 (2026-10-11)
+- [x] “Fix: removed an unused extensionless import in _defineData.js that broke loading the ESM source in plain Node.”
+- [x] Dependency update. @peter.naydenov/walk - v.7.0.1;
+
+
+
 ### 3.10.0 (2026-10-10)
 - [x] Dependency update. @peter.naydenov/walk - v.7.0.0;
 - [x] Update code to use speed optimizations from @peter.naydenov/walk;
+- [ ] Bug: unused extensionless import in _defineData.js that broke loading the ESM source in plain Node.
 
 
 
