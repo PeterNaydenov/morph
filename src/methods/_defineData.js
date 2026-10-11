@@ -1,5 +1,3 @@
-import settings from "./settings";
-
 /**
  * Factory for the data-definition step. Receives the walk library through the
  * dependency object - this module performs no imports.
