@@ -2,6 +2,11 @@
 
 
 
+### 3.10.2 (2026-10-28)
+- [x] Dependency update. @peter.naydenov/stack - v.3.0.2;
+
+
+
 ### 3.10.1 (2026-10-11)
 - [x] “Fix: removed an unused extensionless import in _defineData.js that broke loading the ESM source in plain Node.”
 - [x] Dependency update. @peter.naydenov/walk - v.7.0.1;
